@@ -66,9 +66,11 @@ export function PlanStep({ value, onChange, onContinue }) {
 
       {softExit && <SoftExit message={SOFT_EXITS[softExit]} />}
 
-      <Button variant="primary" ready={!!value} onClick={onContinue}>
-        Continue
-      </Button>
+      <div style={{ marginTop: 'var(--cf-spacing-6)' }}>
+        <Button variant="primary" ready={!!value} onClick={onContinue}>
+          Continue
+        </Button>
+      </div>
     </div>
   )
 }
