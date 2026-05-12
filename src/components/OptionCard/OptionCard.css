@@ -1,0 +1,37 @@
+.option-card {
+  display: flex;
+  align-items: center;
+  padding: var(--cf-spacing-3) var(--cf-spacing-4);
+  background: var(--cf-color-neutral-0);
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: var(--cf-border-radius-lg);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.15s, background 0.15s;
+  font-family: inherit;
+}
+
+.option-card:hover {
+  border-color: var(--cf-color-neutral-400);
+  background: var(--cf-color-neutral-50);
+}
+
+.option-card--selected {
+  border: 2px solid var(--cf-color-neutral-900);
+  background: var(--cf-color-neutral-50);
+}
+
+.option-card__label {
+  display: block;
+  font-size: var(--cf-font-size-lg);
+  font-weight: var(--cf-font-weight-medium);
+  color: var(--cf-color-neutral-900);
+}
+
+.option-card__sub {
+  display: block;
+  font-size: var(--cf-font-size-md);
+  color: var(--cf-color-neutral-500);
+  margin-top: 2px;
+}

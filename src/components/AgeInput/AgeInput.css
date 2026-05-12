@@ -1,0 +1,42 @@
+.age-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--cf-spacing-3);
+  margin-bottom: var(--cf-spacing-2);
+}
+
+.age-input {
+  width: 100px;
+  font-size: var(--cf-font-size-3xl);
+  font-weight: var(--cf-font-weight-medium);
+  text-align: center;
+  padding: var(--cf-spacing-3);
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: var(--cf-border-radius-lg);
+  background: var(--cf-color-neutral-0);
+  color: var(--cf-color-neutral-900);
+  font-family: inherit;
+  -moz-appearance: textfield;
+}
+
+.age-input::-webkit-outer-spin-button,
+.age-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.age-input:focus {
+  outline: none;
+  border-color: var(--cf-color-neutral-900);
+}
+
+.age-unit {
+  font-size: var(--cf-font-size-lg);
+  color: var(--cf-color-neutral-500);
+}
+
+.age-error {
+  font-size: var(--cf-font-size-md);
+  color: var(--cf-color-feedback-error);
+  min-height: 18px;
+  margin-bottom: var(--cf-spacing-6);
+}

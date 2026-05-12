@@ -1,0 +1,158 @@
+.step {
+  width: 100%;
+}
+
+.step-label {
+  font-size: var(--cf-font-size-xs);
+  font-weight: var(--cf-font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cf-color-neutral-500);
+  margin-bottom: var(--cf-spacing-4);
+}
+
+.step-question {
+  font-size: var(--cf-font-size-2xl);
+  font-weight: var(--cf-font-weight-medium);
+  color: var(--cf-color-neutral-900);
+  line-height: var(--cf-line-height-tight);
+  margin-bottom: var(--cf-spacing-2);
+}
+
+.step-hint {
+  font-size: var(--cf-font-size-base);
+  color: var(--cf-color-neutral-600);
+  margin-bottom: var(--cf-spacing-8);
+  line-height: var(--cf-line-height-relaxed);
+}
+
+.option-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cf-spacing-2);
+  margin-bottom: var(--cf-spacing-6);
+}
+
+.expander-trigger {
+  font-size: var(--cf-font-size-md);
+  color: var(--cf-color-neutral-500);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-spacing-1);
+  margin-bottom: var(--cf-spacing-3);
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.expander-trigger:hover { color: var(--cf-color-neutral-900); }
+
+.expander-arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+  font-style: normal;
+}
+
+.expander-arrow--open { transform: rotate(90deg); }
+
+.expander-content {
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: var(--cf-border-radius-lg);
+  overflow: hidden;
+  margin-bottom: var(--cf-spacing-6);
+}
+
+.expander-option {
+  display: block;
+  padding: var(--cf-spacing-3) var(--cf-spacing-4);
+  font-size: var(--cf-font-size-base);
+  color: var(--cf-color-neutral-900);
+  cursor: pointer;
+  border: none;
+  background: var(--cf-color-neutral-0);
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid var(--cf-color-neutral-200);
+  font-family: inherit;
+}
+
+.expander-option:last-child { border-bottom: none; }
+.expander-option:hover { background: var(--cf-color-neutral-50); }
+
+/* Results */
+.results-summary {
+  font-size: var(--cf-font-size-xl);
+  font-weight: var(--cf-font-weight-medium);
+  color: var(--cf-color-neutral-900);
+  margin-bottom: var(--cf-spacing-2);
+}
+
+.results-sub {
+  font-size: var(--cf-font-size-base);
+  color: var(--cf-color-neutral-600);
+  margin-bottom: var(--cf-spacing-8);
+  line-height: var(--cf-line-height-relaxed);
+}
+
+.results-section { margin-bottom: var(--cf-spacing-8); }
+
+.results-heading {
+  font-size: var(--cf-font-size-xs);
+  font-weight: var(--cf-font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cf-color-neutral-500);
+  margin-bottom: var(--cf-spacing-3);
+}
+
+.conditional-accordion { margin-bottom: var(--cf-spacing-8); }
+
+.conditional-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--cf-spacing-3) var(--cf-spacing-4);
+  background: var(--cf-color-neutral-0);
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: var(--cf-border-radius-lg);
+  cursor: pointer;
+  font-size: var(--cf-font-size-base);
+  font-weight: var(--cf-font-weight-medium);
+  color: var(--cf-color-neutral-900);
+  text-align: left;
+  font-family: inherit;
+}
+
+.conditional-toggle--open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.conditional-toggle:hover { background: var(--cf-color-neutral-50); }
+
+.conditional-toggle-meta {
+  font-size: var(--cf-font-size-md);
+  color: var(--cf-color-neutral-500);
+  font-weight: var(--cf-font-weight-normal);
+}
+
+.conditional-toggle-arrow {
+  font-style: normal;
+  color: var(--cf-color-neutral-500);
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.conditional-toggle-arrow--open { transform: rotate(90deg); }
+
+.conditional-cards {
+  border: 1px solid var(--cf-color-neutral-200);
+  border-top: none;
+  border-bottom-left-radius: var(--cf-border-radius-lg);
+  border-bottom-right-radius: var(--cf-border-radius-lg);
+  overflow: hidden;
+}

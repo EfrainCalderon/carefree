@@ -1,0 +1,41 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cf-spacing-2);
+  border: none;
+  border-radius: var(--cf-border-radius-md);
+  font-size: var(--cf-font-size-lg);
+  font-weight: var(--cf-font-weight-medium);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+
+.btn--primary {
+  padding: var(--cf-spacing-3) var(--cf-spacing-6);
+  background: var(--cf-color-neutral-900);
+  color: var(--cf-color-neutral-0);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.btn--primary.btn--ready {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.btn--primary.btn--ready:hover {
+  opacity: 0.85;
+}
+
+.btn--ghost {
+  padding: 0;
+  background: none;
+  color: var(--cf-color-neutral-500);
+  font-size: var(--cf-font-size-md);
+  gap: var(--cf-spacing-1);
+}
+
+.btn--ghost:hover {
+  color: var(--cf-color-neutral-900);
+}

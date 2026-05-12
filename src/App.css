@@ -1,0 +1,25 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--cf-color-neutral-100);
+  color: var(--cf-color-neutral-900);
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--cf-spacing-12) var(--cf-spacing-4);
+  min-height: 100vh;
+}
+
+.flow {
+  width: 100%;
+  max-width: 520px;
+}

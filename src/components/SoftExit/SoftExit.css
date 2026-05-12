@@ -1,0 +1,13 @@
+.soft-exit {
+  padding: var(--cf-spacing-5);
+  background: var(--cf-color-neutral-0);
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: var(--cf-border-radius-lg);
+  margin-bottom: var(--cf-spacing-6);
+}
+
+.soft-exit p {
+  font-size: var(--cf-font-size-base);
+  color: var(--cf-color-neutral-800);
+  line-height: var(--cf-line-height-relaxed);
+}

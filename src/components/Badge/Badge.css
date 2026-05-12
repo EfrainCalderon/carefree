@@ -1,0 +1,18 @@
+.badge {
+  display: inline-block;
+  font-size: var(--cf-font-size-xs);
+  font-weight: var(--cf-font-weight-medium);
+  padding: 2px var(--cf-spacing-2);
+  border-radius: var(--cf-border-radius-sm);
+  margin-bottom: var(--cf-spacing-1);
+}
+
+.badge--a {
+  background: var(--cf-color-grade-a-bg);
+  color: var(--cf-color-grade-a-text);
+}
+
+.badge--b {
+  background: var(--cf-color-grade-b-bg);
+  color: var(--cf-color-grade-b-text);
+}

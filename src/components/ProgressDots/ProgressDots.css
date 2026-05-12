@@ -1,0 +1,16 @@
+.progress {
+  display: flex;
+  gap: var(--cf-spacing-1);
+  margin-bottom: var(--cf-spacing-10);
+}
+
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--cf-border-radius-full);
+  background: var(--cf-color-neutral-200);
+  transition: background 0.2s;
+}
+
+.progress-dot--done   { background: var(--cf-color-neutral-900); }
+.progress-dot--active { background: var(--cf-color-neutral-500); }
