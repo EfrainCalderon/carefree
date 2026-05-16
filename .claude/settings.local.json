@@ -9,7 +9,12 @@
       "Bash(git remote *)",
       "Bash(git push *)",
       "Bash(git pull *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "mcp__mobbin__search_screens",
+      "Skill(anthropic-skills:ux-designer)",
+      "Skill(anthropic-skills:ux-designer:*)",
+      "Bash(python3 -c \"import reportlab; print\\('reportlab ok'\\)\")",
+      "Bash(pip3 install *)"
     ]
   }
 }
