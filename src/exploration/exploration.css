@@ -260,9 +260,14 @@
 
 .di__type {
   font-size: 11px;
-  color: var(--cf-color-neutral-400);
+  color: var(--cf-color-neutral-600);
+  background: var(--cf-color-neutral-100);
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: 4px;
+  padding: 2px 6px;
   white-space: nowrap;
   flex-shrink: 0;
+  line-height: 1.4;
 }
 
 .di__meta {
@@ -473,9 +478,14 @@
 
 .r2-item__type {
   font-size: 11px;
-  color: var(--cf-color-neutral-400);
+  color: var(--cf-color-neutral-600);
+  background: var(--cf-color-neutral-100);
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: 4px;
+  padding: 2px 6px;
   white-space: nowrap;
   flex-shrink: 0;
+  line-height: 1.4;
 }
 
 .r2-item__meta {
