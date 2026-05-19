@@ -4,6 +4,7 @@ import { PlanStep } from './steps/PlanStep'
 import { AgeStep } from './steps/AgeStep'
 import { SexStep } from './steps/SexStep'
 import { ResultsStep } from './steps/ResultsStep'
+import { ExplorationShell } from './exploration/ExplorationShell'
 import './App.css'
 
 const STEPS = ['plan', 'age', 'sex', 'results']
@@ -22,6 +23,7 @@ function filterRecs(recommendations, { age, sex }) {
 }
 
 export default function App() {
+  const [mode, setMode] = useState('app')
   const [step, setStep] = useState('plan')
   const [state, setState] = useState({ plan: null, age: null, sex: null })
   const [recommendations, setRecommendations] = useState([])
@@ -34,6 +36,15 @@ export default function App() {
 
   function set(key, val) {
     setState(s => ({ ...s, [key]: val }))
+  }
+
+  if (mode === 'explore') {
+    return (
+      <ExplorationShell
+        recommendations={recommendations}
+        onExit={() => setMode('app')}
+      />
+    )
   }
 
   const { universal, conditional } = step === 'results'
@@ -77,6 +88,10 @@ export default function App() {
             onBack={() => setStep('sex')}
           />
         )}
+
+        <button className="exp-entry-link" onClick={() => setMode('explore')}>
+          View design exploration →
+        </button>
       </div>
     </div>
   )
