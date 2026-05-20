@@ -97,7 +97,7 @@ export function ResultsR3({ recommendations, answers, onBack, planIds = new Set(
                 <span className="r3-card__icon">{cat.icon}</span>
                 <div className="r3-card__name">{cat.label}</div>
                 <div className="r3-card__hook">
-                  {CATEGORY_HOOKS[cat.colorKey] ?? (allConditional ? 'Ask your doctor' : `${totalCount} screening${totalCount !== 1 ? 's' : ''}`)}
+                  {CATEGORY_HOOKS[cat.id] ?? (allConditional ? 'Ask your doctor' : `${totalCount} screening${totalCount !== 1 ? 's' : ''}`)}
                 </div>
               </button>
             )
