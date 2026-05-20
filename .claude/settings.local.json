@@ -14,7 +14,12 @@
       "Skill(anthropic-skills:ux-designer)",
       "Skill(anthropic-skills:ux-designer:*)",
       "Bash(python3 -c \"import reportlab; print\\('reportlab ok'\\)\")",
-      "Bash(pip3 install *)"
+      "Bash(pip3 install *)",
+      "Skill(anthropic-skills:ux-copywriter)",
+      "Skill(anthropic-skills:ux-copywriter:*)",
+      "Bash(npx vercel *)",
+      "Skill(anthropic-skills:ui-designer)",
+      "Skill(anthropic-skills:ui-designer:*)"
     ]
   }
 }

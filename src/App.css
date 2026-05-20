@@ -22,6 +22,4 @@ body {
 .flow {
   width: 100%;
   max-width: 520px;
-  /* Enough clearance so PlanBar never covers content */
-  padding-bottom: 100px;
 }

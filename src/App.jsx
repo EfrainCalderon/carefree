@@ -4,13 +4,11 @@ import { PlanStep } from './steps/PlanStep'
 import { AgeStep } from './steps/AgeStep'
 import { SexStep } from './steps/SexStep'
 import { ResultsR3 } from './exploration/ResultsR3'
-import { ExplorationShell } from './exploration/ExplorationShell'
 import './App.css'
 
 const STEP_INDEX = { plan: 0, age: 1, sex: 2, results: 2 }
 
 export default function App() {
-  const [mode, setMode] = useState('app')
   const [step, setStep] = useState('plan')
   const [answers, setAnswers] = useState({ plan: null, age: null, sex: null })
   const [recommendations, setRecommendations] = useState([])
@@ -101,15 +99,6 @@ export default function App() {
     setPlanIds(new Set())
   }
 
-  if (mode === 'explore') {
-    return (
-      <ExplorationShell
-        recommendations={recommendations}
-        onExit={() => setMode('app')}
-      />
-    )
-  }
-
   return (
     <div className="app">
       <div className="flow">
@@ -153,9 +142,6 @@ export default function App() {
           />
         )}
 
-        <button className="exp-entry-link" onClick={() => setMode('explore')}>
-          View design exploration →
-        </button>
       </div>
     </div>
   )

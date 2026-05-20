@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { filterRecs, groupByCategory } from './categoryMap'
+import { filterRecs, groupByCategory, CATEGORY_HOOKS } from './categoryMap'
 import { DetailView } from './DetailView'
 import { PlanBar } from '../components/PlanBar/PlanBar'
 import { PlanSheet } from '../components/PlanSheet/PlanSheet'
@@ -65,7 +65,7 @@ export function ResultsR3({ recommendations, answers, onBack, planIds = new Set(
 
   return (
     <>
-      <div>
+      <div className="results-content">
         <button
           className="results-back"
           onClick={fromPlanLink ? onViewAll : onBack}
@@ -96,8 +96,8 @@ export function ResultsR3({ recommendations, answers, onBack, planIds = new Set(
                 {allConditional && <span className="r3-card__dot" />}
                 <span className="r3-card__icon">{cat.icon}</span>
                 <div className="r3-card__name">{cat.label}</div>
-                <div className="r3-card__count">
-                  {allConditional ? 'Ask your doctor' : `${totalCount} screening${totalCount !== 1 ? 's' : ''}`}
+                <div className="r3-card__hook">
+                  {CATEGORY_HOOKS[cat.colorKey] ?? (allConditional ? 'Ask your doctor' : `${totalCount} screening${totalCount !== 1 ? 's' : ''}`)}
                 </div>
               </button>
             )
