@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { filterRecs, groupByCategory, CATEGORY_HOOKS } from './categoryMap'
+import './exploration.css'
 import { DetailView } from './DetailView'
 import { PlanBar } from '../components/PlanBar/PlanBar'
 import { PlanSheet } from '../components/PlanSheet/PlanSheet'
