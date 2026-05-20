@@ -3,7 +3,7 @@ import { ProgressDots } from './components/ProgressDots/ProgressDots'
 import { PlanStep } from './steps/PlanStep'
 import { AgeStep } from './steps/AgeStep'
 import { SexStep } from './steps/SexStep'
-import { ResultsR3 } from './exploration/ResultsR3'
+import { ResultsV2 } from './exploration/ResultsV2'
 import './App.css'
 
 const STEP_INDEX = { plan: 0, age: 1, sex: 2, results: 2 }
@@ -130,7 +130,7 @@ export default function App() {
           />
         )}
         {step === 'results' && answers.age && answers.sex && (
-          <ResultsR3
+          <ResultsV2
             recommendations={recommendations}
             answers={answers}
             planIds={planIds}

@@ -18,8 +18,8 @@
 }
 
 @keyframes plan-bar-enter {
-  from { transform: translateY(-100%); opacity: 0; }
-  to   { transform: translateY(0);     opacity: 1; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .plan-bar__count {
@@ -57,3 +57,9 @@
 }
 .plan-bar__save:hover  { background: rgba(255, 255, 255, 0.88); }
 .plan-bar__save:active { transform: scale(0.97); }
+
+.plan-bar__empty {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+}

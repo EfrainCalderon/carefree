@@ -1,3 +1,39 @@
+// ─── Short hooks — always-visible taglines on each screening row (5–10 words) ─
+export const SCREENING_HOOKS_SHORT = {
+  'high-blood-pressure-screening':  "2-minute cuff check. Free. No symptoms needed.",
+  'statin-cvd':                     "Most who qualify have never been told.",
+  'healthy-diet-counseling':        "Real covered coaching — not a pamphlet.",
+  'diabetes-screening':             "1 in 3 adults have prediabetes. Don't know it.",
+  'colorectal-cancer-screening':    "Biggest cancer risk for adults 45+. Free.",
+  'breast-cancer-screening':        "Covered at no cost starting at 40.",
+  'lung-cancer-screening':          "Smoked? Annual CT scan is free.",
+  'cervical-cancer-screening':      "Every 3–5 years. Fully covered.",
+  'depression-adults':              "Short questionnaire. Opens the door.",
+  'anxiety-adults':                 "Most go undiagnosed for years. Takes 2 minutes.",
+  'unhealthy-alcohol-use':          "Brief covered check-in. Less than 10 minutes.",
+  'hepatitis-c-screening':          "One blood test. Rules it out permanently.",
+  'hiv-screening':                  "Routine blood test. Recommended for every adult.",
+  'hepatitis-b-screening-adults':   "Single blood test. Take it off the table.",
+  'intimate-partner-violence':      "Confidential. Your doctor is required to ask.",
+  'brca-risk':                      "Family history? This assessment is covered.",
+  'chlamydia-gonorrhea-screening':  "No symptoms doesn't mean no risk. Covered.",
+  'obesity-counseling-adults':      "Covered weight counseling program.",
+  'aaa-screening':                  "One-time ultrasound. For men who've smoked.",
+  'tobacco-cessation':              "Covered counseling + medication. Most effective combo.",
+  'syphilis-screening':             "Routine blood test. Fast and covered.",
+  'prep-hiv':                       "Daily pill that prevents HIV. Covered for at-risk adults.",
+  'breast-cancer-meds':             "Risk-reducing medication. Ask your doctor.",
+  'skin-cancer-counseling':         "UV counseling covered for fair-skinned adults.",
+  'osteoporosis-screening':         "Bone density scan. Covered.",
+  'fall-prevention-exercise':       "Covered exercise program. Reduces fall risk.",
+  'vision-screening-adults':        "Covered eye exam.",
+  'aspirin-preeclampsia':           "Low-dose aspirin during pregnancy. Covered.",
+  'folic-acid':                     "Daily supplement before and during pregnancy.",
+  'gestational-diabetes':           "Blood test during pregnancy. Covered.",
+  'perinatal-depression':           "Covered counseling during and after pregnancy.",
+  'bacteriuria-pregnant':           "Urine test during pregnancy. Covered.",
+}
+
 // ─── Category-level hooks (shown at top of detail view) ──────────────────────
 // Source: hooks_v2.md — category-level hooks section
 export const CATEGORY_HOOKS = {
@@ -74,6 +110,29 @@ export const REC_META = {
   'osteoporosis-screening': { category: 'healthy_aging', frequency: 'Periodically', testType: 'Bone density scan' },
   'fall-prevention-exercise': { category: 'healthy_aging', frequency: 'As recommended', testType: 'Exercise program' },
   'vision-screening-adults': { category: 'healthy_aging', frequency: 'Periodically', testType: 'Eye exam' },
+}
+
+// ─── Flat list for V2 results view ───────────────────────────────────────────
+// Returns { schedulable, conditional } as flat arrays enriched with cat metadata,
+// ordered by CATEGORY_ORDER within each section.
+export function flattenForV2(recs) {
+  const ORDER = ['heart_metabolic', 'cancer', 'mental_health', 'infectious_disease', 'womens_health', 'healthy_aging']
+  const schedulable = []
+  const conditional = []
+
+  ORDER.forEach(catId => {
+    const cat = CATEGORIES[catId]
+    recs
+      .filter(r => REC_META[r.id]?.category === catId)
+      .forEach(r => {
+        const meta = REC_META[r.id]
+        const enriched = { ...r, catId, catIcon: cat.icon, catLabel: cat.label, frequency: meta.frequency, testType: meta.testType }
+        if (r.conditional) conditional.push(enriched)
+        else schedulable.push(enriched)
+      })
+  })
+
+  return { schedulable, conditional }
 }
 
 export function filterRecs(recommendations, { age, sex }) {

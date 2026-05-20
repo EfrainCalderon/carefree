@@ -1,17 +1,21 @@
 import './PlanBar.css'
 
 export function PlanBar({ count, onSave }) {
-  if (count === 0) return null
-
   return (
     <div className="plan-bar" role="status" aria-live="polite">
-      <span className="plan-bar__count">
-        <span className="plan-bar__n" key={count}>{count}</span>
-        {' '}in your plan
-      </span>
-      <button className="plan-bar__save" onClick={onSave}>
-        Save your plan
-      </button>
+      {count === 0 ? (
+        <span className="plan-bar__empty">Tap + to claim any screening</span>
+      ) : (
+        <span className="plan-bar__count">
+          <span className="plan-bar__n" key={count}>{count}</span>
+          {' '}claimed
+        </span>
+      )}
+      {count > 0 && (
+        <button className="plan-bar__save" onClick={onSave}>
+          Save these
+        </button>
+      )}
     </div>
   )
 }
