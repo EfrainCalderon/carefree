@@ -99,7 +99,7 @@ function ClaimCard({ rec, inPlan, onPlanToggle, accent, index = 0 }) {
         onClick={() => onPlanToggle?.(rec.id)}
         aria-label={inPlan ? `Remove ${rec.plain_name} from your plan` : `Claim ${rec.plain_name}`}
       >
-        {inPlan ? '✓ Claimed' : '+ Claim'}
+        {inPlan ? '✓ Added' : '+ Add to plan'}
       </button>
     </div>
   )
@@ -122,7 +122,7 @@ function ClaimView({ cat, planIds, onPlanToggle, onBack }) {
         <div className="cv2-detail__section">
           {(cat.schedulable.length > 1 || cat.askDoctor.length > 0) && (
             <div className="sv2__section-label">
-              Book these yourself — {cat.schedulable.length}
+              Schedule these — {cat.schedulable.length}
             </div>
           )}
           {cat.schedulable.map((rec, i) => (
@@ -141,7 +141,7 @@ function ClaimView({ cat, planIds, onPlanToggle, onBack }) {
       {cat.askDoctor.length > 0 && (
         <div className="cv2-detail__section">
           <div className="sv2__section-label">
-            Worth one question — {cat.askDoctor.length}
+            Ask your doctor — {cat.askDoctor.length}
           </div>
           {cat.askDoctor.map((rec, i) => (
             <ClaimCard
@@ -176,7 +176,7 @@ function CategoryCard({ cat, claimedCount, onTap, fullWidth }) {
       <div className="cv2-cat__tagline">{CAT_TAGLINES[cat.id]}</div>
       <div className="cv2-cat__count">
         {claimedCount > 0
-          ? `${claimedCount} of ${total} claimed`
+          ? `${claimedCount} of ${total} added`
           : `${total} benefit${total !== 1 ? 's' : ''} available`}
       </div>
     </button>

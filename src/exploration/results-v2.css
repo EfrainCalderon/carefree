@@ -175,10 +175,10 @@
   margin-bottom: 0;
 }
 
-/* Claimed state: card fills with category color */
+/* Added state: neutral dark fill — consistent across all categories */
 .cv2-card--claimed {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--cf-color-neutral-900);
+  border-color: var(--cf-color-neutral-900);
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
 
@@ -237,7 +237,7 @@
 .cv2-card--claimed .cv2-card__name  { color: #fff; }
 .cv2-card--claimed .cv2-card__hook  { color: rgba(255,255,255,0.82); }
 .cv2-card--claimed .cv2-card__meta  { color: rgba(255,255,255,0.7); }
-.cv2-card--claimed .cv2-card__free  { color: #fff; font-weight: 700; }
+.cv2-card--claimed .cv2-card__free  { color: rgba(255,255,255,0.9); font-weight: 600; }
 .cv2-card--claimed .cv2-card__type  {
   background: rgba(255,255,255,0.2);
   border-color: rgba(255,255,255,0.3);
