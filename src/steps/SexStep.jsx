@@ -14,7 +14,7 @@ export function SexStep({ value, onChange, onBack, onContinue }) {
       <div className="step-label">Step 3 of 3</div>
       <div className="step-question">What sex were you assigned at birth?</div>
       <div className="step-hint">
-        This helps your checklist include the right screenings, since some depend on which organs you were born with.
+        Some screenings are recommended based on the body you were born with, not your gender identity.
       </div>
       <div className="option-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         {SEX_OPTIONS.map(o => (

@@ -1,0 +1,294 @@
+/* Backdrop */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0, 0, 0, 0.4);
+  animation: backdrop-in 200ms ease both;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Sheet */
+.sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 310;
+  background: var(--cf-color-neutral-0);
+  border-radius: 20px 20px 0 0;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: sheet-enter 280ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  /* Cap width to match app flow on desktop */
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+@keyframes sheet-enter {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.sheet__handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--cf-color-neutral-200);
+  margin: 0 auto 16px;
+}
+
+/* Header */
+.sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.sheet__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--cf-color-neutral-900);
+}
+
+.sheet__close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--cf-color-neutral-400);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  font-family: inherit;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
+}
+.sheet__close:hover {
+  background: var(--cf-color-neutral-100);
+  color: var(--cf-color-neutral-700);
+}
+
+/* Summary list */
+.sheet__summary {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 4px;
+}
+
+.sheet__summary-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--cf-color-neutral-700);
+  padding: 4px 0;
+}
+
+.sheet__check {
+  font-size: 11px;
+  color: var(--cf-color-neutral-400);
+  flex-shrink: 0;
+}
+
+.sheet__summary-more {
+  font-size: 13px;
+  color: var(--cf-color-neutral-400);
+  padding: 4px 0 4px 19px;
+}
+
+.sheet__divider {
+  height: 1px;
+  background: var(--cf-color-neutral-100);
+  margin: 14px 0;
+}
+
+/* Option blocks */
+.sheet__option {
+  border: 1px solid var(--cf-color-neutral-200);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 120ms ease;
+}
+.sheet__option:hover { border-color: var(--cf-color-neutral-300); }
+.sheet__option--expanded { border-color: var(--cf-color-neutral-300); }
+
+.sheet__option-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.sheet__option-trigger:hover { background: var(--cf-color-neutral-50); }
+
+.sheet__option-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.sheet__option-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sheet__option-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--cf-color-neutral-900);
+}
+
+.sheet__option-desc {
+  font-size: 13px;
+  color: var(--cf-color-neutral-500);
+}
+
+.sheet__option-chevron {
+  font-size: 12px;
+  color: var(--cf-color-neutral-400);
+  flex-shrink: 0;
+}
+
+.sheet__option-check {
+  font-size: 14px;
+  color: var(--cf-color-neutral-600);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Sent confirmation state */
+.sheet__option-sent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+.sheet__option-sent .sheet__option-label { color: var(--cf-color-neutral-600); }
+
+/* Email form */
+.sheet__email-form {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.sheet__email-input {
+  flex: 1;
+  border: 1.5px solid var(--cf-color-neutral-200);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--cf-color-neutral-900);
+  background: var(--cf-color-neutral-0);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+.sheet__email-input::placeholder { color: var(--cf-color-neutral-400); }
+.sheet__email-input:focus { border-color: var(--cf-color-neutral-500); }
+
+.sheet__email-send {
+  background: var(--cf-color-neutral-900);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+.sheet__email-send:hover   { background: var(--cf-color-neutral-700); }
+.sheet__email-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Footer: start over / confirm */
+.sheet__footer {
+  margin-top: 4px;
+  text-align: center;
+}
+
+.sheet__start-over {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--cf-color-neutral-400);
+  cursor: pointer;
+  font-family: inherit;
+  padding: 8px;
+  transition: color 120ms ease;
+}
+.sheet__start-over:hover { color: var(--cf-color-neutral-600); }
+
+.sheet__confirm {
+  background: var(--cf-color-neutral-50);
+  border-radius: 10px;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.sheet__confirm-label {
+  display: block;
+  font-size: 13px;
+  color: var(--cf-color-neutral-700);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.sheet__confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.sheet__confirm-yes {
+  background: var(--cf-color-neutral-900);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.sheet__confirm-yes:hover { background: var(--cf-color-neutral-700); }
+
+.sheet__confirm-no {
+  background: none;
+  color: var(--cf-color-neutral-600);
+  border: 1.5px solid var(--cf-color-neutral-200);
+  border-radius: 7px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+.sheet__confirm-no:hover {
+  border-color: var(--cf-color-neutral-400);
+  color: var(--cf-color-neutral-800);
+}

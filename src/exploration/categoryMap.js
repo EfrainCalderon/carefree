@@ -1,3 +1,36 @@
+// ─── Category-level hooks (shown at top of detail view) ──────────────────────
+// Source: hooks_v2.md — category-level hooks section
+export const CATEGORY_HOOKS = {
+  heart_metabolic:   "Heart disease is the #1 killer of Americans — and most of the damage happens silently, years before any symptoms. These screenings catch it before it becomes an emergency.",
+  cancer:            "When caught early, most cancers are 90%+ survivable. These screenings find them before symptoms ever start.",
+  mental_health:     "1 in 5 adults will experience a mental health condition this year. Most are never asked about it at a doctor's appointment. A short check can open the door to something better.",
+  infectious_disease:"Many of the most common infectious diseases have no symptoms for years. The only way to know is a blood test.",
+  womens_health:     "Several preventive screenings are recommended specifically for women — not because they're at greater risk for everything, but because some conditions only your OB or primary care doctor would know to check.",
+  healthy_aging:     null, // no hook written yet
+}
+
+// ─── Screening-level hooks (shown on each item row) ──────────────────────────
+// Source: hooks_v2.md — screening-level hooks section
+export const SCREENING_HOOKS = {
+  'high-blood-pressure-screening':  "Nearly half of U.S. adults have high blood pressure — and most find out only after it's caused damage. It has no symptoms. A two-minute cuff check is the only way to know.",
+  'statin-cvd':                     "A free statin prescription can cut your risk of a first heart attack by up to 35%. Most people who qualify have never been told they qualify.",
+  'healthy-diet-counseling':        "Adults with cardiovascular risk factors are entitled to structured, covered coaching on diet and exercise. Not a pamphlet — a real program. Most never claim it.",
+  'diabetes-screening':             "Prediabetes affects 1 in 3 American adults. 8 out of 10 don't know they have it. A simple blood test is all it takes to find out where you stand.",
+  'colorectal-cancer-screening':    "Colorectal cancer is 90% survivable if caught early — but less than 40% of cases are found that way. A stool test or colonoscopy can shift those odds in your favor.",
+  'breast-cancer-screening':        "Mammograms reduce breast cancer deaths by up to 20%. Most women don't realize they're fully covered starting at 40 — every other year, at no cost.",
+  'lung-cancer-screening':          "Lung cancer kills more Americans than any other cancer. In adults with a significant smoking history, annual low-dose CT scans cut mortality by 20%. Most who qualify never get one.",
+  'cervical-cancer-screening':      "Cervical cancer is almost entirely preventable when caught early — but it has no symptoms in its early stages. A Pap smear or HPV test every few years is all it takes.",
+  'depression-adults':              "Depression affects 21 million Americans and is one of the most treatable conditions — when it's identified. A short questionnaire at your annual visit is all it takes.",
+  'anxiety-adults':                 "Anxiety disorders affect 40 million adults in the U.S. Most go undiagnosed for years, not because they're untreatable, but because no one ever asked.",
+  'unhealthy-alcohol-use':          "Brief counseling after a simple screening has been shown to measurably reduce drinking in adults with unhealthy alcohol use. It takes less than 10 minutes — and it's covered.",
+  'hepatitis-c-screening':          "An estimated 2.4 million Americans are living with hepatitis C and don't know it. It causes no symptoms for decades. A one-time blood test can rule it out completely.",
+  'hiv-screening':                  "HIV is now a manageable condition — but only if it's caught. A routine blood test, recommended for every adult 15–65, is the only way to know your status.",
+  'hepatitis-b-screening-adults':   "Hepatitis B affects an estimated 2 million Americans and causes no symptoms until it's caused serious liver damage. A single blood test takes it off the table.",
+  'intimate-partner-violence':      "1 in 4 women will experience intimate partner violence. Most are never screened for it in a medical setting — and most don't bring it up unless someone asks. Your doctor is required to ask and connect you to resources if needed.",
+  'brca-risk':                      "A family history of breast or ovarian cancer may mean you carry a gene mutation that significantly raises your own risk. Most women with this history have never been referred for a risk assessment — and most don't know it's covered.",
+  'chlamydia-gonorrhea-screening':  "Chlamydia and gonorrhea often cause no symptoms — especially in women. Untreated, they can lead to serious long-term complications. Screening takes a few minutes and is covered at no cost.",
+}
+
 export const CATEGORIES = {
   heart_metabolic: { id: 'heart_metabolic', label: 'Heart & Metabolic', icon: '🫀', colorKey: 'heart' },
   cancer: { id: 'cancer', label: 'Cancer', icon: '🎗️', colorKey: 'cancer' },
