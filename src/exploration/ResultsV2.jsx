@@ -1,16 +1,26 @@
 import { useState } from 'react'
-import { filterRecs, flattenForV2, SCREENING_HOOKS_SHORT, SCREENING_HOOKS } from './categoryMap'
+import { filterRecs, groupByCategory, SCREENING_HOOKS_SHORT, SCREENING_HOOKS } from './categoryMap'
 import './results-v2.css'
 import { PlanBar } from '../components/PlanBar/PlanBar'
 import { PlanSheet } from '../components/PlanSheet/PlanSheet'
 
 const CAT_ACCENT = {
-  heart_metabolic:  '#D94B3D',
-  cancer:           '#7B4EAB',
-  mental_health:    '#3B7DC4',
-  infectious_disease: '#2A9D8F',
-  womens_health:    '#C26B7E',
-  healthy_aging:    '#D97706',
+  heart:      '#D94B3D',
+  cancer:     '#7B4EAB',
+  mental:     '#3B7DC4',
+  infectious: '#2A9D8F',
+  womens:     '#C26B7E',
+  aging:      '#D97706',
+}
+
+// What's actually inside each category — no fear, just the facts
+const CAT_TAGLINES = {
+  heart_metabolic:    'Blood pressure · Cholesterol · Diabetes',
+  cancer:             'Colorectal · Lung · Skin',
+  mental_health:      'Depression · Anxiety · Alcohol',
+  infectious_disease: 'HIV · Hepatitis C · STIs',
+  womens_health:      'Cervical · OB · Pregnancy',
+  healthy_aging:      'Vision · Bone density · Falls',
 }
 
 function extractQuestion(prompt) {
@@ -63,55 +73,117 @@ function getPersonalizedLede(age, sex, schedulableCount, conditionalCount) {
   }
 }
 
-function ScreeningRow({ rec, inPlan, onPlanToggle, index = 0 }) {
-  const [expanded, setExpanded] = useState(false)
+// ─── Individual screening claim card ─────────────────────────────────────────
+function ClaimCard({ rec, inPlan, onPlanToggle, accent, index = 0 }) {
   const shortHook = SCREENING_HOOKS_SHORT[rec.id]
   const longHook = SCREENING_HOOKS[rec.id]
-  const accentColor = CAT_ACCENT[rec.catId] ?? '#888'
   const question = extractQuestion(rec.doctor_prompt)
 
   return (
     <div
-      className={`sv2-row${inPlan ? ' sv2-row--claimed' : ''}${expanded ? ' sv2-row--expanded' : ''}`}
-      style={{ '--cat-accent': accentColor, animationDelay: `${index * 40}ms` }}
+      className={`cv2-card${inPlan ? ' cv2-card--claimed' : ''}`}
+      style={{ '--accent': accent, animationDelay: `${index * 55}ms` }}
     >
-      <div className="sv2-row__line">
-        <button
-          className="sv2-row__expand"
-          onClick={() => setExpanded(e => !e)}
-          aria-expanded={expanded}
-          aria-label={`${expanded ? 'Collapse' : 'Expand'} details for ${rec.plain_name}`}
-        >
-          <span className="sv2-row__name">{rec.plain_name}</span>
-          {shortHook && <span className="sv2-row__hook">{shortHook}</span>}
-        </button>
+      <div className="cv2-card__name">{rec.plain_name}</div>
+      {shortHook && <div className="cv2-card__hook">{shortHook}</div>}
+      <div className="cv2-card__meta">
+        <span>{rec.frequency}</span>
+        <span className="cv2-card__free">$0 with most insurance</span>
+        {rec.testType && <span className="cv2-card__type">{rec.testType}</span>}
+      </div>
+      {rec.conditional && question && (
+        <div className="cv2-card__prompt">Ask: "{question}"</div>
+      )}
+      <button
+        className={`cv2-claim-btn${inPlan ? ' cv2-claim-btn--active' : ''}`}
+        onClick={() => onPlanToggle?.(rec.id)}
+        aria-label={inPlan ? `Remove ${rec.plain_name} from your plan` : `Claim ${rec.plain_name}`}
+      >
+        {inPlan ? '✓ Claimed' : '+ Claim'}
+      </button>
+    </div>
+  )
+}
 
-        <button
-          className={`sv2-claim${inPlan ? ' sv2-claim--active' : ''}`}
-          onClick={() => onPlanToggle?.(rec.id)}
-          aria-label={inPlan ? `Remove ${rec.plain_name} from your plan` : `Claim ${rec.plain_name}`}
-        >
-          {inPlan ? '✓' : '+'}
-        </button>
+// ─── Category detail: list of claim cards ─────────────────────────────────────
+function ClaimView({ cat, planIds, onPlanToggle, onBack }) {
+  const accent = CAT_ACCENT[cat.colorKey]
+
+  return (
+    <div>
+      <button className="sv2__back" onClick={onBack}>← Back</button>
+
+      <div className="cv2-detail__header" style={{ '--accent': accent }}>
+        <span className="cv2-detail__icon">{cat.icon}</span>
+        <h2 className="cv2-detail__title">{cat.label}</h2>
       </div>
 
-      {expanded && (
-        <div className="sv2-row__detail">
-          {longHook && <p className="sv2-row__detail-hook">{longHook}</p>}
-          <div className="sv2-row__meta">
-            <span>{rec.frequency}</span>
-            <span className="sv2-row__cost">$0 with most insurance</span>
-            {rec.testType && <span className="sv2-row__type">{rec.testType}</span>}
-          </div>
-          {rec.conditional && question && (
-            <div className="sv2-row__prompt">Ask: "{question}"</div>
+      {cat.schedulable.length > 0 && (
+        <div className="cv2-detail__section">
+          {(cat.schedulable.length > 1 || cat.askDoctor.length > 0) && (
+            <div className="sv2__section-label">
+              Book these yourself — {cat.schedulable.length}
+            </div>
           )}
+          {cat.schedulable.map((rec, i) => (
+            <ClaimCard
+              key={rec.id}
+              rec={rec}
+              inPlan={planIds.has(rec.id)}
+              onPlanToggle={onPlanToggle}
+              accent={accent}
+              index={i}
+            />
+          ))}
+        </div>
+      )}
+
+      {cat.askDoctor.length > 0 && (
+        <div className="cv2-detail__section">
+          <div className="sv2__section-label">
+            Worth one question — {cat.askDoctor.length}
+          </div>
+          {cat.askDoctor.map((rec, i) => (
+            <ClaimCard
+              key={rec.id}
+              rec={rec}
+              inPlan={planIds.has(rec.id)}
+              onPlanToggle={onPlanToggle}
+              accent={accent}
+              index={cat.schedulable.length + i}
+            />
+          ))}
         </div>
       )}
     </div>
   )
 }
 
+// ─── Category grid card ────────────────────────────────────────────────────────
+function CategoryCard({ cat, claimedCount, onTap, fullWidth }) {
+  const total = cat.schedulable.length + cat.askDoctor.length
+  const accent = CAT_ACCENT[cat.colorKey]
+  const progress = total > 0 ? claimedCount / total : 0
+
+  return (
+    <button
+      className={`cv2-cat${claimedCount > 0 ? ' cv2-cat--active' : ''}${fullWidth ? ' cv2-cat--full' : ''}`}
+      style={{ '--accent': accent, '--progress': progress }}
+      onClick={onTap}
+    >
+      <span className="cv2-cat__icon">{cat.icon}</span>
+      <div className="cv2-cat__name">{cat.label}</div>
+      <div className="cv2-cat__tagline">{CAT_TAGLINES[cat.id]}</div>
+      <div className="cv2-cat__count">
+        {claimedCount > 0
+          ? `${claimedCount} of ${total} claimed`
+          : `${total} benefit${total !== 1 ? 's' : ''} available`}
+      </div>
+    </button>
+  )
+}
+
+// ─── Main results component ───────────────────────────────────────────────────
 export function ResultsV2({
   recommendations,
   answers,
@@ -122,18 +194,16 @@ export function ResultsV2({
   fromPlanLink = false,
   onViewAll,
 }) {
+  const [activeCatId, setActiveCatId] = useState(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
   const filtered = filterRecs(recommendations, answers)
-  const { schedulable, conditional } = flattenForV2(filtered)
+  const categories = groupByCategory(filtered)
   const planItems = filtered.filter(r => planIds.has(r.id))
 
-  const { headline, sub } = getPersonalizedLede(
-    answers.age,
-    answers.sex,
-    schedulable.length,
-    conditional.length,
-  )
+  const schedulableCount = categories.reduce((sum, c) => sum + c.schedulable.length, 0)
+  const conditionalCount = categories.reduce((sum, c) => sum + c.askDoctor.length, 0)
+  const { headline, sub } = getPersonalizedLede(answers.age, answers.sex, schedulableCount, conditionalCount)
 
   async function handleEmail(email) {
     try {
@@ -147,13 +217,38 @@ export function ResultsV2({
     }
   }
 
+  // ── Detail view ──
+  if (activeCatId) {
+    const cat = categories.find(c => c.id === activeCatId)
+    if (!cat) return null
+    return (
+      <>
+        <div className="sv2">
+          <ClaimView
+            cat={cat}
+            planIds={planIds}
+            onPlanToggle={onPlanToggle}
+            onBack={() => setActiveCatId(null)}
+          />
+        </div>
+        <PlanBar count={planIds.size} onSave={() => setSheetOpen(true)} />
+        {sheetOpen && (
+          <PlanSheet
+            planItems={planItems}
+            onEmail={handleEmail}
+            onClose={() => setSheetOpen(false)}
+            onClearPlan={() => { onClearPlan?.(); setSheetOpen(false) }}
+          />
+        )}
+      </>
+    )
+  }
+
+  // ── Category grid view ──
   return (
     <>
       <div className="sv2">
-        <button
-          className="sv2__back"
-          onClick={fromPlanLink ? onViewAll : onBack}
-        >
+        <button className="sv2__back" onClick={fromPlanLink ? onViewAll : onBack}>
           {fromPlanLink ? '← See all screenings' : '← Back'}
         </button>
 
@@ -162,43 +257,25 @@ export function ResultsV2({
           <p className="sv2__sublede">{sub}</p>
         </div>
 
-        {schedulable.length > 0 && (
-          <div className="sv2__section">
-            <div className="sv2__section-label">
-              Book these yourself — {schedulable.length}
-            </div>
-            {schedulable.map((rec, i) => (
-              <ScreeningRow
-                key={rec.id}
-                rec={rec}
-                inPlan={planIds.has(rec.id)}
-                onPlanToggle={onPlanToggle}
-                index={i}
+        <div className="cv2-grid">
+          {categories.map((cat, i) => {
+            const allRecs = [...cat.schedulable, ...cat.askDoctor]
+            const claimedCount = allRecs.filter(r => planIds.has(r.id)).length
+            const fullWidth = categories.length % 2 === 1 && i === categories.length - 1
+            return (
+              <CategoryCard
+                key={cat.id}
+                cat={cat}
+                claimedCount={claimedCount}
+                onTap={() => setActiveCatId(cat.id)}
+                fullWidth={fullWidth}
               />
-            ))}
-          </div>
-        )}
-
-        {conditional.length > 0 && (
-          <div className="sv2__section">
-            <div className="sv2__section-label">
-              Worth one question at your next visit — {conditional.length}
-            </div>
-            {conditional.map((rec, i) => (
-              <ScreeningRow
-                key={rec.id}
-                rec={rec}
-                inPlan={planIds.has(rec.id)}
-                onPlanToggle={onPlanToggle}
-                index={i}
-              />
-            ))}
-          </div>
-        )}
+            )
+          })}
+        </div>
       </div>
 
       <PlanBar count={planIds.size} onSave={() => setSheetOpen(true)} />
-
       {sheetOpen && (
         <PlanSheet
           planItems={planItems}
