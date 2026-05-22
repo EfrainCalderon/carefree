@@ -1,7 +1,11 @@
 /* ─── Shared container + back button (used by both views) ─── */
 .sv2 {
-  padding-top: 60px;
+  padding-top: 24px;
   padding-bottom: 40px;
+}
+
+.sv2--with-bar {
+  padding-top: calc(72px + env(safe-area-inset-top));
 }
 
 .sv2__back {
@@ -105,8 +109,13 @@
 }
 
 .cv2-cat__icon {
-  font-size: 32px;
+  width: 48px;
+  height: 48px;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
 }
 
 .cv2-cat__name {
@@ -142,7 +151,13 @@
 }
 
 .cv2-detail__icon {
-  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent);
 }
 
 .cv2-detail__title {
@@ -175,10 +190,10 @@
   margin-bottom: 0;
 }
 
-/* Added state: neutral dark fill — consistent across all categories */
+/* Added state: category accent fill */
 .cv2-card--claimed {
-  background: var(--cf-color-neutral-900);
-  border-color: var(--cf-color-neutral-900);
+  background: var(--accent);
+  border-color: var(--accent);
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
 

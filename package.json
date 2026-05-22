@@ -13,6 +13,7 @@
     "chromatic": "npx chromatic --project-token=chpt_89e4b71ac7704d4"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "resend": "^6.12.3"

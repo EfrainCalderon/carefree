@@ -133,7 +133,7 @@ export function PlanSheet({ planItems, onEmail, onClose, onClearPlan }) {
             <span className="sheet__option-icon" aria-hidden="true">🔗</span>
             <div className="sheet__option-body">
               <span className="sheet__option-label">
-                {copied ? 'Copied!' : 'Copy plan link'}
+                {copied ? 'Copied!' : 'Copy Link'}
               </span>
               <span className="sheet__option-desc">Bookmark it or send it to your doctor</span>
             </div>

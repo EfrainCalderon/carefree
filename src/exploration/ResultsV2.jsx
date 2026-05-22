@@ -114,7 +114,9 @@ function ClaimView({ cat, planIds, onPlanToggle, onBack }) {
       <button className="sv2__back" onClick={onBack}>← Back</button>
 
       <div className="cv2-detail__header" style={{ '--accent': accent }}>
-        <span className="cv2-detail__icon">{cat.icon}</span>
+        <div className="cv2-detail__icon">
+          {(() => { const Icon = cat.icon; return <Icon size={48} weight="regular" /> })()}
+        </div>
         <h2 className="cv2-detail__title">{cat.label}</h2>
       </div>
 
@@ -122,7 +124,7 @@ function ClaimView({ cat, planIds, onPlanToggle, onBack }) {
         <div className="cv2-detail__section">
           {(cat.schedulable.length > 1 || cat.askDoctor.length > 0) && (
             <div className="sv2__section-label">
-              Schedule these — {cat.schedulable.length}
+              Schedule these
             </div>
           )}
           {cat.schedulable.map((rec, i) => (
@@ -141,7 +143,7 @@ function ClaimView({ cat, planIds, onPlanToggle, onBack }) {
       {cat.askDoctor.length > 0 && (
         <div className="cv2-detail__section">
           <div className="sv2__section-label">
-            Ask your doctor — {cat.askDoctor.length}
+            Ask your doctor
           </div>
           {cat.askDoctor.map((rec, i) => (
             <ClaimCard
@@ -171,7 +173,9 @@ function CategoryCard({ cat, claimedCount, onTap, fullWidth }) {
       style={{ '--accent': accent, '--progress': progress }}
       onClick={onTap}
     >
-      <span className="cv2-cat__icon">{cat.icon}</span>
+      <div className="cv2-cat__icon">
+        {(() => { const Icon = cat.icon; return <Icon size={48} weight="regular" /> })()}
+      </div>
       <div className="cv2-cat__name">{cat.label}</div>
       <div className="cv2-cat__tagline">{CAT_TAGLINES[cat.id]}</div>
       <div className="cv2-cat__count">
@@ -223,7 +227,7 @@ export function ResultsV2({
     if (!cat) return null
     return (
       <>
-        <div className="sv2">
+        <div className={`sv2${planIds.size > 0 ? ' sv2--with-bar' : ''}`}>
           <ClaimView
             cat={cat}
             planIds={planIds}
@@ -247,7 +251,7 @@ export function ResultsV2({
   // ── Category grid view ──
   return (
     <>
-      <div className="sv2">
+      <div className={`sv2${planIds.size > 0 ? ' sv2--with-bar' : ''}`}>
         <button className="sv2__back" onClick={fromPlanLink ? onViewAll : onBack}>
           {fromPlanLink ? '← See all screenings' : '← Back'}
         </button>

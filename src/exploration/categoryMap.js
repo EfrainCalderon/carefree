@@ -1,3 +1,5 @@
+import { Heart, Microscope, Brain, Virus, Baby, FlowerLotus } from '@phosphor-icons/react'
+
 // ─── Short hooks — always-visible taglines on each screening row (5–10 words) ─
 export const SCREENING_HOOKS_SHORT = {
   'high-blood-pressure-screening':  "2-minute cuff check. Free. No symptoms needed.",
@@ -68,12 +70,12 @@ export const SCREENING_HOOKS = {
 }
 
 export const CATEGORIES = {
-  heart_metabolic: { id: 'heart_metabolic', label: 'Heart & Metabolic', icon: '🫀', colorKey: 'heart' },
-  cancer: { id: 'cancer', label: 'Cancer', icon: '🎗️', colorKey: 'cancer' },
-  mental_health: { id: 'mental_health', label: 'Mental Health & Behavior', icon: '🧠', colorKey: 'mental' },
-  infectious_disease: { id: 'infectious_disease', label: 'Infectious Disease', icon: '🧬', colorKey: 'infectious' },
-  womens_health: { id: 'womens_health', label: "Women's Health", icon: '🩺', colorKey: 'womens' },
-  healthy_aging: { id: 'healthy_aging', label: 'Healthy Aging', icon: '🌿', colorKey: 'aging' },
+  heart_metabolic: { id: 'heart_metabolic', label: 'Heart & Metabolic', icon: Heart, colorKey: 'heart' },
+  cancer: { id: 'cancer', label: 'Cancer', icon: Microscope, colorKey: 'cancer' },
+  mental_health: { id: 'mental_health', label: 'Mental Health', icon: Brain, colorKey: 'mental' },
+  infectious_disease: { id: 'infectious_disease', label: 'Infections', icon: Virus, colorKey: 'infectious' },
+  womens_health: { id: 'womens_health', label: "Women's Health", icon: Baby, colorKey: 'womens' },
+  healthy_aging: { id: 'healthy_aging', label: 'Healthy Aging', icon: FlowerLotus, colorKey: 'aging' },
 }
 
 // Maps rec ID → category + testType (what the screening actually involves) + frequency
