@@ -239,3 +239,36 @@ Principles: easy questions to personal ones; show value before asking for more; 
   - "2.4 million Americans are living with hepatitis C and don't know it" mixes two numbers. About 2.4M have hep C, and roughly 40% of them don't know.
   - "Most cancers are 90%+ survivable when caught early" is too broad (true for colorectal and breast, not lung).
   - Check the "less than 40% found early" colorectal stat against current ACS data.
+
+## Direction: support Medicare, Medicaid, and uninsured users (Oct 2026)
+The v1 soft exit for non-private insurance was too cautious. All three groups can get a plan; only the coverage rules and visit names change. **Everything below is from memory. Check it against medicare.gov, Medicaid.gov, and state sources before building.**
+
+**Medicare (most people 65+)**
+- One national list: Part B covers preventive services at $0 when the provider accepts assignment. Same in every state.
+- Large overlap with USPSTF A/B: colorectal (incl. follow-up colonoscopy after a positive stool test), mammogram, cervical, lung LDCT, AAA (one-time, with referral), diabetes, CV blood tests, hep B/C, HIV, STI, depression, alcohol, tobacco cessation, bone density, obesity counseling, PrEP, vaccines.
+- Differences: yearly PSA prostate screening is covered (not USPSTF A/B). Medicare Diabetes Prevention Program. Statins are Part D, so not automatically $0. Glaucoma exams have cost sharing.
+- **Visit names differ:** Medicare does not cover an "annual physical". It covers a "Welcome to Medicare" preventive visit (first 12 months) and then a yearly **Annual Wellness Visit**. The plan must say "book an Annual Wellness Visit" to avoid surprise bills.
+- Likely fewer questions (age is already 65+, no state variation).
+
+**Medicaid**
+- ACA expansion adults (about 40 states + DC) get USPSTF A/B services at $0, the same list as ours.
+- Traditional Medicaid categories usually cover them too (states get a funding incentive), but it varies by state. Adult ACIP vaccines are $0 in Medicaid.
+- Ask "What state are you in?" (people don't know whether they're in the "expansion" group), then label: "Your state covers these" vs "Likely covered, call the number on your card to confirm".
+
+**Uninsured**
+- Don't exit. Point to community health centers (sliding-scale fees), local health departments (often free HIV/STI/hepatitis testing), and state breast and cervical cancer screening programs (CDC-funded).
+
+**Data model**
+- Add per-insurance coverage to each rec (private / medicare / medicaid / uninsured-resource), and per-insurance visit names in visits.json (e.g. primary-care → "Annual Wellness Visit" for Medicare).
+- Question order and plan structure stay the same.
+
+## Idea: nearby community health center finder by ZIP (Oct 2026)
+Turns "uninsured" and "no primary care doctor" from dead ends into a next step. Health centers take uninsured patients (sliding-scale fees) as well as Medicaid, Medicare, and most private insurance.
+
+- **Data (verify):** HRSA's downloadable health center service delivery sites file (believed to be on data.hrsa.gov) has addresses, phone numbers, and lat/long. ZIP → lat/long comes from the Census ZCTA Gazetteer file (public domain). Ship both as static files, trimmed to the needed columns.
+- **No server, no API key:** compute the nearest sites in the browser. The ZIP never leaves the device.
+- **Fallback:** link to HRSA's "Find a Health Center" tool.
+- **When to ask:** only for uninsured users or people with no primary care doctor, with the reason attached: "What's your ZIP? We'll find clinics near you. It stays on your device." Never up front.
+- **Card:** 3 nearest (with "Show more"): name, distance, call button, address that opens in maps, "sliding-scale fees" label, plus the booking script ("I'd like to schedule a preventive visit. I don't have insurance.").
+- **Edge cases:** rural users with a nearest center 30+ miles away still see it with the distance (mention telehealth). Refresh the data a few times a year and show "Updated [month]". Hours probably aren't in the federal data, so say "Call to check hours".
+- **Later:** the same pattern for free HIV/STI testing sites (CDC locator), local health departments, and state breast and cervical cancer screening programs.
