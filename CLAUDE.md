@@ -91,3 +91,61 @@ npm run build            # production build
 - **Tokens Studio format** — uses legacy (non-W3C DTCG) Tokens Studio format; tokens.json has a `"global"` wrapper that Style Dictionary strips at build time
 - **No component library** — components are hand-built to keep the token-to-component relationship transparent and easy to understand
 - **Storybook pinned to 8.6.14** — all @storybook/* packages pinned to exact same version to avoid peer dependency conflicts
+
+---
+
+## Where v1 landed (as of Oct 2026)
+Things built after the original setup above, so the structure section is a bit out of date:
+- **Audience:** men (roughly 35–55) who haven't seen a doctor in years and don't know what preventive care the ACA already covers at $0. Goal is: show what's available → explain each briefly in plain language → build a plan they can take to a doctor.
+- **Results evolved** through several explorations (`src/exploration/` — ResultsR1–R3, ResultsV2, category grid + "claim" cards with an unlock mechanic). Grade A/B badges were dropped from results because they imply a priority USPSTF doesn't intend. See `carefree prd.md` for the reasoning.
+- **"Your Plan" system:** `PlanBar` (persistent bar at top) + `PlanSheet` (the plan view). Users "claim" screenings into a plan.
+- **Share + email:** plans can be shared via `?plan=` URL links (handled in `App.jsx`), and emailed via `api/send-plan.js` (Vercel serverless function using Resend, `RESEND_API_KEY`). Email splits items into "schedule this" vs "ask your doctor" (`conditional`).
+- **Data:** `public/data/recommendations.json` — 32 USPSTF A/B recs, each with `plain_name`, `description`, `doctor_prompt`, `condition_note`, frequency, age/sex eligibility.
+- **Copy & hooks docs:** `copy.md`, `copy_v2.md`, `hooks.md`, `hooks_v2.md`.
+
+## Next direction: chat-first redesign (not started — exploring)
+Restarting the project as a **chat-first experience**, possibly with **voice**. Nothing built yet; this is the brief to iterate from.
+
+**Core idea**
+- The user talks (text or voice) instead of filling a 3-step form. The assistant gathers the same inputs conversationally (insurance type, age, sex at birth) and can pick up extra context that currently becomes "ask your doctor" (smoking history, family history, etc.).
+- **Responses aren't just text.** The assistant renders **cards/widgets inline in the conversation** — screening cards, short explainers, "add to plan" actions — similar to how efrain.fm uses widgets rather than plain text bubbles.
+- **Plan as a "checkout":** a plan view the user can pop in and out of at any time (drawer/sheet/cart pattern) showing what they've added. From there they can **email the plan to themselves** to book care.
+
+**What carries over from v1**
+- `recommendations.json` as the source of truth (the assistant should only surface recs from this data, never invent medical guidance).
+- Existing card thinking (RecCard / claim cards), PlanBar/PlanSheet as the starting point for the checkout UI.
+- `api/send-plan.js` email flow and `?plan=` share links.
+- Design token pipeline (Tokens Studio → Style Dictionary → `--cf-*`) and Storybook — new chat widgets should be components with stories like everything else.
+- Plain-language, low-pressure tone; no grade-based priority signals; "schedule this" vs "ask your doctor" framing.
+
+**Open questions to work through together**
+- Fully conversational vs. hybrid (chat with quick-reply chips/buttons for the 3 core inputs)?
+- Voice: input only (speech-to-text) or full voice conversation? How do cards show up during a voice exchange?
+- Which LLM/backend, and how to constrain it to the dataset (tool calls that return structured cards rather than free text)?
+- Widget set: which card types are needed (screening card, explainer, eligibility check, plan summary, email confirmation)?
+- How does the checkout feel on mobile vs desktop — slide-over drawer, bottom sheet, side panel?
+- Privacy: no accounts in v1; keep it that way? What gets stored or sent to the LLM?
+
+## Information architecture: organized by visit, not by test (decided Oct 2026)
+People think in terms of appointments ("go see my doctor"), not lists of USPSTF tests. So the plan is organized around **the visits a person actually makes**, and each screening explains what happens at each one.
+
+**Data**
+- `public/data/visits.json` lists the visit types in display order: primary care checkup (the hub), well-woman, prenatal, lab work, imaging, colon cancer screening, pharmacy pickup, coaching/program, and genetic counseling. Each has `who`, `description`, `booking_tip`, and `coverage` copy.
+- Each rec in `recommendations.json` has a `journey`: ordered steps of `{ visit, as, action, also_at? }`.
+  - `as` is what happens at that step: `question | measurement | exam | lab | order | prescription | counseling | procedure`. Use it to show what will be asked, measured, or ordered at a visit.
+  - Example: lung cancer has a conversation at primary care, then a low-dose CT at imaging. A statin has a lab test, then a primary care conversation, then a pharmacy pickup.
+- `src/lib/visits.js` → `groupByVisit(recs, visits)` turns filtered recs into visits with `items: [{ rec, step }]`. A rec can appear in more than one visit.
+- Primary care is the hub. Most recs start there, and it's where follow-on visits get ordered.
+
+**Mental health screeners (one-way rule)**
+- Depression, anxiety, and alcohol recs carry a `screener` field: PHQ-2→PHQ-9, GAD-2→GAD-7, AUDIT-C→AUDIT. Start with the short version and expand only if it flags something.
+- **A score can only raise the signal, never lower it.** A high score means "worth bringing up", with a doctor prompt and an option to include the score in the emailed plan. A low score means "your doctor will likely ask about this, and now you know what to expect". Never say "you can skip this". These screenings ride along with the checkup anyway, so a low score doesn't save a visit, and this audience already avoids care. `screenerSignal()` encodes this.
+- PHQ-9 item 9 (self-harm) needs a crisis path (988) designed before shipping.
+- Keep screener answers on the device. Don't send them to an LLM.
+- PHQ and GAD are free to use; AUDIT is from the WHO.
+
+**Coverage facts to keep straight**
+- Adult skin cancer *screening* (dermatologist skin check) is USPSTF grade **I**, not A/B, so it isn't free under these rules. Only sun-safety counseling for ages 6 months–24 years (fair skin) is grade B. There's no dermatologist visit in the model.
+- **Verify:** `vision-screening-adults` is marked grade B in the data, but USPSTF rates vision screening in older adults as **I** (2022). It's likely the rec should be removed. Not changed yet.
+- Bringing up a new problem during a preventive visit can make that part billable. Surface this as a booking tip, not a scare.
+- `journey.action` and `visits.json` copy are first drafts. Run them through a copy pass (see copy_v2.md tone).

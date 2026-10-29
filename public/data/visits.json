@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "notes": "Visit types a person actually goes to. Recommendations in recommendations.json point here through their `journey` steps. Order in this list is the display order. Coverage notes are general guidance for ACA-compliant private plans, not a guarantee for every plan."
+  },
+  "visits": [
+    {
+      "id": "primary-care",
+      "name": "Primary care checkup",
+      "aka": ["Annual physical", "Preventive visit", "Wellness exam"],
+      "who": "Your primary care doctor, nurse practitioner, or physician assistant",
+      "description": "The hub. Most free screenings happen here as questions, quick measurements, or a blood draw. Anything that needs another appointment usually gets ordered here.",
+      "booking_tip": "Book it as a \"preventive visit\" or \"annual physical\". If you also bring up a new problem, that part can be billed as a regular visit.",
+      "coverage": "Most plans cover one preventive visit a year at $0."
+    },
+    {
+      "id": "well-woman",
+      "name": "Well-woman visit",
+      "aka": ["Annual gyn exam"],
+      "who": "An OB-GYN or your primary care doctor",
+      "description": "A yearly preventive visit focused on reproductive and sexual health. Can be combined with a primary care checkup.",
+      "booking_tip": "Book it as a \"well-woman visit\".",
+      "coverage": "Covered once a year at $0 under the ACA's women's preventive services."
+    },
+    {
+      "id": "prenatal",
+      "name": "Prenatal visits",
+      "aka": ["Pregnancy checkups"],
+      "who": "An OB-GYN, midwife, or family doctor",
+      "description": "Checkups during pregnancy. Several free screenings and supports are built into this care.",
+      "booking_tip": null,
+      "coverage": "The preventive screenings listed here are covered at $0."
+    },
+    {
+      "id": "lab",
+      "name": "Lab work",
+      "aka": ["Blood draw", "Urine test"],
+      "who": "Your doctor's office or a lab",
+      "description": "A blood or urine sample. Often taken the same day as your checkup, otherwise at a lab with the order your doctor gives you.",
+      "booking_tip": "Ask whether you need to fast beforehand.",
+      "coverage": "Covered at $0 when ordered as part of a preventive screening."
+    },
+    {
+      "id": "imaging",
+      "name": "Imaging appointment",
+      "aka": ["Scan", "X-ray / ultrasound"],
+      "who": "A hospital or imaging center",
+      "description": "A scan done somewhere other than your doctor's office, like a mammogram, low-dose CT, ultrasound, or bone density test.",
+      "booking_tip": "Most scans need an order from your doctor first. Mammograms often don't.",
+      "coverage": "Covered at $0 when it's a screening, not a follow-up for symptoms."
+    },
+    {
+      "id": "colorectal",
+      "name": "Colon cancer screening",
+      "aka": ["Colonoscopy", "At-home stool test"],
+      "who": "At home with a mailed kit, or a GI specialist for a colonoscopy",
+      "description": "You choose the test with your doctor: a stool test you do at home, or a colonoscopy at a GI clinic.",
+      "booking_tip": "If an at-home test comes back abnormal, the follow-up colonoscopy should also be covered. Confirm with your plan.",
+      "coverage": "Covered at $0 for ages 45–75."
+    },
+    {
+      "id": "pharmacy",
+      "name": "Pharmacy pickup",
+      "aka": ["Prescription"],
+      "who": "Any in-network pharmacy",
+      "description": "Some preventive medicines are free with a prescription from your doctor.",
+      "booking_tip": "Ask your doctor to prescribe a generic if there's a choice. That's usually the $0 option.",
+      "coverage": "Covered at $0 with a prescription for eligible people."
+    },
+    {
+      "id": "program",
+      "name": "Coaching or program",
+      "aka": ["Counseling sessions", "Referral program"],
+      "who": "A counselor, dietitian, coach, or community program your doctor refers you to",
+      "description": "Ongoing sessions, not a one-time test. Your doctor refers you.",
+      "booking_tip": "Ask your doctor for a referral, then check that the program is in-network.",
+      "coverage": "Covered at $0 when it meets the preventive guideline."
+    },
+    {
+      "id": "genetic-counseling",
+      "name": "Genetic counseling",
+      "aka": ["BRCA counseling"],
+      "who": "A genetic counselor",
+      "description": "A conversation about family history and, if it makes sense, genetic testing.",
+      "booking_tip": "Usually needs a referral after a risk check at your doctor.",
+      "coverage": "Counseling, and testing when recommended, is covered at $0 for eligible people."
+    }
+  ]
+}

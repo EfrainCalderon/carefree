@@ -18,7 +18,19 @@
       "condition_note": "Applies to men who have ever smoked (at least 100 cigarettes in their lifetime).",
       "doctor_prompt": "Ask your doctor: 'I've smoked in the past — am I due for a one-time ultrasound to check for an abdominal aortic aneurysm?'",
       "description": "A one-time ultrasound to check for a dangerous bulge in the main artery in your abdomen. Recommended for men 65–75 who have ever smoked.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/abdominal-aortic-aneurysm-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/abdominal-aortic-aneurysm-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Ask for a one-time ultrasound order"
+        },
+        {
+          "visit": "imaging",
+          "as": "procedure",
+          "action": "Abdominal ultrasound (about 15 minutes)"
+        }
+      ]
     },
     {
       "id": "anxiety-adults",
@@ -32,7 +44,19 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Screening for anxiety disorders, including during pregnancy and postpartum. Recommended for all adults 18–64.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/anxiety-adults-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/anxiety-adults-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "question",
+          "action": "A few questions about worry and stress"
+        }
+      ],
+      "screener": {
+        "short": "GAD-2",
+        "full": "GAD-7",
+        "has_crisis_item": false
+      }
     },
     {
       "id": "aspirin-preeclampsia",
@@ -46,7 +70,19 @@
       "condition_note": "Applies to pregnant people at high risk for preeclampsia.",
       "doctor_prompt": "Ask your doctor: 'Am I at high risk for preeclampsia, and should I be taking low-dose aspirin during my pregnancy?'",
       "description": "Low-dose aspirin (81mg/day) after 12 weeks of pregnancy to reduce the risk of preeclampsia in high-risk pregnancies.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/low-dose-aspirin-use-for-the-prevention-of-morbidity-and-mortality-from-preeclampsia-preventive-medication"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/low-dose-aspirin-use-for-the-prevention-of-morbidity-and-mortality-from-preeclampsia-preventive-medication",
+      "journey": [
+        {
+          "visit": "prenatal",
+          "as": "prescription",
+          "action": "Ask whether low-dose aspirin is right for you"
+        },
+        {
+          "visit": "pharmacy",
+          "as": "prescription",
+          "action": "Pick up low-dose aspirin"
+        }
+      ]
     },
     {
       "id": "bacteriuria-pregnant",
@@ -60,7 +96,14 @@
       "condition_note": "Applies to pregnant people only.",
       "doctor_prompt": "Ask your doctor: 'Should I be screened for a urinary tract infection as part of my prenatal care?'",
       "description": "A urine culture to check for bacteria in the urine during pregnancy, even if there are no symptoms.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/asymptomatic-bacteriuria-in-adults-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/asymptomatic-bacteriuria-in-adults-screening",
+      "journey": [
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Urine test early in pregnancy"
+        }
+      ]
     },
     {
       "id": "brca-risk",
@@ -74,7 +117,20 @@
       "condition_note": "Applies to women with a personal or family history of breast, ovarian, tubal, or peritoneal cancer, or ancestry associated with BRCA1/2 mutations.",
       "doctor_prompt": "Ask your doctor: 'Given my family history, should I be assessed for BRCA gene mutations?'",
       "description": "A risk assessment and, if indicated, genetic counseling and testing for gene mutations that significantly raise the risk of breast and ovarian cancer.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/brca-related-cancer-risk-assessment-genetic-counseling-and-genetic-testing"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/brca-related-cancer-risk-assessment-genetic-counseling-and-genetic-testing",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "question",
+          "action": "Questions about family history of breast, ovarian, or related cancers",
+          "also_at": "primary-care"
+        },
+        {
+          "visit": "genetic-counseling",
+          "as": "counseling",
+          "action": "Genetic counseling, and testing if recommended"
+        }
+      ]
     },
     {
       "id": "breast-cancer-meds",
@@ -88,7 +144,20 @@
       "condition_note": "Applies to women at increased risk for breast cancer and low risk for adverse medication effects.",
       "doctor_prompt": "Ask your doctor: 'Am I at increased risk for breast cancer, and would risk-reducing medication be appropriate for me?'",
       "description": "Medications like tamoxifen or raloxifene that can reduce the risk of breast cancer in women who are at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-medications-for-risk-reduction"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-medications-for-risk-reduction",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "counseling",
+          "action": "Talk through whether risk-reducing medicine makes sense",
+          "also_at": "primary-care"
+        },
+        {
+          "visit": "pharmacy",
+          "as": "prescription",
+          "action": "Pick up the medication"
+        }
+      ]
     },
     {
       "id": "breast-cancer-screening",
@@ -102,7 +171,20 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Mammography screening for breast cancer every other year. Recommended for all women 40–74.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/breast-cancer-screening",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "order",
+          "action": "Ask for a mammogram order if your imaging center needs one",
+          "also_at": "primary-care"
+        },
+        {
+          "visit": "imaging",
+          "as": "procedure",
+          "action": "Mammogram every 2 years"
+        }
+      ]
     },
     {
       "id": "cervical-cancer-screening",
@@ -116,7 +198,15 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "A Pap smear every 3 years, or an HPV test every 5 years (or both together) for women 30–65. Recommended for all women 21–65.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "exam",
+          "action": "Pap and/or HPV test during a pelvic exam",
+          "also_at": "primary-care"
+        }
+      ]
     },
     {
       "id": "chlamydia-gonorrhea-screening",
@@ -130,7 +220,20 @@
       "condition_note": "Recommended for all sexually active women 24 and younger. Also recommended for older women at increased risk.",
       "doctor_prompt": "Ask your doctor: 'Should I be screened for chlamydia and gonorrhea based on my age and sexual history?'",
       "description": "STI screening for chlamydia and gonorrhea. Recommended for sexually active women 24 and younger, and older women at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/chlamydia-and-gonorrhea-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/chlamydia-and-gonorrhea-screening",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "order",
+          "action": "Ask for STI testing",
+          "also_at": "primary-care"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Urine test or swab"
+        }
+      ]
     },
     {
       "id": "colorectal-cancer-screening",
@@ -144,7 +247,19 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Screening for colorectal cancer using one of several methods (colonoscopy, stool tests, etc.). Recommended for all adults 45–75.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Pick a test: at-home stool kit or colonoscopy"
+        },
+        {
+          "visit": "colorectal",
+          "as": "procedure",
+          "action": "Do the at-home kit, or get a colonoscopy"
+        }
+      ]
     },
     {
       "id": "depression-adults",
@@ -158,7 +273,19 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Screening for depression, including during and after pregnancy. Recommended for all adults.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/depression-in-adults-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/depression-in-adults-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "question",
+          "action": "A few questions about mood and energy"
+        }
+      ],
+      "screener": {
+        "short": "PHQ-2",
+        "full": "PHQ-9",
+        "has_crisis_item": true
+      }
     },
     {
       "id": "diabetes-screening",
@@ -172,7 +299,19 @@
       "condition_note": "Applies to adults who are overweight or obese.",
       "doctor_prompt": "Ask your doctor: 'Given my weight, should I be screened for prediabetes or type 2 diabetes?'",
       "description": "Blood sugar testing to check for prediabetes and type 2 diabetes. Recommended for adults 35–70 who are overweight or obese.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/screening-for-prediabetes-and-type-2-diabetes"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/screening-for-prediabetes-and-type-2-diabetes",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "measurement",
+          "action": "Weight and BMI check"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Blood sugar test (A1C or glucose)"
+        }
+      ]
     },
     {
       "id": "fall-prevention-exercise",
@@ -186,7 +325,19 @@
       "condition_note": "Applies to community-dwelling adults 65+ at increased risk for falls.",
       "doctor_prompt": "Ask your doctor: 'Am I at increased risk for falls, and should I be referred to a fall prevention exercise program?'",
       "description": "Referral to exercise programs to prevent falls and fall-related injuries in older adults at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/falls-prevention-in-community-dwelling-older-adults-interventions"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/falls-prevention-in-community-dwelling-older-adults-interventions",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Ask about a fall prevention referral"
+        },
+        {
+          "visit": "program",
+          "as": "counseling",
+          "action": "Exercise or physical therapy program"
+        }
+      ]
     },
     {
       "id": "folic-acid",
@@ -200,7 +351,20 @@
       "condition_note": "Applies to people who are pregnant or planning to become pregnant.",
       "doctor_prompt": "Ask your doctor: 'Should I be taking a folic acid supplement, and what dose is right for me?'",
       "description": "A daily folic acid supplement (0.4–0.8mg) to reduce the risk of neural tube defects in pregnancy. Recommended for people planning or capable of pregnancy.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/folic-acid-for-the-prevention-of-neural-tube-defects-preventive-medication"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/folic-acid-for-the-prevention-of-neural-tube-defects-preventive-medication",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "prescription",
+          "action": "Ask for a folic acid prescription if you could become pregnant",
+          "also_at": "primary-care"
+        },
+        {
+          "visit": "pharmacy",
+          "as": "prescription",
+          "action": "Pick up folic acid"
+        }
+      ]
     },
     {
       "id": "gestational-diabetes",
@@ -214,7 +378,14 @@
       "condition_note": "Applies to pregnant people after 24 weeks of gestation.",
       "doctor_prompt": "Ask your doctor: 'When should I be screened for gestational diabetes during my pregnancy?'",
       "description": "Blood sugar screening to check for diabetes that develops during pregnancy, typically after 24 weeks.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/gestational-diabetes-mellitus-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/gestational-diabetes-mellitus-screening",
+      "journey": [
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Blood sugar test at 24 weeks or later"
+        }
+      ]
     },
     {
       "id": "healthy-diet-counseling",
@@ -228,7 +399,19 @@
       "condition_note": "Applies to adults with cardiovascular risk factors such as high blood pressure, high cholesterol, or mixed dyslipidemia.",
       "doctor_prompt": "Ask your doctor: 'Do I have cardiovascular risk factors that qualify me for free diet and physical activity counseling?'",
       "description": "Behavioral counseling to encourage a healthy diet and regular physical activity in adults with cardiovascular risk factors.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/healthful-diet-and-physical-activity-for-cvd-prevention-in-adults-with-risk-factors-behavioral-counseling"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/healthful-diet-and-physical-activity-for-cvd-prevention-in-adults-with-risk-factors-behavioral-counseling",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Ask for a referral to diet and exercise counseling"
+        },
+        {
+          "visit": "program",
+          "as": "counseling",
+          "action": "Sessions with a dietitian or health coach"
+        }
+      ]
     },
     {
       "id": "hepatitis-b-screening-adults",
@@ -242,7 +425,19 @@
       "condition_note": "Applies to adults at increased risk for hepatitis B infection (e.g., born in countries with HBV prevalence ≥2%, U.S.-born people not vaccinated as infants whose parents were born in high-prevalence regions, or HIV-positive individuals).",
       "doctor_prompt": "Ask your doctor: 'Based on my background or risk factors, should I be screened for hepatitis B?'",
       "description": "Blood test to screen for hepatitis B virus infection in adults at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hepatitis-b-virus-infection-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hepatitis-b-virus-infection-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Ask for a hepatitis B test"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Blood test"
+        }
+      ]
     },
     {
       "id": "hepatitis-c-screening",
@@ -256,7 +451,19 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "A one-time blood test to check for hepatitis C infection. Most people who have it don't know. Recommended for all adults 18–79.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hepatitis-c-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hepatitis-c-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Ask for a one-time hepatitis C test"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Blood test"
+        }
+      ]
     },
     {
       "id": "high-blood-pressure-screening",
@@ -270,7 +477,14 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Blood pressure measurement to screen for high blood pressure. Recommended for all adults 18 and older.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hypertension-in-adults-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/hypertension-in-adults-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "measurement",
+          "action": "Blood pressure check with a cuff"
+        }
+      ]
     },
     {
       "id": "hiv-screening",
@@ -284,7 +498,19 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Blood test to screen for HIV. Recommended for all adults and adolescents 15–65. Older adults at increased risk should also be screened.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/human-immunodeficiency-virus-hiv-infection-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/human-immunodeficiency-virus-hiv-infection-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Ask for an HIV test"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Blood test"
+        }
+      ]
     },
     {
       "id": "intimate-partner-violence",
@@ -298,7 +524,15 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Screening for intimate partner violence (domestic violence) and referral to support services when needed. Recommended for all women of reproductive age.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/intimate-partner-violence-elder-abuse-and-abuse-of-vulnerable-adults-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/intimate-partner-violence-elder-abuse-and-abuse-of-vulnerable-adults-screening",
+      "journey": [
+        {
+          "visit": "well-woman",
+          "as": "question",
+          "action": "Private questions about safety at home",
+          "also_at": "primary-care"
+        }
+      ]
     },
     {
       "id": "lung-cancer-screening",
@@ -312,7 +546,19 @@
       "condition_note": "Applies to adults with a 20 pack-year smoking history who currently smoke or quit within the past 15 years.",
       "doctor_prompt": "Ask your doctor: 'Based on my smoking history, do I qualify for a yearly low-dose CT scan to screen for lung cancer?'",
       "description": "A yearly low-dose CT scan to screen for lung cancer in adults 50–80 with a significant smoking history.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Talk through your smoking history and the pros and cons"
+        },
+        {
+          "visit": "imaging",
+          "as": "procedure",
+          "action": "Low-dose CT scan every year"
+        }
+      ]
     },
     {
       "id": "obesity-counseling-adults",
@@ -326,7 +572,19 @@
       "condition_note": "Applies to adults with a BMI of 30 or higher.",
       "doctor_prompt": "Ask your doctor: 'My BMI is over 30 — am I eligible for free weight loss counseling or a structured program?'",
       "description": "Referral to intensive behavioral counseling programs to support weight loss in adults with obesity.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/obesity-in-adults-interventions"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/obesity-in-adults-interventions",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "measurement",
+          "action": "Weight and BMI check"
+        },
+        {
+          "visit": "program",
+          "as": "counseling",
+          "action": "Weight management program"
+        }
+      ]
     },
     {
       "id": "osteoporosis-screening",
@@ -340,7 +598,20 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "A bone density scan to screen for osteoporosis and fracture risk. Recommended for all women 65 and older, and for younger postmenopausal women at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/osteoporosis-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/osteoporosis-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Ask for a bone density test order",
+          "also_at": "well-woman"
+        },
+        {
+          "visit": "imaging",
+          "as": "procedure",
+          "action": "Bone density scan (DEXA)"
+        }
+      ]
     },
     {
       "id": "perinatal-depression",
@@ -354,7 +625,19 @@
       "condition_note": "Applies to pregnant and postpartum people at increased risk for perinatal depression.",
       "doctor_prompt": "Ask your doctor: 'Am I at risk for perinatal depression, and should I be referred to counseling during or after my pregnancy?'",
       "description": "Counseling interventions to prevent depression during and after pregnancy for people at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/perinatal-depression-preventive-interventions"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/perinatal-depression-preventive-interventions",
+      "journey": [
+        {
+          "visit": "prenatal",
+          "as": "question",
+          "action": "Questions about mood during or after pregnancy"
+        },
+        {
+          "visit": "program",
+          "as": "counseling",
+          "action": "Counseling sessions if you're at higher risk"
+        }
+      ]
     },
     {
       "id": "prep-hiv",
@@ -368,7 +651,24 @@
       "condition_note": "Applies to adults at increased risk for HIV acquisition.",
       "doctor_prompt": "Ask your doctor: 'Based on my risk factors, should I be taking PrEP to prevent HIV?'",
       "description": "A daily medication (PrEP) that significantly reduces the risk of getting HIV. Recommended for adults at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/pre-exposure-prophylaxis-prep-for-hiv-prevention"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/pre-exposure-prophylaxis-prep-for-hiv-prevention",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Talk about whether PrEP fits you"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "HIV and kidney blood tests before starting"
+        },
+        {
+          "visit": "pharmacy",
+          "as": "prescription",
+          "action": "Pick up PrEP"
+        }
+      ]
     },
     {
       "id": "skin-cancer-counseling",
@@ -382,7 +682,14 @@
       "condition_note": "Applies to fair-skinned people aged 6 months to 24 years.",
       "doctor_prompt": "Ask your doctor: 'Should I receive counseling about reducing my UV exposure and skin cancer risk?'",
       "description": "Counseling about minimizing UV exposure to reduce the risk of skin cancer. Recommended for fair-skinned people up to age 24.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-counseling"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-counseling",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Quick talk about sun protection"
+        }
+      ]
     },
     {
       "id": "statin-cvd",
@@ -396,7 +703,24 @@
       "condition_note": "Applies to adults with one or more cardiovascular risk factors (dyslipidemia, diabetes, hypertension, or smoking) and an estimated 10-year CVD risk of 10% or greater.",
       "doctor_prompt": "Ask your doctor: 'Do I have enough cardiovascular risk factors to qualify for a free statin prescription under preventive care?'",
       "description": "A statin medication to prevent a first heart attack or stroke in adults 40–75 with cardiovascular risk factors.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/statin-use-in-adults-preventive-medication"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/statin-use-in-adults-preventive-medication",
+      "journey": [
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Cholesterol blood test"
+        },
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Go over your heart risk score and whether a statin makes sense"
+        },
+        {
+          "visit": "pharmacy",
+          "as": "prescription",
+          "action": "Pick up a generic statin"
+        }
+      ]
     },
     {
       "id": "syphilis-screening",
@@ -410,7 +734,19 @@
       "condition_note": "Applies to adults at increased risk for syphilis infection.",
       "doctor_prompt": "Ask your doctor: 'Based on my sexual history, should I be screened for syphilis?'",
       "description": "Blood test to screen for syphilis. Recommended for adults at increased risk.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/syphilis-infection-in-nonpregnant-adults-and-adolescents-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/syphilis-infection-in-nonpregnant-adults-and-adolescents-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "Ask for a syphilis test"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Blood test"
+        }
+      ]
     },
     {
       "id": "tobacco-cessation",
@@ -424,7 +760,19 @@
       "condition_note": "Applies to adults who currently use tobacco.",
       "doctor_prompt": "Ask your doctor: 'I currently smoke — what free cessation counseling or medications am I entitled to?'",
       "description": "Counseling and medications to help quit smoking and other tobacco use. Recommended for all adults who currently use tobacco.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/tobacco-use-in-adults-and-pregnant-women-counseling-and-interventions"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/tobacco-use-in-adults-and-pregnant-women-counseling-and-interventions",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "counseling",
+          "action": "Ask for help quitting"
+        },
+        {
+          "visit": "pharmacy",
+          "as": "prescription",
+          "action": "Pick up quit-smoking medicine"
+        }
+      ]
     },
     {
       "id": "unhealthy-alcohol-use",
@@ -438,7 +786,19 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Screening for unhealthy alcohol use and brief counseling to reduce it. Recommended for all adults 18 and older.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/unhealthy-alcohol-use-in-adolescents-and-adults-screening-and-behavioral-counseling-interventions"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/unhealthy-alcohol-use-in-adolescents-and-adults-screening-and-behavioral-counseling-interventions",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "question",
+          "action": "A few questions about drinking"
+        }
+      ],
+      "screener": {
+        "short": "AUDIT-C",
+        "full": "AUDIT",
+        "has_crisis_item": false
+      }
     },
     {
       "id": "vision-screening-adults",
@@ -452,7 +812,14 @@
       "condition_note": null,
       "doctor_prompt": null,
       "description": "Screening for vision problems in older adults. Recommended for adults 65 and older.",
-      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/impaired-visual-acuity-in-older-adults-screening"
+      "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/impaired-visual-acuity-in-older-adults-screening",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "measurement",
+          "action": "Eye chart check"
+        }
+      ]
     }
   ]
 }
