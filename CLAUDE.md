@@ -196,3 +196,46 @@ From a walkthrough of the live app as Marcus (47M, employer insurance) on mobile
 - The annual checkup isn't itself a USPSTF recommendation. It's the container. Most ACA plans cover one preventive visit a year at $0 (well-woman visits are covered by law).
 - Secondary visits branch off the checkup: lab, imaging, colon test, pharmacy, programs. A few can happen without the checkup (self-referred mammograms, walk-in HIV/STI testing, pharmacy pickups), so show these as "can also do directly" rather than hiding them.
 - Plan shape: "Book a preventive visit with a primary care doctor → here's what they'll check → here's what to ask for → here's what may come after."
+
+## Decision: sexual health is a passive, self-select card (Oct 2026)
+- Covered items it unlocks: PrEP, syphilis, and hepatitis B (men and women), plus chlamydia/gonorrhea (**women only**; USPSTF rates screening men as "I", so it isn't free for men). HIV testing is universal ages 15–65 and is already a regular checkup item. No question needed.
+- No questionnaire. Show one card listing behavior-based risk factors (new or multiple partners, inconsistent condoms with partners of unknown status, a recent STI, a partner with HIV or hep B, sex with men (for men), shared needles). Buttons: "Add these tests to my plan" / "Not for me". The app never records which factor applies.
+- Place it near the end of the journey (in or next to the plan), never as an upfront question.
+- Doctor script stays general: "I'd like to talk about STI testing and whether PrEP makes sense for me."
+- Never use race or ethnicity as a risk question, even where USPSTF prevalence data mentions it.
+- Hep B "born in or parents from a high-prevalence country" is a separate, non-sexual question.
+
+## Decision: question order (Oct 2026)
+Principles: easy questions to personal ones; show value before asking for more; one opt-in instead of many "prefer not to say" answers; only ask what changes this person's plan.
+
+1. **Easy questions (chips):** age range → sex at birth → insurance. Age first is a warmer opener than insurance; the trade-off is that the Medicare/Medicaid soft exit comes one question later.
+2. **Motivating stat moment** (see below), right after age + sex.
+3. **Logistics:** "Do you have a primary care doctor?" If no, the plan includes a find-a-doctor card.
+4. **Show the plan:** checkup plus what's covered.
+5. **One opt-in:** "3 quick questions could add up to N more free screenings." [Improve my plan] / [I'm good]
+6. **Personal questions, least to most sensitive, only if relevant to age/sex:** heart (told BP/cholesterol is high?) → smoking → weight → family history (women) → pregnancy (women in range, opt-in). After each answer, show what it added ("+ Diabetes screening added to your checkup").
+7. **Passive cards at the end:** sexual health self-select card, mental health "know what they'll ask" preview.
+- Fallback: anything skipped stays as an "ask your doctor" card with a "does this apply to me?" toggle. Skipping never loses anything.
+- Example (Marcus, 47): 45–49 → Male → Employer → no doctor → plan → Improve → heart: not sure → smoking: quit 8 yrs ago → weight: a bit over → "+2 added" → sexual health card. About 7 taps.
+
+## Direction: tell people what they'll get up front
+- On the first screen, show what they'll leave with, e.g. "You'll get a 1-page visit plan: what to book, what to say, what's covered. Email it or save it." A small thumbnail of the plan/email helps; people commit more when they can see the finish line.
+- Repeat it at the opt-in ("…added to your emailed plan") and on the plan view.
+- The email itself should mirror the visit structure: the visit to book, a call script, what they'll check, what to ask for, then follow-on visits.
+
+## Direction: one motivating stat, matched to age and sex
+- Show **one** stat right after age + sex, matched to the screening that matters most for that person. Never stack stats.
+- Rules:
+  - Gain-framed and tied to an action ("a blood test finds it"), not fear.
+  - Cite the source in small print.
+  - **Avoid "most men skip this" framing.** Telling people that most others skip something makes skipping feel normal (descriptive-norm backfire). Use "most who have it don't know" instead, which is about hidden risk, not other people's behavior.
+- Draft stat per age band (men). **Verify every number before shipping:**
+  - 18–34: blood pressure. Nearly half of U.S. adults have high blood pressure, often with no symptoms (CDC).
+  - 35–44: prediabetes. About 1 in 3 adults have it, and more than 8 in 10 of them don't know (CDC).
+  - 45–49: colorectal. Screening now starts at 45. Found early, about 9 in 10 people are alive 5 years later (ACS). A home test counts.
+  - 50–64: colorectal, or lung for smokers (annual low-dose CT cut lung cancer deaths by about 20% in the NLST trial).
+  - 65+: heart disease is the leading cause of death for men (CDC); blood pressure and statin checks.
+- **Fix before reusing old hooks (hooks_v2.md):**
+  - "2.4 million Americans are living with hepatitis C and don't know it" mixes two numbers. About 2.4M have hep C, and roughly 40% of them don't know.
+  - "Most cancers are 90%+ survivable when caught early" is too broad (true for colorectal and breast, not lung).
+  - Check the "less than 40% found early" colorectal stat against current ACS data.
