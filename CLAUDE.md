@@ -149,3 +149,50 @@ People think in terms of appointments ("go see my doctor"), not lists of USPSTF 
 - **Verify:** `vision-screening-adults` is marked grade B in the data, but USPSTF rates vision screening in older adults as **I** (2022). It's likely the rec should be removed. Not changed yet.
 - Bringing up a new problem during a preventive visit can make that part billable. Surface this as a booking tip, not a scare.
 - `journey.action` and `visits.json` copy are first drafts. Run them through a copy pass (see copy_v2.md tone).
+
+## UX review findings (Oct 2026)
+From a walkthrough of the live app as Marcus (47M, employer insurance) on mobile. Current app: **6/10**. Content and tone are strong; the weak points are the ending (the plan) and accessibility.
+
+**Core insight:** the user's job isn't "learn about 15 screenings", it's "book one checkup and know what to say". Organizing by visit serves that.
+
+**Keep:** the "Ask:" doctor scripts (the strongest part), "$0 with most insurance" plus short hooks, the respectful sex-at-birth explainer, the persistent plan count, and email and link sharing.
+
+**Fix in the current app**
+- Critical: the results headline "7 covered benefits you haven't used" assumes facts. Try "7 free screenings you qualify for", and avoid "benefits" (insurance jargon).
+- Critical (a11y): category tiles and the Email and Copy Link buttons have no accessible name. Insurance and sex OptionCards aren't keyboard-focusable (they render as divs). The AgeInput label is "—".
+- Critical: category subtitles are static. The Cancer tile says "Colorectal · Lung · Skin" for a user with 1 item, and "Skin" implies an uncovered skin check. Build subtitles from the user's own items.
+- Doctor prompts assume facts ("My BMI is over 30 —"). Make them conditional ("If my BMI is over 30…").
+- PlanSheet is a flat checklist with no visit, script, or booking step. It's the last screen people see, so it matters most.
+- 15 equal-weight "+ Add to plan" buttons is too many decisions. Pre-include items that happen automatically at the checkup; only optional items need a choice.
+- Category grid vs visit IA conflict: make visits the main structure, categories as tags.
+- "My situation is different" ends in a soft exit. Uninsured men are core to the audience; route them to community health centers and free screening programs instead.
+
+**Chat-first opportunities**
+- Use chat to resolve the conditional ("ask your doctor") items with 3–4 light questions (ever smoked? weight? family history?), turning maybes into yeses. This is the strongest case for chat over a form.
+- Hybrid input: chips for the 3 basics, free text optional.
+- Ask "Do you have a primary care doctor?" and help find an in-network one. Likely the biggest real-world blocker.
+- End with a booking kit: call script, visit itinerary, calendar reminder (.ics), and a printable sheet for the doctor.
+- Voice stays optional. Sensitive questions (HIV, alcohol, IPV) and screeners are always tap-based.
+- Trust: "Source: USPSTF" on cards. The LLM only shows cards built from our data and never writes coverage claims itself.
+- Biggest risk: chat feels like a slower form. Success = fewer total decisions to a finished plan than v1.
+
+**Tests to run**
+- 5-second test on the results headline.
+- Chat prototype vs the current flow with 5 men aged 35–55: time to plan, and "would you book this?"
+- Riskiest assumption: that users have a primary care doctor to book with.
+
+## Decisions: age ranges and visit-first framing (Oct 2026)
+
+**Ask age as tap-to-pick ranges, not an exact number**
+- Checked against recommendations.json (ages 18–90): results only change at a few cutoffs. Men have 6 distinct ranges (12 including conditional items); women have 9 (14). The main cutoffs are 35 (diabetes), 40 (statins, mammogram), 45 (colorectal), 50 (lung), and 65.
+- Chips: `Under 25` · `25–34` · `35–39` · `40–44` · `45–49` · `50–64` · `65–75` · `76+`
+- Single-year edges (HIV through 65, diabetes through 70, hep C through 79, lung through 80, etc.) go in card copy ("recommended through age 70") instead of extra chips.
+- Bonus: we never collect an exact age or birth year (privacy and trust).
+- When implementing, filterRecs needs to work with a range. Decide how a rec that starts or ends mid-range shows up (e.g. include it with edge copy).
+
+**Visit-first framing is the core of the product**
+- Lead with the visit to book, who to see, what they'll check, and what to ask for. Don't lead with a breakdown of every covered benefit.
+- Screenings like blood pressure, mood, anxiety, and alcohol aren't booked on their own. They happen inside the checkup, so the checkup is what the user books.
+- The annual checkup isn't itself a USPSTF recommendation. It's the container. Most ACA plans cover one preventive visit a year at $0 (well-woman visits are covered by law).
+- Secondary visits branch off the checkup: lab, imaging, colon test, pharmacy, programs. A few can happen without the checkup (self-referred mammograms, walk-in HIV/STI testing, pharmacy pickups), so show these as "can also do directly" rather than hiding them.
+- Plan shape: "Book a preventive visit with a primary care doctor → here's what they'll check → here's what to ask for → here's what may come after."
