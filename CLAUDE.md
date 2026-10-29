@@ -272,3 +272,13 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - **Card:** 3 nearest (with "Show more"): name, distance, call button, address that opens in maps, "sliding-scale fees" label, plus the booking script ("I'd like to schedule a preventive visit. I don't have insurance.").
 - **Edge cases:** rural users with a nearest center 30+ miles away still see it with the distance (mention telehealth). Refresh the data a few times a year and show "Updated [month]". Hours probably aren't in the federal data, so say "Call to check hours".
 - **Later:** the same pattern for free HIV/STI testing sites (CDC locator), local health departments, and state breast and cervical cancer screening programs.
+
+## Lofi branch: chat-first prototype (`lofi-chat`, Oct 2026)
+- Lives at `/lofi.html` (chat) and `/lofi.html#/components` (component showcase). The v1 app at `/` is untouched; it's a separate Vite entry (see `vite.config.js` `build.rollupOptions.input`).
+- Code: `src/lofi/` (`logic.js` plan logic, `widgets.jsx` chat widgets, `ChatApp.jsx` conversation + plan panel, `ComponentsPage.jsx`).
+- **shadcn/ui** (radix-nova, Tailwind v4) in `src/components/ui/`. Theme variables in `src/lofi/index.css` map to `--cf-*` tokens, so Tokens Studio still drives colors. Tailwind is scoped to the lofi entry. This departs from "plain CSS only" as an experiment.
+- **React upgraded to 19 on this branch** because current shadcn components rely on React 19's ref-as-prop (React 18 broke Radix triggers and sheets). Storybook 8.6 is not yet verified on React 19.
+- Scripted conversation, no LLM yet. Free text only matches the on-screen options (e.g. "I'm 47" → 45–49). Voice is a disabled placeholder.
+- Stubs: email doesn't send, clinic finder shows labeled sample results, stats are drafts marked "verify".
+- Layout: plan is a persistent side panel ≥1024px, right sheet 768–1023px, bottom sheet <768px.
+- Claude Design prompt for visual exploration: `docs/claude-design-prompt.md`.
