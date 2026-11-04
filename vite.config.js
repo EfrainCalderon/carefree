@@ -10,10 +10,10 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      // v1 app at /, chat lofi at /lofi.html
+      // Chat app at /, original v1 app at /v1.html
       input: {
         main: path.resolve(import.meta.dirname, 'index.html'),
-        lofi: path.resolve(import.meta.dirname, 'lofi.html'),
+        v1: path.resolve(import.meta.dirname, 'v1.html'),
       },
     },
   },

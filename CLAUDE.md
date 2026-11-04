@@ -274,7 +274,7 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - **Later:** the same pattern for free HIV/STI testing sites (CDC locator), local health departments, and state breast and cervical cancer screening programs.
 
 ## Lofi branch: chat-first prototype (`lofi-chat`, Oct 2026)
-- Lives at `/lofi.html` (chat) and `/lofi.html#/components` (component showcase). The v1 app at `/` is untouched; it's a separate Vite entry (see `vite.config.js` `build.rollupOptions.input`).
+- **Now the main app (merged to main, Nov 2026):** the chat is at `/` (`index.html`) and the component showcase at `/#/components`. The original v1 app moved to `/v1.html` (`v1.html`, `src/main.jsx`); old `/?plan=` share links redirect there. Both are Vite entries in `vite.config.js` `build.rollupOptions.input`.
 - Code: `src/lofi/` (`logic.js` plan logic, `widgets.jsx` chat widgets, `ChatApp.jsx` conversation + plan panel, `ComponentsPage.jsx`).
 - **shadcn/ui** (radix-nova, Tailwind v4) in `src/components/ui/`. Theme variables in `src/lofi/index.css` map to `--cf-*` tokens, so Tokens Studio still drives colors. Tailwind is scoped to the lofi entry. This departs from "plain CSS only" as an experiment.
 - **React upgraded to 19 on this branch** because current shadcn components rely on React 19's ref-as-prop (React 18 broke Radix triggers and sheets). Storybook 8.6 is not yet verified on React 19.
