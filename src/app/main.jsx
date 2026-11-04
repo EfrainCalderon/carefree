@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { ChatApp } from './ChatApp'
 import './index.css'
 
@@ -27,8 +26,6 @@ function Root() {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <TooltipProvider>
-      <Root />
-    </TooltipProvider>
+    <Root />
   </React.StrictMode>
 )

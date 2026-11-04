@@ -7,16 +7,19 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { cn } from '@/lib/utils'
 import {
   AGE_RANGES, INSURANCE, INSURANCE_NOTES, SEXUAL_HEALTH,
-  derivePlan, pickStat, relevantQuestions,
+  derivePlan, relevantQuestions,
 } from './logic'
 import {
-  AddedLine, Bubble, Chips, Composer, DoctorFinderCard, MentalHealthCard, NoteCard, OptInCard,
-  OutputPreview, PlanHeader, PlanPanel, PlanSnapshot, SexualHealthCard, StatCard, Typing,
+  AddedLine, AgeInput, Bubble, Chips, Composer, DoctorFinderCard, MentalHealthCard, NoteCard, OptInCard,
+  OutputPreview, PlanHeader, PlanPanel, PlanSnapshot, SexualHealthCard, Typing,
 } from '@/components/chat'
 
 const SEX = [{ id: 'male', label: 'Male' }, { id: 'female', label: 'Female' }]
 const DOCTOR = [{ id: 'yes', label: 'Yes' }, { id: 'no', label: 'No' }, { id: 'unsure', label: 'Not sure' }]
 const DELAY = 450
+// The intro drips one message at a time; the user taps a reply to move on.
+const INTRO_1 = [{ id: 'go', label: 'Show me' }]
+const INTRO_2 = [{ id: 'go', label: 'Let’s start' }]
 
 function useMediaQuery(q) {
   const [m, setM] = useState(() => window.matchMedia(q).matches)
@@ -34,7 +37,8 @@ export function ChatApp({ data }) {
   const [msgs, setMsgs] = useState([])
   const [typing, setTyping] = useState(false)
   const [planOpen, setPlanOpen] = useState(false)
-  const [panelOpen, setPanelOpen] = useState(true)
+  const [panelOpen, setPanelOpen] = useState(false)
+  const [nudge, setNudge] = useState(false) // suggest the next step: open the plan / enter an email
   const stateRef = useRef(s)
   const pendingRef = useRef(null) // { qid, options } the composer can answer
   const questionsRef = useRef([])
@@ -68,11 +72,9 @@ export function ChatApp({ data }) {
     if (started.current) return
     started.current = true
     say([
-      { kind: 'text', text: 'Hi. Most insurance covers a set of preventive checkups and screenings at no cost. I’ll show you which ones apply to you, and where to get them.' },
-      { kind: 'output-preview' },
-      { kind: 'text', text: 'First, how old are you?' },
-      ask('age', AGE_RANGES, 'Age range'),
-    ], { qid: 'age', options: AGE_RANGES })
+      { kind: 'text', text: 'Hi. Most insurance covers a set of preventive checkups and screenings at $0. I’ll show you which ones apply to you, and where to get them.' },
+      ask('intro1', INTRO_1, 'Continue'),
+    ], { qid: 'intro1', options: INTRO_1 })
   }, [])
 
   useEffect(() => {
@@ -106,10 +108,17 @@ export function ChatApp({ data }) {
     say([{ kind: 'text', text: q.text }, ask(`q:${q.id}`, q.options, q.text)], { qid: `q:${q.id}`, options: q.options })
   }
 
+  // Plan is done: point at the email. Desktop opens the panel; smaller screens nudge the plan button.
+  function ready(text) {
+    say([{ kind: 'text', text }, ...(isDesktop ? [] : [{ kind: 'done' }])])
+    if (isDesktop) setPanelOpen(true)
+    setNudge(true)
+  }
+
   function wrap(st) {
     const d = derivePlan(data, st)
     const hasSH = d.eligible.some(r => SEXUAL_HEALTH.recs.includes(r.id))
-    const list = [{ kind: 'text', text: 'Two more things for your checkup.' }, { kind: 'mental' }]
+    const list = [{ kind: 'text', text: 'Two more things for your visit.' }, { kind: 'mental' }]
     if (hasSH) {
       list.push({ kind: 'sexual' })
       say(list, { qid: 'sexual', options: [{ id: 'yes', label: 'Add these tests' }, { id: 'no', label: 'Not for me' }] })
@@ -120,7 +129,7 @@ export function ChatApp({ data }) {
   }
 
   function finish() {
-    say([{ kind: 'text', text: 'That’s your plan. Open it anytime to see what to book and what to say, or email it to yourself.' }, { kind: 'done' }])
+    ready(`Your plan is ready. Email it to yourself${isDesktop ? ' on the right' : ''} so it’s handy when you call to book.`)
   }
 
   function answer(qid, option, { echo = true } = {}) {
@@ -128,6 +137,17 @@ export function ChatApp({ data }) {
     if (echo) push({ kind: 'user', text: option.label })
     const prev = stateRef.current
 
+    if (qid.startsWith('intro')) update({ [qid]: option.id }) // hides the reply chip once tapped
+    if (qid === 'intro1') {
+      return say([
+        { kind: 'output-preview' },
+        { kind: 'text', text: 'Three quick questions, then your plan. About two minutes.' },
+        ask('intro2', INTRO_2, 'Continue'),
+      ], { qid: 'intro2', options: INTRO_2 })
+    }
+    if (qid === 'intro2') {
+      return say([{ kind: 'text', text: 'First, how old are you?' }, { kind: 'age' }], { qid: 'age', options: AGE_RANGES })
+    }
     if (qid === 'age') {
       update({ age: option.id })
       return say([
@@ -136,11 +156,8 @@ export function ChatApp({ data }) {
       ], { qid: 'sex', options: SEX })
     }
     if (qid === 'sex') {
-      const st = update({ sex: option.id })
-      const stat = pickStat(AGE_RANGES.find(r => r.id === st.age), st.sex)
+      update({ sex: option.id })
       return say([
-        { kind: 'text', text: 'One thing worth knowing at your age:' },
-        { kind: 'stat', stat },
         { kind: 'text', text: 'How do you get health insurance?' },
         ask('insurance', INSURANCE, 'Insurance'),
       ], { qid: 'insurance', options: INSURANCE })
@@ -155,7 +172,8 @@ export function ChatApp({ data }) {
     if (qid === 'doctor') return showPlan(update({ doctor: option.id }))
     if (qid === 'optin') {
       update({ optin: option.id })
-      return option.id === 'yes' ? askPersonal(0) : wrap(stateRef.current)
+      // "I'm good" ends here: no more questions, straight to emailing the plan.
+      return option.id === 'yes' ? askPersonal(0) : finish()
     }
     if (qid.startsWith('q:')) {
       const id = qid.slice(2)
@@ -177,6 +195,13 @@ export function ChatApp({ data }) {
     }
   }
 
+  // Age arrives as a number; only the matching range is kept.
+  function answerAge(n, { echo = true } = {}) {
+    const range = n >= 18 && (AGE_RANGES.find(r => n >= r.lo && n <= r.hi) || AGE_RANGES.at(-1))
+    if (!range) return say([{ kind: 'text', text: 'Carefree is for adults 18 and older.' }], pendingRef.current)
+    answer('age', { id: range.id, label: String(n) }, { echo })
+  }
+
   // Free text: match it to the options on screen. No LLM in the lofi.
   function onSend(text) {
     push({ kind: 'user', text })
@@ -184,10 +209,8 @@ export function ChatApp({ data }) {
     if (p) {
       const t = text.toLowerCase()
       let match
-      if (p.qid === 'age' && /\d+/.test(t)) {
-        const n = Number(t.match(/\d+/)[0])
-        match = AGE_RANGES.find(r => n >= r.lo && n <= r.hi) || (n < 18 ? null : AGE_RANGES.at(-1))
-      }
+      if (p.qid.startsWith('intro')) match = p.options[0]
+      if (p.qid === 'age' && /\d+/.test(t)) return answerAge(Number(t.match(/\d+/)[0]), { echo: false })
       match ??= p.options.find(o => o.label.toLowerCase() === t) ||
         p.options.find(o => o.label.toLowerCase().includes(t) || t.includes(o.label.toLowerCase()))
       if (match) return answer(p.qid, match, { echo: false })
@@ -200,7 +223,7 @@ export function ChatApp({ data }) {
     return s[qid]
   }
 
-  const openPlan = () => (isDesktop ? setPanelOpen(true) : setPlanOpen(true))
+  const openPlan = () => { setNudge(false); isDesktop ? setPanelOpen(true) : setPlanOpen(true) }
   const itemCount = plan.planned.length
 
   const render = m => {
@@ -208,10 +231,10 @@ export function ChatApp({ data }) {
       case 'text': return <Bubble role="assistant">{m.text}</Bubble>
       case 'user': return <Bubble role="user">{m.text}</Bubble>
       case 'output-preview': return <OutputPreview />
+      case 'age': return <AgeInput value={s.age} onSubmit={n => answerAge(n)} />
       case 'chips': return <Chips options={m.options} value={value(m.qid)} label={m.label} onSelect={o => answer(m.qid, o)} />
-      case 'stat': return <StatCard stat={m.stat} />
       case 'note': return <NoteCard>{m.text}</NoteCard>
-      case 'snapshot': return <PlanSnapshot visits={plan.visits} askCount={plan.askDoctor.length} onOpen={openPlan} />
+      case 'snapshot': return <PlanSnapshot visits={plan.visits} onOpen={openPlan} />
       case 'finder': return <DoctorFinderCard reason={m.reason} />
       case 'optin': return <OptInCard count={m.count} value={s.optin} onChoose={o => answer('optin', o)} />
       case 'added': return <AddedLine added={m.added} removed={m.removed} />
@@ -223,27 +246,29 @@ export function ChatApp({ data }) {
           onChoose={o => answer('sexual', o)}
         />
       )
-      case 'done': return <Button className="h-6 px-3" onClick={openPlan}><ClipboardList />Open your plan</Button>
+      case 'done': return <Button nudge={nudge} onClick={openPlan}><ClipboardList />Open your plan</Button>
       default: return null
     }
   }
 
-  const panel = <PlanPanel plan={plan} ready={planReady} />
+  // Answered chips and the age field disappear (the reply bubble shows the answer), so skip their slots.
+  const shown = msgs.filter(m => !((m.kind === 'chips' && value(m.qid) != null) || (m.kind === 'age' && s.age)))
+  const panel = <PlanPanel plan={plan} ready={planReady} showAskDoctor={s.optin === 'yes'} nudge={nudge} onEmailFocus={() => setNudge(false)} />
 
   return (
     <div className="flex h-dvh overflow-hidden bg-background text-foreground">
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-8 shrink-0 items-center justify-between gap-2 border-b px-2 sm:px-3">
           <div className="flex items-center gap-1">
-            <span aria-hidden className="flex size-4 items-center justify-center rounded-control bg-primary font-bold text-primary-foreground">c</span>
-            <span className="text-heading font-bold tracking-tight">carefree</span>
-                      </div>
+            <span aria-hidden className="flex size-4 items-center justify-center rounded-control bg-primary font-bold text-primary-foreground">C</span>
+            <span className="text-heading font-bold tracking-tight">Carefree</span>
+          </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" asChild className="hidden sm:inline-flex"><a href="https://main--6a028d420ec59b7bb3bbaa5e.chromatic.com/" target="_blank" rel="noreferrer">Components</a></Button>
-            {(!isDesktop || !panelOpen) && (
-              <Button variant="outline" onClick={openPlan}>
+            {/* The plan button appears once there is a plan. */}
+            {planReady && (!isDesktop || !panelOpen) && (
+              <Button variant="outline" nudge={nudge} onClick={openPlan}>
                 <ClipboardList />Your plan
-                {planReady && <Badge className="ml-0" aria-label={`${itemCount} items`}>{itemCount}</Badge>}
+                <Badge aria-label={`${itemCount} items`}>{itemCount}</Badge>
               </Button>
             )}
           </div>
@@ -253,11 +278,11 @@ export function ChatApp({ data }) {
           {/* `relative` keeps sr-only (absolute) labels inside the scroll area instead of stretching the page */}
           <div className="mx-auto flex max-w-[688px] flex-col px-2 py-3 sm:px-3">
             {/* 8px between one speaker's messages, 24px when the speaker changes */}
-            {msgs.map((m, i) => {
-              const turn = i > 0 && (m.kind === 'user') !== (msgs[i - 1].kind === 'user')
+            {shown.map((m, i) => {
+              const turn = i > 0 && (m.kind === 'user') !== (shown[i - 1].kind === 'user')
               return <div key={m.id} className={i === 0 ? '' : turn ? 'mt-(--cf-chat-gap-turn)' : 'mt-(--cf-chat-gap-group)'}>{render(m)}</div>
             })}
-            {typing && <div className={msgs.at(-1)?.kind === 'user' ? 'mt-(--cf-chat-gap-turn)' : 'mt-(--cf-chat-gap-group)'}><Typing /></div>}
+            {typing && <div className={shown.at(-1)?.kind === 'user' ? 'mt-(--cf-chat-gap-turn)' : 'mt-(--cf-chat-gap-group)'}><Typing /></div>}
           </div>
         </main>
 
@@ -269,9 +294,9 @@ export function ChatApp({ data }) {
       {isDesktop && panelOpen && (
         <aside aria-label="Your visit plan" className="flex w-(--cf-size-plan) shrink-0 flex-col border-l bg-card">
           <PlanHeader plan={plan} ready={planReady}>
-            <Button variant="ghost" size="icon-lg" className="text-white hover:bg-white/10 hover:text-white focus-visible:outline-white" aria-label="Hide plan" onClick={() => setPanelOpen(false)}><PanelRightClose /></Button>
+            <Button variant="ghost" size="icon-lg" className="-ml-1 shrink-0 text-white hover:bg-white/10 hover:text-white focus-visible:outline-white" aria-label="Hide plan" onClick={() => setPanelOpen(false)}><PanelRightClose className="size-3" /></Button>
           </PlanHeader>
-          <div className="flex-1 overflow-y-auto bg-tint-subtle p-2">{panel}</div>
+          {panel}
         </aside>
       )}
 
@@ -279,12 +304,12 @@ export function ChatApp({ data }) {
         <Sheet open={planOpen} onOpenChange={setPlanOpen}>
           <SheetContent
             side={isTablet ? 'right' : 'bottom'}
-            className={cn('gap-0 overflow-hidden border-0 [&>button.absolute]:text-white [&>button.absolute]:hover:bg-white/10', isTablet ? 'w-(--cf-size-plan) sm:max-w-(--cf-size-plan)' : 'max-h-[88dvh]')}
+            className={cn('gap-0 overflow-hidden border-0 [&>button.absolute]:text-white [&>button.absolute]:hover:bg-white/10', isTablet ? 'w-(--cf-size-plan) sm:max-w-(--cf-size-plan)' : 'h-[88dvh]')}
           >
             <SheetTitle className="sr-only">Your visit plan</SheetTitle>
             <SheetDescription className="sr-only">What to book, what to say, and what’s covered.</SheetDescription>
             <PlanHeader plan={plan} ready={planReady} />
-            <div className="overflow-y-auto bg-tint-subtle p-2 pb-3">{panel}</div>
+            {panel}
           </SheetContent>
         </Sheet>
       )}

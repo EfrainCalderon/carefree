@@ -188,7 +188,7 @@ From a walkthrough of the live app as Marcus (47M, employer insurance) on mobile
 
 ## Decisions: age ranges and visit-first framing (Oct 2026)
 
-**Ask age as tap-to-pick ranges, not an exact number**
+**Ask age as tap-to-pick ranges, not an exact number** (superseded Nov 2026: age is now one typed number field, `AgeInput`, mapped to these ranges; eight chips were too many at once. Only the range is kept, never the exact age.)
 - Checked against recommendations.json (ages 18–90): results only change at a few cutoffs. Men have 6 distinct ranges (12 including conditional items); women have 9 (14). The main cutoffs are 35 (diabetes), 40 (statins, mammogram), 45 (colorectal), 50 (lung), and 65.
 - Chips: `Under 25` · `25–34` · `35–39` · `40–44` · `45–49` · `50–64` · `65–75` · `76+`
 - Single-year edges (HIV through 65, diabetes through 70, hep C through 79, lung through 80, etc.) go in card copy ("recommended through age 70") instead of extra chips.
@@ -283,7 +283,7 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - Code: see Component structure above (`src/app/`, `src/components/chat/`).
 - **shadcn/ui** (radix-nova, Tailwind v4) in `src/components/ui/`. Theme variables in `src/app/index.css` map to `--cf-*` tokens, so Tokens Studio still drives colors. Tailwind is scoped to the lofi entry. This departs from "plain CSS only" as an experiment.
 - **React upgraded to 19 on this branch** because current shadcn components rely on React 19's ref-as-prop (React 18 broke Radix triggers and sheets). Storybook 8.6 is not yet verified on React 19.
-- Scripted conversation, no LLM yet. Free text only matches the on-screen options (e.g. "I'm 47" → 45–49). Voice is a disabled placeholder.
+- Scripted conversation, no LLM yet. Free text only matches the on-screen options; typed digits answer the age question. Voice was removed (Nov 2026), not planned.
 - Stubs: email doesn't send, clinic finder shows labeled sample results, stats are drafts marked "verify".
 - Layout: plan is a persistent side panel ≥1024px, right sheet 768–1023px, bottom sheet <768px.
 - Claude Design prompt for visual exploration: `docs/claude-design-prompt.md`.
@@ -295,3 +295,14 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - Still shadcn/ui: the base components in `src/components/ui/` (button, input, card, sheet) were restyled to Direction D states (48px targets, 2px green-900 focus ring, pressed scale .98).
 - One color only: success/info/caution all map to greens. No grade colors in the chat UI.
 - The design system's component previews are static, hand-written renditions; if the React components change, update the system too.
+
+## Feedback round (Nov 2026)
+- **Pacing:** the intro drips. Each message waits for a reply chip ("Show me", "Let's start") until the age question. The plan panel and the header "Your plan" button only appear once a plan exists.
+- **Stat removed from the flow:** a stat between questions felt random. `StatCard` stays in the library for later.
+- **Naming:** the primary care visit is "Preventive care visit", who = "Your primary care provider". These are the words people use when booking.
+- **VisitCard:** collapsed by default. Items are grouped by kind (Questions, Checks, Tests, Choices, Prescriptions) instead of per-item labels; 40px icon tiles; hover darkens the border (no fill). Visits can carry a `coverage_tip` (lab work: not every blood test counts as preventive, e.g. vitamin D).
+- **Ask your doctor** only shows if the user answered the extra questions, and lists name + doctor prompt only.
+- **Ending:** "I'm good" skips the extra cards and goes straight to "Your plan is ready." On desktop the panel opens and the email field is nudged; on mobile the plan button is nudged.
+- **Nudge state:** `.cf-nudge` (green-200 ring, pulses 3 times, static with reduced motion), `nudge` prop on Button and EmailPlanForm. Cleared when the user opens the plan or focuses the email field.
+- **Email:** a sticky bar at the bottom of the plan; the plan scrolls on its own. Send is disabled until something is typed; validated on submit with a red error.
+- **Header:** "Carefree" wordmark, no Components link. The hide-panel button sits left of the plan title.

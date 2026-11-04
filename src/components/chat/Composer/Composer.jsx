@@ -1,9 +1,8 @@
-// Composer: Text field with a disabled voice mic and a send button.
+// Composer: Text field and send button.
 import { useState } from 'react'
-import { ArrowUp, Mic } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function Composer({ onSend, hint }) {
   const [text, setText] = useState('')
@@ -24,15 +23,6 @@ export function Composer({ onSend, hint }) {
         className="min-h-6 min-w-0 flex-1 bg-transparent outline-none focus-visible:outline-none placeholder:text-muted-foreground"
         autoComplete="off"
       />
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {/* aria-disabled keeps it focusable so the tooltip explains why */}
-          <Button type="button" variant="ghost" size="icon-lg" aria-disabled="true" className="rounded-full text-faint hover:bg-transparent hover:text-faint" aria-label="Voice input, coming later">
-            <Mic />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Voice is coming later</TooltipContent>
-      </Tooltip>
       <Button type="submit" size="icon-lg" className="rounded-full" aria-label="Send" disabled={!text.trim()}>
         <ArrowUp className="size-3" />
       </Button>

@@ -4,14 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { VisitNumber } from '../VisitNumber/VisitNumber'
 
 // Compact summary of the plan inside the conversation.
-export function PlanSnapshot({ visits, askCount, onOpen }) {
+export function PlanSnapshot({ visits, onOpen }) {
   return (
     <Card className="max-w-md">
       <CardHeader>
         <CardTitle>Your visit plan</CardTitle>
         <CardDescription>
           {visits.length} {visits.length === 1 ? 'visit' : 'visits'}
-          {askCount > 0 && ` · ${askCount} to ask your doctor about`}
         </CardDescription>
       </CardHeader>
       <CardContent>

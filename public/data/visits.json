@@ -5,17 +5,23 @@
   "visits": [
     {
       "id": "primary-care",
-      "name": "Primary care checkup",
-      "aka": ["Annual physical", "Preventive visit", "Wellness exam"],
-      "who": "Your primary care doctor, nurse practitioner, or physician assistant",
+      "name": "Preventive care visit",
+      "aka": [
+        "Annual physical",
+        "Primary care checkup",
+        "Wellness exam"
+      ],
+      "who": "Your primary care provider",
       "description": "The hub. Most free screenings happen here as questions, quick measurements, or a blood draw. Anything that needs another appointment usually gets ordered here.",
-      "booking_tip": "Book it as a \"preventive visit\" or \"annual physical\". If you also bring up a new problem, that part can be billed as a regular visit.",
+      "booking_tip": "Ask for a \"preventive visit\" when you book. If you also bring up a new problem, that part can be billed as a regular visit.",
       "coverage": "Most plans cover one preventive visit a year at $0."
     },
     {
       "id": "well-woman",
       "name": "Well-woman visit",
-      "aka": ["Annual gyn exam"],
+      "aka": [
+        "Annual gyn exam"
+      ],
       "who": "An OB-GYN or your primary care doctor",
       "description": "A yearly preventive visit focused on reproductive and sexual health. Can be combined with a primary care checkup.",
       "booking_tip": "Book it as a \"well-woman visit\".",
@@ -24,7 +30,9 @@
     {
       "id": "prenatal",
       "name": "Prenatal visits",
-      "aka": ["Pregnancy checkups"],
+      "aka": [
+        "Pregnancy checkups"
+      ],
       "who": "An OB-GYN, midwife, or family doctor",
       "description": "Checkups during pregnancy. Several free screenings and supports are built into this care.",
       "booking_tip": null,
@@ -33,16 +41,23 @@
     {
       "id": "lab",
       "name": "Lab work",
-      "aka": ["Blood draw", "Urine test"],
+      "aka": [
+        "Blood draw",
+        "Urine test"
+      ],
       "who": "Your doctor's office or a lab",
       "description": "A blood or urine sample. Often taken the same day as your checkup, otherwise at a lab with the order your doctor gives you.",
       "booking_tip": "Ask whether you need to fast beforehand.",
-      "coverage": "Covered at $0 when ordered as part of a preventive screening."
+      "coverage": "Covered at $0 when ordered as part of a preventive screening.",
+      "coverage_tip": "Not every blood test counts as preventive, even when your doctor orders it. Vitamin D is a common example. To be sure a test is $0, call your insurer and ask if it’s covered as preventive care."
     },
     {
       "id": "imaging",
       "name": "Imaging appointment",
-      "aka": ["Scan", "X-ray / ultrasound"],
+      "aka": [
+        "Scan",
+        "X-ray / ultrasound"
+      ],
       "who": "A hospital or imaging center",
       "description": "A scan done somewhere other than your doctor's office, like a mammogram, low-dose CT, ultrasound, or bone density test.",
       "booking_tip": "Most scans need an order from your doctor first. Mammograms often don't.",
@@ -51,7 +66,10 @@
     {
       "id": "colorectal",
       "name": "Colon cancer screening",
-      "aka": ["Colonoscopy", "At-home stool test"],
+      "aka": [
+        "Colonoscopy",
+        "At-home stool test"
+      ],
       "who": "At home with a mailed kit, or a GI specialist for a colonoscopy",
       "description": "You choose the test with your doctor: a stool test you do at home, or a colonoscopy at a GI clinic.",
       "booking_tip": "If an at-home test comes back abnormal, the follow-up colonoscopy should also be covered. Confirm with your plan.",
@@ -60,7 +78,9 @@
     {
       "id": "pharmacy",
       "name": "Pharmacy pickup",
-      "aka": ["Prescription"],
+      "aka": [
+        "Prescription"
+      ],
       "who": "Any in-network pharmacy",
       "description": "Some preventive medicines are free with a prescription from your doctor.",
       "booking_tip": "Ask your doctor to prescribe a generic if there's a choice. That's usually the $0 option.",
@@ -69,7 +89,10 @@
     {
       "id": "program",
       "name": "Coaching or program",
-      "aka": ["Counseling sessions", "Referral program"],
+      "aka": [
+        "Counseling sessions",
+        "Referral program"
+      ],
       "who": "A counselor, dietitian, coach, or community program your doctor refers you to",
       "description": "Ongoing sessions, not a one-time test. Your doctor refers you.",
       "booking_tip": "Ask your doctor for a referral, then check that the program is in-network.",
@@ -78,7 +101,9 @@
     {
       "id": "genetic-counseling",
       "name": "Genetic counseling",
-      "aka": ["BRCA counseling"],
+      "aka": [
+        "BRCA counseling"
+      ],
       "who": "A genetic counselor",
       "description": "A conversation about family history and, if it makes sense, genetic testing.",
       "booking_tip": "Usually needs a referral after a risk check at your doctor.",

@@ -131,6 +131,11 @@
 /* Brand gradient used on user bubbles and plan headers */
 .cf-gradient { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 55%, var(--cf-color-gradient-end) 100%); color: #fff; }
 .cf-gradient-bubble { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 70%); color: #fff; }
+/* Nudge: suggests the one thing to do next (open the plan, enter an email). A soft green ring that
+   breathes three times, then stays. Static under reduced motion. */
+.cf-nudge { box-shadow: 0 0 0 4px var(--cf-color-green-200); animation: cf-nudge 1.6s ease-in-out 3; }
+@keyframes cf-nudge { 50% { box-shadow: 0 0 0 8px var(--cf-color-green-100); } }
+
 /* Section label: same size as body (16px minimum), set apart by weight and color. */
 .cf-label { font-size: var(--cf-fontSize-body); line-height: var(--cf-lineHeight-body); font-weight: var(--cf-fontWeight-semibold); color: var(--cf-color-green-600); }
 

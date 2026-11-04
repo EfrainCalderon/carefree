@@ -3,4 +3,4 @@ import { marcusPlan } from '../fixtures'
 
 export default { title: 'Chat/Cards/PlanSnapshot', component: PlanSnapshot, tags: ['autodocs'] }
 
-export const Marcus = { args: { visits: marcusPlan.visits, askCount: marcusPlan.askDoctor.length, onOpen: () => {} } }
+export const Marcus = { args: { visits: marcusPlan.visits, onOpen: () => {} } }

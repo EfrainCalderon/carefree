@@ -29,10 +29,10 @@ export const Color = {
 const TYPE = [
   ['Display · 40/48 bold', 'text-display font-bold tracking-tight', '9 in 10'],
   ['Title · 24/32 bold', 'text-title font-bold tracking-tight', 'Your visit plan'],
-  ['Heading · 20/24 bold', 'text-heading font-bold', 'Primary care checkup'],
+  ['Heading · 20/24 bold', 'text-heading font-bold', 'Preventive care visit'],
   ['Item · 16/24 semibold', 'font-semibold', 'Blood pressure'],
   ['Body · 16/24 regular', '', 'First, how old are you?'],
-  ['Secondary · 16/24 regular, green-600', 'text-muted-foreground', 'Once a year · doctor or nurse practitioner'],
+  ['Secondary · 16/24 regular, green-600', 'text-muted-foreground', 'Your primary care provider'],
 ]
 export const Type = {
   render: () => (

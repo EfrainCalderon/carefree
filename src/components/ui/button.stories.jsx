@@ -8,6 +8,8 @@ export const Secondary = { args: { variant: 'outline', children: 'I’m good' } 
 export const Ghost = { args: { variant: 'ghost', children: 'Start over' } }
 export const WithIcon = { args: { children: <><Mail />Send</> } }
 export const Disabled = { args: { disabled: true } }
+// Nudge: a soft ring that suggests the next step (e.g. open the plan once it's ready). Static under reduced motion.
+export const Nudge = { args: { variant: 'outline', nudge: true, children: 'Your plan' } }
 export const AllStates = {
   render: () => (
     <div className="flex flex-wrap gap-1">

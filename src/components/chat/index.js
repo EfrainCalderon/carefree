@@ -2,6 +2,7 @@
 export { Bubble } from './Bubble/Bubble'
 export { Typing } from './Typing/Typing'
 export { Chips } from './Chips/Chips'
+export { AgeInput } from './AgeInput/AgeInput'
 export { Composer } from './Composer/Composer'
 export { OutputPreview } from './OutputPreview/OutputPreview'
 export { StatCard } from './StatCard/StatCard'
