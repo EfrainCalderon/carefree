@@ -62,7 +62,7 @@ Rule: the app never styles things inline that a component should own. New UI = a
 Filtering and plan logic is in `src/app/logic.js` (`eligibleRecs`, `buildPlan`, `derivePlan`).
 
 ## Storybook + Chromatic
-- Every component has a `.stories.jsx` file alongside it. Storybook loads the app theme (`.storybook/preview.jsx` imports `src/app/index.css`; Overpass via `.storybook/preview-head.html`).
+- Every component has a `.stories.jsx` file alongside it. Storybook loads the app theme (`.storybook/preview.jsx` imports `src/app/index.css`, which also loads the self-hosted fonts).
 - Storybook is hosted on Chromatic (free tier): https://main--6a028d420ec59b7bb3bbaa5e.chromatic.com/ (always the latest build on main) (project: https://www.chromatic.com/setup?appId=6a028d420ec59b7bb3bbaa5e)
 - Storybook Connect Figma plugin links Figma components to live Chromatic stories
 - To republish Storybook after component changes: `npm run chromatic`
@@ -282,7 +282,7 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 ## Design system: Direction D (Nov 2026)
 - Visual direction comes from the Claude Design canvas (https://claude.ai/artifact/DQzzwp9nUYzRkBchKNfjfp). The Claude Design System built from this repo is https://claude.ai/artifact/BG8W22kCUQUcLo1P2befCJ; use it for future Claude Design work.
 - Tokens added to `tokens/tokens.json` (existing v1 tokens kept): `color.green` 50–950, `color.gradient` start/mid/end, `color.page`, `color.border`, `color.feedback.error-bg`, radius control/card/bubble/tail/sheet/composer, fontFamily sans (Overpass) / mono (Overpass Mono), fontSize display/title/heading/body, fontWeight semibold/bold, `boxShadow.sheet`, `chat` gaps, `size` touch/plan-panel/plan-sheet, `motion` fast/base.
-- `src/app/index.css` maps shadcn variables to the green tokens and adds Tailwind utilities (`bg-brand`, `bg-tint`, `border-outline`, `rounded-bubble`, `rounded-card`, `shadow-sheet`, …) plus `.cf-gradient`, `.cf-gradient-bubble` and `.cf-label`. Overpass loads from Google Fonts in `lofi.html`.
+- `src/app/index.css` maps shadcn variables to the green tokens and adds Tailwind utilities (`bg-brand`, `bg-tint`, `border-outline`, `rounded-bubble`, `rounded-card`, `shadow-sheet`, …) plus `.cf-gradient`, `.cf-gradient-bubble` and `.cf-label`. Overpass is self-hosted (`src/assets/fonts/`, @font-face in `src/app/index.css`) with ascent/descent overrides: the stock font sits ~0.1em high in any box, so the overrides balance it and text centers in bubbles, chips and buttons. Don't switch back to the Google Fonts link without keeping that fix.
 - Still shadcn/ui: the base components in `src/components/ui/` (button, input, card, sheet) were restyled to Direction D states (44px targets, 2px green-900 focus ring, pressed scale .98).
 - One color only: success/info/caution all map to greens. No grade colors in the chat UI.
 - The design system's component previews are static, hand-written renditions; if the React components change, update the system too.
