@@ -282,3 +282,11 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - Stubs: email doesn't send, clinic finder shows labeled sample results, stats are drafts marked "verify".
 - Layout: plan is a persistent side panel ≥1024px, right sheet 768–1023px, bottom sheet <768px.
 - Claude Design prompt for visual exploration: `docs/claude-design-prompt.md`.
+
+## Design system: Direction D (Nov 2026)
+- Visual direction comes from the Claude Design canvas (https://claude.ai/artifact/DQzzwp9nUYzRkBchKNfjfp). The Claude Design System built from this repo is https://claude.ai/artifact/BG8W22kCUQUcLo1P2befCJ; use it for future Claude Design work.
+- Tokens added to `tokens/tokens.json` (existing v1 tokens kept): `color.green` 50–950, `color.gradient` start/mid/end, `color.page`, `color.border`, `color.feedback.error-bg`, radius control/card/bubble/tail/sheet/composer, fontFamily sans (Overpass) / mono (Overpass Mono), fontSize display/title/heading/body, fontWeight semibold/bold, `boxShadow.sheet`, `chat` gaps, `size` touch/plan-panel/plan-sheet, `motion` fast/base.
+- `src/lofi/index.css` maps shadcn variables to the green tokens and adds Tailwind utilities (`bg-brand`, `bg-tint`, `border-outline`, `rounded-bubble`, `rounded-card`, `shadow-sheet`, …) plus `.cf-gradient`, `.cf-gradient-bubble` and `.cf-label`. Overpass loads from Google Fonts in `lofi.html`.
+- Still shadcn/ui: the base components in `src/components/ui/` (button, input, card, sheet) were restyled to Direction D states (44px targets, 2px green-900 focus ring, pressed scale .98).
+- One color only: success/info/caution all map to greens. No grade colors in the chat UI.
+- The design system's component previews are static, hand-written renditions; if the React components change, update the system too.

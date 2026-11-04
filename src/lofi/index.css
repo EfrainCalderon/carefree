@@ -12,7 +12,22 @@
     --color-info-soft: var(--info-soft);
     --color-caution: var(--caution);
     --font-heading: var(--font-sans);
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-sans: var(--cf-fontFamily-sans);
+    --font-mono: var(--cf-fontFamily-mono);
+    --color-page: var(--cf-color-page);
+    --color-brand: var(--cf-color-green-800);
+    --color-brand-hover: var(--cf-color-green-700);
+    --color-tint: var(--cf-color-green-100);
+    --color-tint-subtle: var(--cf-color-green-50);
+    --color-outline: var(--cf-color-green-500);
+    --color-faint: var(--cf-color-green-300);
+    --radius-control: var(--cf-borderRadius-control);
+    --radius-card: var(--cf-borderRadius-card);
+    --radius-bubble: var(--cf-borderRadius-bubble);
+    --radius-tail: var(--cf-borderRadius-tail);
+    --radius-sheet: var(--cf-borderRadius-sheet);
+    --radius-composer: var(--cf-borderRadius-composer);
+    --shadow-sheet: var(--cf-boxShadow-sheet);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -43,34 +58,39 @@
 /* shadcn theme variables, mapped to Carefree --cf-* tokens (src/tokens.css).
    Change colors in Tokens Studio -> tokens.json -> npm run tokens:build, not here. */
 :root {
-    --background: var(--cf-color-neutral-100);
-    --foreground: var(--cf-color-neutral-900);
+    /* Direction D: one calm green family. */
+    --background: var(--cf-color-page);
+    --foreground: var(--cf-color-green-900);
     --card: var(--cf-color-neutral-0);
-    --card-foreground: var(--cf-color-neutral-900);
+    --card-foreground: var(--cf-color-green-900);
     --popover: var(--cf-color-neutral-0);
-    --popover-foreground: var(--cf-color-neutral-900);
-    --primary: var(--cf-color-neutral-900);
+    --popover-foreground: var(--cf-color-green-900);
+    --primary: var(--cf-color-green-800);
     --primary-foreground: var(--cf-color-neutral-0);
-    --secondary: var(--cf-color-neutral-50);
-    --secondary-foreground: var(--cf-color-neutral-900);
-    --muted: var(--cf-color-neutral-50);
-    /* neutral-600, not 500: 500 fails WCAG AA on white */
-    --muted-foreground: var(--cf-color-neutral-600);
-    --accent: var(--cf-color-neutral-50);
-    --accent-foreground: var(--cf-color-neutral-900);
+    --secondary: var(--cf-color-green-100);
+    --secondary-foreground: var(--cf-color-green-900);
+    --muted: var(--cf-color-green-50);
+    --muted-foreground: var(--cf-color-green-600);
+    --accent: var(--cf-color-green-50);
+    --accent-foreground: var(--cf-color-green-900);
     --destructive: var(--cf-color-feedback-error);
-    --border: var(--cf-color-neutral-200);
-    --input: var(--cf-color-neutral-200);
-    --ring: var(--cf-color-neutral-400);
-    /* Carefree semantic extras */
-    --success: var(--cf-color-grade-a-text);
-    --success-soft: var(--cf-color-grade-a-bg);
-    --info: var(--cf-color-grade-b-text);
-    --info-soft: var(--cf-color-grade-b-bg);
-    --caution: var(--cf-color-grade-conditional-accent);
-    /* No radius token exists yet in tokens.json */
-    --radius: 0.75rem;
+    --border: var(--cf-color-border);
+    --input: var(--cf-color-green-500);
+    --ring: var(--cf-color-green-900);
+    /* Carefree semantic extras: no traffic-light colors, everything stays green */
+    --success: var(--cf-color-green-800);
+    --success-soft: var(--cf-color-green-100);
+    --info: var(--cf-color-green-800);
+    --info-soft: var(--cf-color-green-50);
+    --caution: var(--cf-color-green-600);
+    --radius: var(--cf-borderRadius-control);
 }
+
+/* Brand gradient used on user bubbles and plan headers */
+.cf-gradient { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 55%, var(--cf-color-gradient-end) 100%); color: #fff; }
+.cf-gradient-bubble { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 70%); color: #fff; }
+.cf-label { font-family: var(--cf-fontFamily-mono); font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--cf-color-green-600); }
+
 
 
 @layer base {
@@ -78,7 +98,14 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
     }
   html {
     @apply font-sans;

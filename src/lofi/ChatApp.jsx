@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { groupByVisit } from '@/lib/visits'
+import { cn } from '@/lib/utils'
 import {
   AGE_RANGES, INSURANCE, INSURANCE_NOTES, SEXUAL_HEALTH,
   ageNote, buildPlan, eligibleRecs, pickStat, relevantQuestions, visitForInsurance,
 } from './logic'
 import {
   AddedLine, AskDoctorList, Bubble, Chips, Composer, DoctorFinderCard, EmailPlanForm, MentalHealthCard,
-  NoteCard, OptInCard, OutputPreview, PlanSnapshot, SexualHealthCard, StatCard, Typing, VisitCard,
+  Grain, NoteCard, OptInCard, OutputPreview, PlanSnapshot, SexualHealthCard, StatCard, Typing, VisitCard,
 } from './widgets'
 
 const SEX = [{ id: 'male', label: 'Male' }, { id: 'female', label: 'Female' }]
@@ -245,15 +246,16 @@ export function ChatApp({ data }) {
   return (
     <div className="flex h-dvh overflow-hidden bg-background text-foreground">
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b bg-card px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold tracking-tight">Carefree</span>
-            <Badge variant="outline">Chat lofi</Badge>
+        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b px-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <span aria-hidden className="flex size-7 items-center justify-center rounded-control bg-primary text-sm font-extrabold text-primary-foreground">c</span>
+            <span className="text-[19px] font-extrabold tracking-tight">carefree</span>
+            <span className="cf-label hidden sm:inline">Lofi</span>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" asChild className="hidden h-10 sm:inline-flex"><a href="#/components">Components</a></Button>
+            <Button variant="ghost" asChild className="hidden sm:inline-flex"><a href="#/components">Components</a></Button>
             {(!isDesktop || !panelOpen) && (
-              <Button variant="outline" className="h-10" onClick={openPlan}>
+              <Button variant="outline" onClick={openPlan}>
                 <ClipboardList />Your plan
                 {planReady && <Badge className="ml-0.5" aria-label={`${itemCount} items`}>{itemCount}</Badge>}
               </Button>
@@ -263,24 +265,27 @@ export function ChatApp({ data }) {
 
         <main ref={logRef} role="log" aria-live="polite" aria-label="Conversation" className="relative flex-1 overflow-y-auto">
           {/* `relative` keeps sr-only (absolute) labels inside the scroll area instead of stretching the page */}
-          <div className="mx-auto flex max-w-2xl flex-col gap-3 px-4 py-6">
-            {msgs.map(m => <div key={m.id}>{render(m)}</div>)}
-            {typing && <Typing />}
+          <div className="mx-auto flex max-w-[688px] flex-col px-4 py-6 sm:px-6">
+            {/* 6px between one speaker's messages, 20px when the speaker changes */}
+            {msgs.map((m, i) => {
+              const turn = i > 0 && (m.kind === 'user') !== (msgs[i - 1].kind === 'user')
+              return <div key={m.id} className={i === 0 ? '' : turn ? 'mt-(--cf-chat-gap-turn)' : 'mt-(--cf-chat-gap-group)'}>{render(m)}</div>
+            })}
+            {typing && <div className={msgs.at(-1)?.kind === 'user' ? 'mt-(--cf-chat-gap-turn)' : 'mt-(--cf-chat-gap-group)'}><Typing /></div>}
           </div>
         </main>
 
-        <div className="border-t bg-background px-4 pt-3 pb-[max(env(safe-area-inset-bottom),12px)]">
-          <div className="mx-auto max-w-2xl"><Composer onSend={onSend} /></div>
+        <div className="bg-background px-4 pt-2 pb-[max(env(safe-area-inset-bottom),16px)] sm:px-6">
+          <div className="mx-auto max-w-[640px]"><Composer onSend={onSend} /></div>
         </div>
       </div>
 
       {isDesktop && panelOpen && (
-        <aside aria-label="Your plan" className="flex w-[400px] shrink-0 flex-col border-l bg-card">
-          <div className="flex items-center justify-between border-b px-4 py-2.5">
-            <h2 className="font-semibold">Your plan</h2>
-            <Button variant="ghost" size="icon-lg" aria-label="Hide plan" onClick={() => setPanelOpen(false)}><PanelRightClose /></Button>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4">{panel}</div>
+        <aside aria-label="Your visit plan" className="flex w-(--cf-size-plan-panel) shrink-0 flex-col border-l bg-card">
+          <PlanHeader plan={plan} ready={planReady}>
+            <Button variant="ghost" size="icon-lg" className="text-white hover:bg-white/10 hover:text-white focus-visible:outline-white" aria-label="Hide plan" onClick={() => setPanelOpen(false)}><PanelRightClose /></Button>
+          </PlanHeader>
+          <div className="flex-1 overflow-y-auto bg-tint-subtle p-4">{panel}</div>
         </aside>
       )}
 
@@ -288,13 +293,12 @@ export function ChatApp({ data }) {
         <Sheet open={planOpen} onOpenChange={setPlanOpen}>
           <SheetContent
             side={isTablet ? 'right' : 'bottom'}
-            className={isTablet ? 'w-[420px] sm:max-w-[420px]' : 'max-h-[88dvh] rounded-t-2xl'}
+            className={cn('gap-0 overflow-hidden border-0 [&>button.absolute]:text-white [&>button.absolute]:hover:bg-white/10', isTablet ? 'w-(--cf-size-plan-sheet) sm:max-w-(--cf-size-plan-sheet)' : 'max-h-[88dvh]')}
           >
-            <SheetHeader>
-              <SheetTitle>Your plan</SheetTitle>
-              <SheetDescription>What to book, what to say, and what’s covered.</SheetDescription>
-            </SheetHeader>
-            <div className="overflow-y-auto px-4 pb-6">{panel}</div>
+            <SheetTitle className="sr-only">Your visit plan</SheetTitle>
+            <SheetDescription className="sr-only">What to book, what to say, and what’s covered.</SheetDescription>
+            <PlanHeader plan={plan} ready={planReady} />
+            <div className="overflow-y-auto bg-tint-subtle p-4 pb-6">{panel}</div>
           </SheetContent>
         </Sheet>
       )}
@@ -302,10 +306,27 @@ export function ChatApp({ data }) {
   )
 }
 
+// Gradient header shared by the side panel and the sheets.
+function PlanHeader({ plan, ready, children }) {
+  const n = plan.visits?.length || 0
+  return (
+    <div className="cf-gradient relative isolate flex shrink-0 items-start justify-between gap-3 overflow-hidden px-6 pt-5.5 pb-5">
+      <Grain />
+      <div className="flex flex-col">
+        <span className="text-[26px] leading-tight font-extrabold tracking-tight">Your visit plan</span>
+        <span className="text-[15px] text-[var(--cf-color-green-100)]">
+          {ready ? `${n} ${n === 1 ? 'visit' : 'visits'} · $0 with in-network providers` : 'Builds as you answer'}
+        </span>
+      </div>
+      {children}
+    </div>
+  )
+}
+
 export function PlanPanel({ plan, ready }) {
   if (!ready)
     return (
-      <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+      <div className="rounded-card border border-dashed border-[var(--cf-color-green-200)] p-6 text-center text-[15px] text-muted-foreground">
         Your plan builds as you answer. It will show each visit to book, what happens there, and what to ask for.
       </div>
     )
