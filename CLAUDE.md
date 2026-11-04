@@ -306,3 +306,4 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - **Nudge state:** `.cf-nudge` (green-200 ring, pulses 3 times, static with reduced motion), `nudge` prop on Button and EmailPlanForm. Cleared when the user opens the plan or focuses the email field.
 - **Email:** a sticky bar at the bottom of the plan; the plan scrolls on its own. Send is disabled until something is typed; validated on submit with a red error.
 - **Header:** "Carefree" wordmark, no Components link. The hide-panel button sits left of the plan title.
+- **Motion:** the desktop plan panel grows open from the right (320ms) and closes faster (200ms); the content inside keeps its full width so nothing reflows. Plan sections then fade up one after another (`.cf-rise`, 400ms, 120ms apart, starting 200ms in). Reduced motion turns both off.

@@ -4,6 +4,9 @@ import { AskDoctorList } from '../AskDoctorList/AskDoctorList'
 import { EmailPlanForm } from '../EmailPlanForm/EmailPlanForm'
 
 // showAskDoctor: only after the extra questions. nudge: ring the email field to suggest it's next.
+// Sections fade up one after another (after the panel has opened), so the plan reads as it arrives.
+const rise = i => ({ className: 'cf-rise', style: { animationDelay: `${200 + i * 120}ms` } })
+
 export function PlanPanel({ plan, ready, showAskDoctor, nudge, onEmailFocus }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -11,9 +14,9 @@ export function PlanPanel({ plan, ready, showAskDoctor, nudge, onEmailFocus }) {
         {ready ? (
           <div className="space-y-3">
             <div className="space-y-1">
-              {plan.visits.map((v, i) => <VisitCard key={v.id} visit={v} index={i} />)}
+              {plan.visits.map((v, i) => <div key={v.id} {...rise(i)}><VisitCard visit={v} index={i} /></div>)}
             </div>
-            {showAskDoctor && <AskDoctorList recs={plan.askDoctor} />}
+            {showAskDoctor && <div {...rise(plan.visits.length)}><AskDoctorList recs={plan.askDoctor} /></div>}
           </div>
         ) : (
           <div className="rounded-card border border-dashed border-[var(--cf-color-green-200)] p-3 text-center text-muted-foreground">

@@ -136,6 +136,17 @@
 .cf-nudge { box-shadow: 0 0 0 4px var(--cf-color-green-200); animation: cf-nudge 1.6s ease-in-out 3; }
 @keyframes cf-nudge { 50% { box-shadow: 0 0 0 8px var(--cf-color-green-100); } }
 
+/* Rise: plan sections fade up one after another. Each element sets its own animation-delay. */
+.cf-rise { animation: cf-rise 400ms cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes cf-rise { from { opacity: 0; transform: translateY(16px); } }
+/* Desktop plan panel opens by growing from the right edge, so the chat eases over instead of jumping.
+   Closing is quicker. The content inside keeps its full width, so nothing reflows while it moves. */
+.cf-panel-in { animation: cf-panel-in 320ms cubic-bezier(.2, .8, .2, 1); }
+.cf-panel-out { animation: cf-panel-out 200ms cubic-bezier(.4, 0, 1, 1) forwards; }
+@keyframes cf-panel-in { from { width: 0; } }
+@keyframes cf-panel-out { to { width: 0; } }
+@media (prefers-reduced-motion: reduce) { .cf-rise { animation: none; } }
+
 /* Section label: same size as body (16px minimum), set apart by weight and color. */
 .cf-label { font-size: var(--cf-fontSize-body); line-height: var(--cf-lineHeight-body); font-weight: var(--cf-fontWeight-semibold); color: var(--cf-color-green-600); }
 

@@ -38,6 +38,7 @@ export function ChatApp({ data }) {
   const [typing, setTyping] = useState(false)
   const [planOpen, setPlanOpen] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [panelClosing, setPanelClosing] = useState(false)
   const [nudge, setNudge] = useState(false) // suggest the next step: open the plan / enter an email
   const stateRef = useRef(s)
   const pendingRef = useRef(null) // { qid, options } the composer can answer
@@ -223,7 +224,7 @@ export function ChatApp({ data }) {
     return s[qid]
   }
 
-  const openPlan = () => { setNudge(false); isDesktop ? setPanelOpen(true) : setPlanOpen(true) }
+  const openPlan = () => { setNudge(false); setPanelClosing(false); isDesktop ? setPanelOpen(true) : setPlanOpen(true) }
   const itemCount = plan.planned.length
 
   const render = m => {
@@ -265,7 +266,7 @@ export function ChatApp({ data }) {
           </div>
           <div className="flex items-center gap-1">
             {/* The plan button appears once there is a plan. */}
-            {planReady && (!isDesktop || !panelOpen) && (
+            {planReady && (!isDesktop || !panelOpen || panelClosing) && (
               <Button variant="outline" nudge={nudge} onClick={openPlan}>
                 <ClipboardList />Your plan
                 <Badge aria-label={`${itemCount} items`}>{itemCount}</Badge>
@@ -292,11 +293,17 @@ export function ChatApp({ data }) {
       </div>
 
       {isDesktop && panelOpen && (
-        <aside aria-label="Your visit plan" className="flex w-(--cf-size-plan) shrink-0 flex-col border-l bg-card">
-          <PlanHeader plan={plan} ready={planReady}>
-            <Button variant="ghost" size="icon-lg" className="-ml-1 shrink-0 text-white hover:bg-white/10 hover:text-white focus-visible:outline-white" aria-label="Hide plan" onClick={() => setPanelOpen(false)}><PanelRightClose className="size-3" /></Button>
-          </PlanHeader>
-          {panel}
+        <aside
+          aria-label="Your visit plan"
+          className={cn('w-(--cf-size-plan) shrink-0 overflow-hidden border-l bg-card', panelClosing ? 'cf-panel-out' : 'cf-panel-in')}
+          onAnimationEnd={e => { if (e.target === e.currentTarget && panelClosing) { setPanelOpen(false); setPanelClosing(false) } }}
+        >
+          <div className="flex h-full w-(--cf-size-plan) flex-col">
+            <PlanHeader plan={plan} ready={planReady}>
+              <Button variant="ghost" size="icon-lg" className="-ml-1 shrink-0 text-white hover:bg-white/10 hover:text-white focus-visible:outline-white" aria-label="Hide plan" onClick={() => setPanelClosing(true)}><PanelRightClose className="size-3" /></Button>
+            </PlanHeader>
+            {panel}
+          </div>
         </aside>
       )}
 
