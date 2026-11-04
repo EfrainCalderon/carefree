@@ -3,71 +3,74 @@
 @import "shadcn/tailwind.css";
 @import "../tokens.css";
 
-/* Overpass, self-hosted (SIL OFL, src/assets/fonts/OFL.txt).
-   Overpass ships with a deep descender and little room above capitals, so text sits
-   about 0.1em high in any box. These overrides keep the same total line box (1.25em)
-   but balance it, so text centers vertically in bubbles, chips and buttons. */
+/* Red Hat Text, self-hosted (SIL OFL, src/assets/fonts/OFL.txt). Its capitals sit centered in
+   the line box, so text centers in bubbles, chips and buttons without metric overrides or trimming. */
 @font-face {
-    font-family: "Overpass";
-    src: url("../assets/fonts/overpass-latin-400-normal.woff2") format("woff2");
+    font-family: "Red Hat Text";
+    src: url("../assets/fonts/red-hat-text-latin-400-normal.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
-    ascent-override: 97.5%;
-    descent-override: 27.5%;
-    line-gap-override: 0%;
 }
 @font-face {
-    font-family: "Overpass";
-    src: url("../assets/fonts/overpass-latin-600-normal.woff2") format("woff2");
+    font-family: "Red Hat Text";
+    src: url("../assets/fonts/red-hat-text-latin-600-normal.woff2") format("woff2");
     font-weight: 600;
     font-style: normal;
     font-display: swap;
-    ascent-override: 97.5%;
-    descent-override: 27.5%;
-    line-gap-override: 0%;
 }
 @font-face {
-    font-family: "Overpass";
-    src: url("../assets/fonts/overpass-latin-800-normal.woff2") format("woff2");
-    font-weight: 800;
+    font-family: "Red Hat Text";
+    src: url("../assets/fonts/red-hat-text-latin-700-normal.woff2") format("woff2");
+    font-weight: 700;
     font-style: normal;
     font-display: swap;
-    ascent-override: 97.5%;
-    descent-override: 27.5%;
-    line-gap-override: 0%;
-}
-@font-face {
-    font-family: "Overpass Mono";
-    src: url("../assets/fonts/overpass-mono-latin-600-normal.woff2") format("woff2");
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-    ascent-override: 98%;
-    descent-override: 28%;
-    line-gap-override: 0%;
 }
 
 @custom-variant dark (&:is(.dark *));
 
-/* Leading trim: cut a text box to the top of the capitals and the baseline, so padding is the
-   real space around the letters (like Figma's vertical trim). Supported in Chrome/Edge 133+ and
-   Safari 18.2+. `trim:` applies a class only where it's supported, so other browsers keep the
-   untrimmed padding. */
-@custom-variant trim (@supports (text-box: trim-both cap alphabetic));
-@utility text-trim {
-    text-box: trim-both cap alphabetic;
-}
-
 @theme inline {
+    /* Base-8 scale. Tailwind spacing steps are 8px, so the class number is the token number:
+       p-1 = 8, p-2 = 16, p-3 = 24, gap-4 = 32 (--cf-spacing-*). Avoid half steps. */
+    --spacing: var(--cf-spacing-1);
+
+    /* Type: four sizes, nothing under 16px. Defaults are cleared so only these exist. */
+    --text-*: initial;
+    --text-body: var(--cf-fontSize-body);
+    --text-body--line-height: var(--cf-lineHeight-body);
+    --text-heading: var(--cf-fontSize-heading);
+    --text-heading--line-height: var(--cf-lineHeight-body);
+    --text-title: var(--cf-fontSize-title);
+    --text-title--line-height: var(--cf-lineHeight-title);
+    --text-display: var(--cf-fontSize-display);
+    --text-display--line-height: var(--cf-lineHeight-display);
+    --leading-*: initial;
+    --font-weight-*: initial;
+    --font-weight-normal: var(--cf-fontWeight-regular);
+    --font-weight-semibold: var(--cf-fontWeight-semibold);
+    --font-weight-bold: var(--cf-fontWeight-bold);
+    --font-sans: var(--cf-fontFamily-sans);
+    --font-heading: var(--cf-fontFamily-sans);
+
+    /* Radius: three sizes plus full. */
+    --radius-*: initial;
+    --radius-sm: var(--cf-borderRadius-sm);
+    --radius-md: var(--cf-borderRadius-md);
+    --radius-lg: var(--cf-borderRadius-lg);
+    --radius-full: var(--cf-borderRadius-full);
+    --radius-control: var(--cf-borderRadius-sm);
+    --radius-tail: var(--cf-borderRadius-sm);
+    --radius-card: var(--cf-borderRadius-md);
+    --radius-bubble: var(--cf-borderRadius-lg);
+    --radius-sheet: var(--cf-borderRadius-lg);
+    --radius-composer: var(--cf-borderRadius-lg);
+    --shadow-sheet: var(--cf-boxShadow-sheet);
+
     --color-success: var(--success);
     --color-success-soft: var(--success-soft);
     --color-info: var(--info);
     --color-info-soft: var(--info-soft);
     --color-caution: var(--caution);
-    --font-heading: var(--font-sans);
-    --font-sans: var(--cf-fontFamily-sans);
-    --font-mono: var(--cf-fontFamily-mono);
     --color-page: var(--cf-color-page);
     --color-brand: var(--cf-color-green-800);
     --color-brand-hover: var(--cf-color-green-700);
@@ -75,27 +78,6 @@
     --color-tint-subtle: var(--cf-color-green-50);
     --color-outline: var(--cf-color-green-500);
     --color-faint: var(--cf-color-green-300);
-    /* Line height: every text size and leading-* utility reads the --cf-lineHeight-* tokens,
-       so tokens.json is the one place to change it. */
-    --leading-none: var(--cf-lineHeight-none);
-    --leading-tight: var(--cf-lineHeight-tight);
-    --leading-snug: var(--cf-lineHeight-snug);
-    --leading-normal: var(--cf-lineHeight-normal);
-    --leading-relaxed: var(--cf-lineHeight-relaxed);
-    --text-xs--line-height: var(--cf-lineHeight-normal);
-    --text-sm--line-height: var(--cf-lineHeight-normal);
-    --text-base--line-height: var(--cf-lineHeight-normal);
-    --text-lg--line-height: var(--cf-lineHeight-normal);
-    --text-xl--line-height: var(--cf-lineHeight-snug);
-    --text-2xl--line-height: var(--cf-lineHeight-tight);
-    --text-3xl--line-height: var(--cf-lineHeight-tight);
-    --radius-control: var(--cf-borderRadius-control);
-    --radius-card: var(--cf-borderRadius-card);
-    --radius-bubble: var(--cf-borderRadius-bubble);
-    --radius-tail: var(--cf-borderRadius-tail);
-    --radius-sheet: var(--cf-borderRadius-sheet);
-    --radius-composer: var(--cf-borderRadius-composer);
-    --shadow-sheet: var(--cf-boxShadow-sheet);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -114,13 +96,6 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 /* shadcn theme variables, mapped to Carefree --cf-* tokens (src/tokens.css).
@@ -129,12 +104,12 @@
     /* Direction D: one calm green family. */
     --background: var(--cf-color-page);
     --foreground: var(--cf-color-green-900);
-    --card: var(--cf-color-neutral-0);
+    --card: var(--cf-color-surface);
     --card-foreground: var(--cf-color-green-900);
-    --popover: var(--cf-color-neutral-0);
+    --popover: var(--cf-color-surface);
     --popover-foreground: var(--cf-color-green-900);
     --primary: var(--cf-color-green-800);
-    --primary-foreground: var(--cf-color-neutral-0);
+    --primary-foreground: var(--cf-color-surface);
     --secondary: var(--cf-color-green-100);
     --secondary-foreground: var(--cf-color-green-900);
     --muted: var(--cf-color-green-50);
@@ -151,13 +126,13 @@
     --info: var(--cf-color-green-800);
     --info-soft: var(--cf-color-green-50);
     --caution: var(--cf-color-green-600);
-    --radius: var(--cf-borderRadius-control);
 }
 
 /* Brand gradient used on user bubbles and plan headers */
 .cf-gradient { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 55%, var(--cf-color-gradient-end) 100%); color: #fff; }
 .cf-gradient-bubble { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 70%); color: #fff; }
-.cf-label { font-family: var(--cf-fontFamily-mono); font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase; color: var(--cf-color-green-600); }
+/* Section label: same size as body (16px minimum), set apart by weight and color. */
+.cf-label { font-size: var(--cf-fontSize-body); line-height: var(--cf-lineHeight-body); font-weight: var(--cf-fontWeight-semibold); color: var(--cf-color-green-600); }
 
 
 
@@ -166,7 +141,8 @@
     @apply border-border outline-ring/50;
     }
   html {
-    line-height: var(--cf-lineHeight-normal);
+    font-size: var(--cf-fontSize-body);
+    line-height: var(--cf-lineHeight-body);
     }
   body {
     @apply bg-background text-foreground antialiased;

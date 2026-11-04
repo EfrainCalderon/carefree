@@ -9,14 +9,14 @@ export function Chips({ options, value, onSelect, label, keepAfterAnswer, onChan
   const done = value != null
   if (done && !keepAfterAnswer) return null
   return (
-    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
+    <div role="group" aria-label={label} className="flex flex-wrap gap-1">
       {options.map(o => {
         const picked = value === o.id
         return (
           <Button
             key={o.id}
             variant={picked ? 'default' : 'outline'}
-            className={cn('rounded-full px-4', done && picked && 'disabled:bg-primary disabled:text-primary-foreground', done && !picked && 'disabled:bg-tint disabled:border-tint disabled:text-muted-foreground')}
+            className={cn('rounded-full px-2', done && picked && 'disabled:bg-primary disabled:text-primary-foreground', done && !picked && 'disabled:bg-tint disabled:border-tint disabled:text-muted-foreground')}
             aria-pressed={picked}
             disabled={done}
             onClick={() => onSelect(o)}
@@ -27,7 +27,7 @@ export function Chips({ options, value, onSelect, label, keepAfterAnswer, onChan
         )
       })}
       {done && onChange && (
-        <button type="button" onClick={onChange} className="min-h-11 px-1 text-[15px] font-semibold text-primary underline underline-offset-3">Change answer</button>
+        <button type="button" onClick={onChange} className="min-h-6 px-1 font-semibold text-primary underline underline-offset-3">Change answer</button>
       )}
     </div>
   )

@@ -13,7 +13,7 @@ export default {
       // Adds px to dimension tokens that arrive as bare numbers
       'ts/size/px': {
         type: 'value',
-        filter: token => ['spacing', 'borderRadius', 'fontSizes'].includes(token.type),
+        filter: token => ['spacing', 'borderRadius', 'fontSizes', 'lineHeights'].includes(token.type),
         transform: token => {
           const v = String(token.value)
           return /^\d+(\.\d+)?$/.test(v) ? `${v}px` : v

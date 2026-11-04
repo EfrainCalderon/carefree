@@ -24,14 +24,14 @@ src/tokens.css  ← CSS custom properties, auto-generated, do not edit manually
 Every component CSS file reads from --cf-* variables
 ```
 
-### Line height is a token
-`lineHeight.none/tight/snug/normal/relaxed` in tokens.json (`--cf-lineHeight-*`). `src/app/index.css` routes the html default, every Tailwind `text-*` size and every `leading-*` utility through them, so changing `lineHeight.normal` changes all body text in the app and Storybook. The Claude design system mirrors them as `leading-*` tokens (update it by hand after a change).
-
-### Leading trim (text measured from cap top to baseline)
-Text inside padded shapes (bubbles, buttons, chips, pills, badges, tip boxes) uses `text-box: trim-both cap alphabetic`, so padding is the visible space around the letters, like Figma's vertical trim. Line height only spaces lines apart.
-- Utility `text-trim` and variant `trim:` live in `src/app/index.css`. `trim:` applies only where trimming is supported (Chrome/Edge 133+, Safari 18.2+). Firefox keeps the untrimmed padding.
-- A flex container can't be trimmed, so the label needs its own element. `Button` wraps text children in `<span class="text-trim">` automatically.
-- Bubble: assistant `trim:pt-3 trim:pb-4` (12 above caps, 16 below baseline, because descenders like g/p/y hang ~3px into the bottom and sentences always have them), user `trim:py-3.5` (even 14; replies are mostly numbers and short words). Measured: tallest letters 12.1px from the top, descenders 12.5px from the bottom, on any number of lines.
+### Scale: base 8, 16px minimum (Nov 2026)
+Less but better: only the tokens the app uses, every value a multiple of 8.
+- **Spacing:** `spacing.1–6, 8` = 8–48, 64. Tailwind's `--spacing` is set to `--cf-spacing-1` (8px), so the class number is the token number: `p-2` = 16, `gap-3` = 24. Avoid half steps (`p-0.5`); the only one in use is the document thumbnail drawing in OutputPreview.
+- **Insets:** cards 16 (`p-2`), gradient surfaces (StatCard, plan header) 24 (`p-3`), controls and bubbles 16 left and right, list rows 16 top and bottom, pills 32 tall with 16 left and right. Gaps: 8 inside a group, 16 between groups, 24 between sections and between chat speakers.
+- **Sizes:** controls and touch targets 48 (`min-h-6`, `size-6`), pills 32, icon tiles 24 (= one line of text, so no alignment offsets), icons 16 (24 in the composer). Bubble heights land on 8 (40, 64, 88…); the assistant bubble draws its border inside (`shadow-[inset_0_0_0_1px_var(--border)]`) to keep that.
+- **Type:** Red Hat Text 400/600/700 only. Four sizes: body 16/24, heading 20/24, title 24/32, display 40/48 (`text-body`, `text-heading`, `text-title`, `text-display`). Tailwind's default sizes and `leading-*` are cleared in `src/app/index.css`, so 12–15px classes no longer exist. Secondary text is set apart by color and weight, not size. `.cf-label` is 16px semibold green-600.
+- **Radius:** sm 8 (controls, bubble tails), md 16 (cards), lg 24 (bubbles, sheets, composer), full (chips, pills).
+- **Why Red Hat Text:** Red Hat replaced Overpass with it, so it's the closest relative. Unlike Overpass, its capitals sit centered in the line, so text centers in bubbles and buttons with plain padding (measured within 0.2px). The old metric overrides and `text-box-trim` hacks were removed.
 
 ### Token naming convention
 All CSS custom properties are prefixed `--cf-` (for Carefree).
@@ -55,7 +55,7 @@ src/
     logic.js        — plan logic: age ranges, questions, buildPlan, derivePlan, stats, insurance notes
     index.css       — Tailwind + shadcn theme variables mapped to --cf-* tokens
   components/
-    ui/             — shadcn/ui primitives (button, input, card, sheet…), restyled to Direction D; stories for the main ones
+    ui/             — shadcn/ui primitives in use (button, input, label, card, sheet, tooltip, badge), restyled to Direction D; stories for the main ones
     chat/<Name>/    — one folder per chat component: <Name>.jsx + <Name>.stories.jsx
     chat/index.js   — exports every chat component (the app imports from '@/components/chat')
     chat/fixtures.js — story sample data (Marcus 47M employer, Linda 67F Medicare) built with derivePlan
@@ -290,8 +290,8 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 
 ## Design system: Direction D (Nov 2026)
 - Visual direction comes from the Claude Design canvas (https://claude.ai/artifact/DQzzwp9nUYzRkBchKNfjfp). The Claude Design System built from this repo is https://claude.ai/artifact/BG8W22kCUQUcLo1P2befCJ; use it for future Claude Design work.
-- Tokens added to `tokens/tokens.json` (existing v1 tokens kept): `color.green` 50–950, `color.gradient` start/mid/end, `color.page`, `color.border`, `color.feedback.error-bg`, radius control/card/bubble/tail/sheet/composer, fontFamily sans (Overpass) / mono (Overpass Mono), fontSize display/title/heading/body, fontWeight semibold/bold, `boxShadow.sheet`, `chat` gaps, `size` touch/plan-panel/plan-sheet, `motion` fast/base.
-- `src/app/index.css` maps shadcn variables to the green tokens and adds Tailwind utilities (`bg-brand`, `bg-tint`, `border-outline`, `rounded-bubble`, `rounded-card`, `shadow-sheet`, …) plus `.cf-gradient`, `.cf-gradient-bubble` and `.cf-label`. Overpass is self-hosted (`src/assets/fonts/`, @font-face in `src/app/index.css`) with ascent/descent overrides: the stock font sits ~0.1em high in any box, so the overrides balance it and text centers in bubbles, chips and buttons. Don't switch back to the Google Fonts link without keeping that fix.
-- Still shadcn/ui: the base components in `src/components/ui/` (button, input, card, sheet) were restyled to Direction D states (44px targets, 2px green-900 focus ring, pressed scale .98).
+- Tokens in `tokens/tokens.json` (v1 neutral/grade tokens removed Nov 2026): `color.green` 50–950, `color.gradient`, `page`, `surface`, `border`, `feedback.error`; spacing, radius, type and size per "Scale" above; `boxShadow.sheet`; `chat` gaps 8/24; `size` touch 48 / plan 440; `motion` fast/base.
+- `src/app/index.css` maps shadcn variables to the green tokens and adds Tailwind utilities (`bg-brand`, `bg-tint`, `border-outline`, `rounded-bubble`, `rounded-card`, `shadow-sheet`, …) plus `.cf-gradient`, `.cf-gradient-bubble` and `.cf-label`. Red Hat Text is self-hosted (`src/assets/fonts/`, @font-face in `src/app/index.css`). See "Scale" above.
+- Still shadcn/ui: the base components in `src/components/ui/` (button, input, card, sheet) were restyled to Direction D states (48px targets, 2px green-900 focus ring, pressed scale .98).
 - One color only: success/info/caution all map to greens. No grade colors in the chat UI.
 - The design system's component previews are static, hand-written renditions; if the React components change, update the system too.

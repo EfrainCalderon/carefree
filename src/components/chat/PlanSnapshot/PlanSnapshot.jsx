@@ -15,16 +15,16 @@ export function PlanSnapshot({ visits, askCount, onOpen }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ol className="space-y-2.5">
+        <ol className="space-y-1">
           {visits.map((v, i) => (
-            <li key={v.id} className="flex items-center gap-2.5">
+            <li key={v.id} className="flex items-center gap-1">
               <VisitNumber n={i + 1} />
               <span className="flex-1">{v.name}</span>
-              <span className="shrink-0 text-sm text-muted-foreground">{v.items.length} {v.items.length === 1 ? 'thing' : 'things'}</span>
+              <span className="shrink-0 text-muted-foreground">{v.items.length} {v.items.length === 1 ? 'thing' : 'things'}</span>
             </li>
           ))}
         </ol>
-        <Button className="mt-4 w-full" onClick={onOpen}>Open your plan</Button>
+        <Button className="mt-2 w-full" onClick={onOpen}>Open your plan</Button>
       </CardContent>
     </Card>
   )

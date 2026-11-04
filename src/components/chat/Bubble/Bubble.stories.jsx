@@ -5,7 +5,7 @@ export default { title: 'Chat/Conversation/Bubble', component: Bubble, tags: ['a
 export const Assistant = { args: { role: 'assistant', children: 'First, how old are you?' } }
 export const User = { args: { role: 'user', children: '45–49' } }
 
-// 6px between one speaker's messages, 20px when the speaker changes.
+// 8px between one speaker's messages, 24px when the speaker changes.
 export const Conversation = {
   render: () => (
     <div className="flex max-w-xl flex-col">

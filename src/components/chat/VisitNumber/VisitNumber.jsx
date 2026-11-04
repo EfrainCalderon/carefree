@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils'
 export function VisitNumber({ n, on, size }) {
   return (
     <span className={cn(
-      'flex shrink-0 items-center justify-center rounded-control font-extrabold',
-      size === 'lg' ? 'size-10 text-[19px]' : 'size-7 text-sm',
+      'flex shrink-0 items-center justify-center rounded-control font-bold',
+      size === 'lg' ? 'size-5 text-heading' : 'size-4',
       on ? 'bg-primary text-primary-foreground shadow-[inset_0_0_0_2px_var(--primary),inset_0_0_0_4px_#fff]' : 'bg-tint text-primary'
-    )}><span className="text-trim">{n}</span></span>
+    )}>{n}</span>
   )
 }

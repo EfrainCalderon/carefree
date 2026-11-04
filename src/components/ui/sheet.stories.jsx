@@ -8,7 +8,7 @@ const make = side => ({
   render: () => (
     <Sheet>
       <SheetTrigger asChild><Button variant="outline">Open {side} sheet</Button></SheetTrigger>
-      <SheetContent side={side} className={side === 'right' ? 'w-(--cf-size-plan-sheet) sm:max-w-(--cf-size-plan-sheet)' : ''}>
+      <SheetContent side={side} className={side === 'right' ? 'w-(--cf-size-plan) sm:max-w-(--cf-size-plan)' : ''}>
         <SheetHeader><SheetTitle>Your visit plan</SheetTitle><SheetDescription>What to book, what to say, and what’s covered.</SheetDescription></SheetHeader>
       </SheetContent>
     </Sheet>

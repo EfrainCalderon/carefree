@@ -223,7 +223,7 @@ export function ChatApp({ data }) {
           onChoose={o => answer('sexual', o)}
         />
       )
-      case 'done': return <Button className="h-11 px-5" onClick={openPlan}><ClipboardList />Open your plan</Button>
+      case 'done': return <Button className="h-6 px-3" onClick={openPlan}><ClipboardList />Open your plan</Button>
       default: return null
     }
   }
@@ -233,17 +233,17 @@ export function ChatApp({ data }) {
   return (
     <div className="flex h-dvh overflow-hidden bg-background text-foreground">
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b px-4 sm:px-6">
-          <div className="flex items-center gap-2.5">
-            <span aria-hidden className="flex size-7 items-center justify-center rounded-control bg-primary text-sm font-extrabold text-primary-foreground">c</span>
-            <span className="text-[19px] font-extrabold tracking-tight">carefree</span>
+        <header className="flex h-8 shrink-0 items-center justify-between gap-2 border-b px-2 sm:px-3">
+          <div className="flex items-center gap-1">
+            <span aria-hidden className="flex size-4 items-center justify-center rounded-control bg-primary font-bold text-primary-foreground">c</span>
+            <span className="text-heading font-bold tracking-tight">carefree</span>
                       </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" asChild className="hidden sm:inline-flex"><a href="https://main--6a028d420ec59b7bb3bbaa5e.chromatic.com/" target="_blank" rel="noreferrer">Components</a></Button>
             {(!isDesktop || !panelOpen) && (
               <Button variant="outline" onClick={openPlan}>
                 <ClipboardList />Your plan
-                {planReady && <Badge className="ml-0.5" aria-label={`${itemCount} items`}>{itemCount}</Badge>}
+                {planReady && <Badge className="ml-0" aria-label={`${itemCount} items`}>{itemCount}</Badge>}
               </Button>
             )}
           </div>
@@ -251,8 +251,8 @@ export function ChatApp({ data }) {
 
         <main ref={logRef} role="log" aria-live="polite" aria-label="Conversation" className="relative flex-1 overflow-y-auto">
           {/* `relative` keeps sr-only (absolute) labels inside the scroll area instead of stretching the page */}
-          <div className="mx-auto flex max-w-[688px] flex-col px-4 py-6 sm:px-6">
-            {/* 6px between one speaker's messages, 20px when the speaker changes */}
+          <div className="mx-auto flex max-w-[688px] flex-col px-2 py-3 sm:px-3">
+            {/* 8px between one speaker's messages, 24px when the speaker changes */}
             {msgs.map((m, i) => {
               const turn = i > 0 && (m.kind === 'user') !== (msgs[i - 1].kind === 'user')
               return <div key={m.id} className={i === 0 ? '' : turn ? 'mt-(--cf-chat-gap-turn)' : 'mt-(--cf-chat-gap-group)'}>{render(m)}</div>
@@ -261,17 +261,17 @@ export function ChatApp({ data }) {
           </div>
         </main>
 
-        <div className="bg-background px-4 pt-2 pb-[max(env(safe-area-inset-bottom),16px)] sm:px-6">
+        <div className="bg-background px-2 pt-1 pb-[max(env(safe-area-inset-bottom),16px)] sm:px-3">
           <div className="mx-auto max-w-[640px]"><Composer onSend={onSend} /></div>
         </div>
       </div>
 
       {isDesktop && panelOpen && (
-        <aside aria-label="Your visit plan" className="flex w-(--cf-size-plan-panel) shrink-0 flex-col border-l bg-card">
+        <aside aria-label="Your visit plan" className="flex w-(--cf-size-plan) shrink-0 flex-col border-l bg-card">
           <PlanHeader plan={plan} ready={planReady}>
             <Button variant="ghost" size="icon-lg" className="text-white hover:bg-white/10 hover:text-white focus-visible:outline-white" aria-label="Hide plan" onClick={() => setPanelOpen(false)}><PanelRightClose /></Button>
           </PlanHeader>
-          <div className="flex-1 overflow-y-auto bg-tint-subtle p-4">{panel}</div>
+          <div className="flex-1 overflow-y-auto bg-tint-subtle p-2">{panel}</div>
         </aside>
       )}
 
@@ -279,12 +279,12 @@ export function ChatApp({ data }) {
         <Sheet open={planOpen} onOpenChange={setPlanOpen}>
           <SheetContent
             side={isTablet ? 'right' : 'bottom'}
-            className={cn('gap-0 overflow-hidden border-0 [&>button.absolute]:text-white [&>button.absolute]:hover:bg-white/10', isTablet ? 'w-(--cf-size-plan-sheet) sm:max-w-(--cf-size-plan-sheet)' : 'max-h-[88dvh]')}
+            className={cn('gap-0 overflow-hidden border-0 [&>button.absolute]:text-white [&>button.absolute]:hover:bg-white/10', isTablet ? 'w-(--cf-size-plan) sm:max-w-(--cf-size-plan)' : 'max-h-[88dvh]')}
           >
             <SheetTitle className="sr-only">Your visit plan</SheetTitle>
             <SheetDescription className="sr-only">What to book, what to say, and what’s covered.</SheetDescription>
             <PlanHeader plan={plan} ready={planReady} />
-            <div className="overflow-y-auto bg-tint-subtle p-4 pb-6">{panel}</div>
+            <div className="overflow-y-auto bg-tint-subtle p-2 pb-3">{panel}</div>
           </SheetContent>
         </Sheet>
       )}

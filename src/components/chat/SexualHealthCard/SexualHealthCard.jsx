@@ -10,8 +10,8 @@ export function SexualHealthCard({ factors, value, onChoose }) {
         <CardTitle>Some free tests depend on your sexual health</CardTitle>
         <CardDescription>If any of these have been true for you in the last year, they’re worth asking about. No need to say which.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <ul className="list-disc space-y-1 pl-5">
+      <CardContent className="space-y-2">
+        <ul className="list-disc space-y-1 pl-3">
           {factors.map(f => <li key={f}>{f}</li>)}
         </ul>
         <Chips
