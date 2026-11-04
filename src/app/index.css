@@ -50,6 +50,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Leading trim: cut a text box to the top of the capitals and the baseline, so padding is the
+   real space around the letters (like Figma's vertical trim). Supported in Chrome/Edge 133+ and
+   Safari 18.2+. `trim:` applies a class only where it's supported, so other browsers keep the
+   untrimmed padding. */
+@custom-variant trim (@supports (text-box: trim-both cap alphabetic));
+@utility text-trim {
+    text-box: trim-both cap alphabetic;
+}
+
 @theme inline {
     --color-success: var(--success);
     --color-success-soft: var(--success-soft);
@@ -66,6 +75,20 @@
     --color-tint-subtle: var(--cf-color-green-50);
     --color-outline: var(--cf-color-green-500);
     --color-faint: var(--cf-color-green-300);
+    /* Line height: every text size and leading-* utility reads the --cf-lineHeight-* tokens,
+       so tokens.json is the one place to change it. */
+    --leading-none: var(--cf-lineHeight-none);
+    --leading-tight: var(--cf-lineHeight-tight);
+    --leading-snug: var(--cf-lineHeight-snug);
+    --leading-normal: var(--cf-lineHeight-normal);
+    --leading-relaxed: var(--cf-lineHeight-relaxed);
+    --text-xs--line-height: var(--cf-lineHeight-normal);
+    --text-sm--line-height: var(--cf-lineHeight-normal);
+    --text-base--line-height: var(--cf-lineHeight-normal);
+    --text-lg--line-height: var(--cf-lineHeight-normal);
+    --text-xl--line-height: var(--cf-lineHeight-snug);
+    --text-2xl--line-height: var(--cf-lineHeight-tight);
+    --text-3xl--line-height: var(--cf-lineHeight-tight);
     --radius-control: var(--cf-borderRadius-control);
     --radius-card: var(--cf-borderRadius-card);
     --radius-bubble: var(--cf-borderRadius-bubble);
@@ -141,6 +164,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    }
+  html {
+    line-height: var(--cf-lineHeight-normal);
     }
   body {
     @apply bg-background text-foreground antialiased;

@@ -52,7 +52,7 @@ export function VisitCard({ visit, index, defaultOpen }) {
               )
             })}
           </ul>
-          {visit.booking_tip && <p className="mt-2 rounded-control bg-tint px-3 py-2.5 text-[15px]"><strong>When you book:</strong> {visit.booking_tip}</p>}
+          {visit.booking_tip && <p className="mt-2 rounded-control bg-tint px-3 py-2.5 trim:py-3 text-trim text-[15px]"><strong>When you book:</strong> {visit.booking_tip}</p>}
           <p className="pt-2 text-sm text-muted-foreground">{visit.coverage}</p>
         </div>
       )}

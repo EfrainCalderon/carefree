@@ -45,9 +45,16 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  children,
   ...props
 }) {
   const Comp = asChild ? Slot.Root : "button"
+  // Wrap text labels so leading trim can center the letters themselves (flex items can't be
+  // trimmed directly). Skipped with asChild, which needs a single child element.
+  const content = asChild
+    ? children
+    : React.Children.map(children, c =>
+        typeof c === "string" || typeof c === "number" ? <span className="text-trim">{c}</span> : c)
 
   return (
     <Comp
@@ -55,7 +62,7 @@ function Button({
       data-variant={variant}
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
-      {...props} />
+      {...props}>{content}</Comp>
   );
 }
 

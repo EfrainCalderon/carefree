@@ -38,7 +38,7 @@ export function DoctorFinderCard({ reason }) {
                 <div>
                   <p className="font-semibold">{n}</p>
                   <p className="flex items-center gap-1 text-[13px] text-muted-foreground"><MapPin className="size-3.5" />{(1.2 + i * 1.7).toFixed(1)} mi · Call to check hours</p>
-                  <span className="mt-1 inline-flex rounded-full bg-tint px-2.5 py-0.5 text-xs font-semibold">Sliding-scale fees</span>
+                  <span className="mt-1 inline-block rounded-full bg-tint px-2.5 py-0.5 trim:py-1.5 text-trim text-xs font-semibold">Sliding-scale fees</span>
                 </div>
                 <Button variant="outline" aria-label={`Call ${n}`}><Phone />Call</Button>
               </div>

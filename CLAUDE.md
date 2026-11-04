@@ -24,6 +24,15 @@ src/tokens.css  ← CSS custom properties, auto-generated, do not edit manually
 Every component CSS file reads from --cf-* variables
 ```
 
+### Line height is a token
+`lineHeight.none/tight/snug/normal/relaxed` in tokens.json (`--cf-lineHeight-*`). `src/app/index.css` routes the html default, every Tailwind `text-*` size and every `leading-*` utility through them, so changing `lineHeight.normal` changes all body text in the app and Storybook. The Claude design system mirrors them as `leading-*` tokens (update it by hand after a change).
+
+### Leading trim (text measured from cap top to baseline)
+Text inside padded shapes (bubbles, buttons, chips, pills, badges, tip boxes) uses `text-box: trim-both cap alphabetic`, so padding is the visible space around the letters, like Figma's vertical trim. Line height only spaces lines apart.
+- Utility `text-trim` and variant `trim:` live in `src/app/index.css`. `trim:` applies only where trimming is supported (Chrome/Edge 133+, Safari 18.2+). Firefox keeps the untrimmed padding.
+- A flex container can't be trimmed, so the label needs its own element. `Button` wraps text children in `<span class="text-trim">` automatically.
+- Bubble: `py-2.5 trim:py-3.5` gives 14px on all four sides where supported.
+
 ### Token naming convention
 All CSS custom properties are prefixed `--cf-` (for Carefree).
 Examples: `--cf-color-neutral-900`, `--cf-spacing-4`, `--cf-border-radius-lg`

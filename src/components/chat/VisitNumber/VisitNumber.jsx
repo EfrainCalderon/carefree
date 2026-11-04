@@ -8,6 +8,6 @@ export function VisitNumber({ n, on, size }) {
       'flex shrink-0 items-center justify-center rounded-control font-extrabold',
       size === 'lg' ? 'size-10 text-[19px]' : 'size-7 text-sm',
       on ? 'bg-primary text-primary-foreground shadow-[inset_0_0_0_2px_var(--primary),inset_0_0_0_4px_#fff]' : 'bg-tint text-primary'
-    )}>{n}</span>
+    )}><span className="text-trim">{n}</span></span>
   )
 }

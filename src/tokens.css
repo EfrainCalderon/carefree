@@ -69,9 +69,11 @@
   --cf-fontWeight-medium: 500;
   --cf-fontWeight-semibold: 600;
   --cf-fontWeight-bold: 800;
-  --cf-lineHeight-tight: 1.3;
+  --cf-lineHeight-none: 1;
+  --cf-lineHeight-tight: 1.25;
+  --cf-lineHeight-snug: 1.375;
   --cf-lineHeight-normal: 1.5;
-  --cf-lineHeight-relaxed: 1.6;
+  --cf-lineHeight-relaxed: 1.625;
   --cf-fontFamily-sans: Overpass, -apple-system, "Segoe UI", sans-serif;
   --cf-fontFamily-mono: "Overpass Mono", ui-monospace, monospace;
   --cf-boxShadow-sheet: 0 -12px 40px rgb(22 41 31 / 0.18);

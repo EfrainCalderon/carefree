@@ -11,7 +11,7 @@ export function EmailPlanForm() {
   const [sent, setSent] = useState(false)
   if (sent)
     return (
-      <p role="status" className="rounded-control bg-tint p-3 text-[15px]">
+      <p role="status" className="rounded-control bg-tint p-3 text-trim text-[15px]">
         Prototype: nothing was sent. The real version emails your plan to {email}.
       </p>
     )
