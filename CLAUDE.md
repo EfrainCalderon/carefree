@@ -31,7 +31,7 @@ Every component CSS file reads from --cf-* variables
 Text inside padded shapes (bubbles, buttons, chips, pills, badges, tip boxes) uses `text-box: trim-both cap alphabetic`, so padding is the visible space around the letters, like Figma's vertical trim. Line height only spaces lines apart.
 - Utility `text-trim` and variant `trim:` live in `src/app/index.css`. `trim:` applies only where trimming is supported (Chrome/Edge 133+, Safari 18.2+). Firefox keeps the untrimmed padding.
 - A flex container can't be trimmed, so the label needs its own element. `Button` wraps text children in `<span class="text-trim">` automatically.
-- Bubble: `py-2.5 trim:py-3.5` gives 14px on all four sides where supported.
+- Bubble: assistant `trim:pt-3 trim:pb-4` (12 above caps, 16 below baseline, because descenders like g/p/y hang ~3px into the bottom and sentences always have them), user `trim:py-3.5` (even 14; replies are mostly numbers and short words). Measured: tallest letters 12.1px from the top, descenders 12.5px from the bottom, on any number of lines.
 
 ### Token naming convention
 All CSS custom properties are prefixed `--cf-` (for Carefree).
