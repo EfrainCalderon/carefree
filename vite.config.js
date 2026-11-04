@@ -8,13 +8,4 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(import.meta.dirname, 'src') },
   },
-  build: {
-    rollupOptions: {
-      // Chat app at /, original v1 app at /v1.html
-      input: {
-        main: path.resolve(import.meta.dirname, 'index.html'),
-        v1: path.resolve(import.meta.dirname, 'v1.html'),
-      },
-    },
-  },
 })

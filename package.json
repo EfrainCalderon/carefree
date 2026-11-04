@@ -13,7 +13,6 @@
     "chromatic": "npx chromatic --project-token=chpt_89e4b71ac7704d4"
   },
   "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.0",
     "lucide-react": "^1.64.0",

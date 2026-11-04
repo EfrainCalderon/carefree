@@ -1,6 +1,6 @@
 // Group a person's eligible recommendations by the visits they'll actually make.
 //
-// recs:   recommendations already filtered for this person (see filterRecs in App.jsx)
+// recs:   recommendations already filtered for this person (see eligibleRecs in src/app/logic.js)
 // visits: the `visits` array from /data/visits.json
 //
 // Returns visits in visits.json order, skipping empty ones. Each visit has

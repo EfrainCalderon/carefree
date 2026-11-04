@@ -1,0 +1,6 @@
+import { AskDoctorList } from './AskDoctorList'
+import { marcusPlan } from '../fixtures'
+
+export default { title: 'Chat/Plan/AskDoctorList', component: AskDoctorList, tags: ['autodocs'] }
+
+export const Marcus = { args: { recs: marcusPlan.askDoctor } }

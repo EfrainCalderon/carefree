@@ -1,0 +1,25 @@
+import { Meta } from '@storybook/blocks'
+
+<Meta title="Introduction" />
+
+# Carefree
+
+Carefree helps people, especially men 35–55 who haven’t seen a doctor in years, find the preventive care their insurance already covers at $0, then leave with a one-page visit plan.
+
+This Storybook shows every component the live app uses, with the same code and the same theme.
+
+## How it fits together
+
+- **Tokens** live in `tokens/tokens.json` (managed in Figma with Tokens Studio) and build into `src/tokens.css` as `--cf-*` variables.
+- **Primitives** are [shadcn/ui](https://ui.shadcn.com) components in `src/components/ui/`, themed by those tokens.
+- **Chat components** in `src/components/chat/` are built from the primitives. The app (`src/app/ChatApp.jsx`) only composes them.
+- **Stories** sit next to each component, so the app and Storybook always render the same code.
+
+## Principles
+
+- Visits, not benefits: organize around the appointments a person books.
+- Calm, one color: greens only, no grade badges or traffic-light colors.
+- Plain words, and every answer visibly changes the plan.
+- Show value before asking anything personal.
+
+Sample data comes from the real recommendations, using the app’s own plan logic for Marcus (47, insured through work) and Linda (67, Medicare).
