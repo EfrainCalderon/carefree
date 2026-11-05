@@ -268,6 +268,8 @@ The v1 soft exit for non-private insurance was too cautious. All three groups ca
 - Question order and plan structure stay the same.
 
 ## Idea: nearby community health center finder by ZIP (Oct 2026)
+**Set aside (Nov 2026)** for the MVP: provider data goes stale, and keeping our own copy fresh is ongoing work. `FindDoctorCard` gives text plus at most one link out, picked by `findDoctorVariant(insurance, doctor)` in logic.js: insured + doctor → no card; insured + no/not sure → call the number on your card and ask for in-network primary care doctors taking new patients (Medicare: 1-800-MEDICARE or the plan card); insurance not sure → the same, plus a link for if they have none; uninsured + no/not sure → HRSA's search (https://findahealthcenter.hrsa.gov/); uninsured + has a doctor → "If cost is a worry": ask the office the self-pay price, health centers as the fallback. Checked: HRSA's sites file (data.hrsa.gov, updated daily, has coordinates and phones) and the Census ZCTA file both download fine if we revisit this. Zocdoc's API is partner-only; HRSA's old embed widget is gone.
+
 Turns "uninsured" and "no primary care doctor" from dead ends into a next step. Health centers take uninsured patients (sliding-scale fees) as well as Medicaid, Medicare, and most private insurance.
 
 - **Data (verify):** HRSA's downloadable health center service delivery sites file (believed to be on data.hrsa.gov) has addresses, phone numbers, and lat/long. ZIP → lat/long comes from the Census ZCTA Gazetteer file (public domain). Ship both as static files, trimmed to the needed columns.
@@ -284,7 +286,7 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - **shadcn/ui** (radix-nova, Tailwind v4) in `src/components/ui/`. Theme variables in `src/app/index.css` map to `--cf-*` tokens, so Tokens Studio still drives colors. Tailwind is scoped to the lofi entry. This departs from "plain CSS only" as an experiment.
 - **React upgraded to 19 on this branch** because current shadcn components rely on React 19's ref-as-prop (React 18 broke Radix triggers and sheets). Storybook 8.6 is not yet verified on React 19.
 - Superseded Nov 2026: no conversation, no text input, no voice. See "Form redesign" below.
-- Stubs: email doesn't send, clinic finder shows labeled sample results, stats are drafts marked "verify".
+- Stubs: email doesn’t send; stats are drafts marked "verify".
 - Layout (superseded): the plan was a side panel / sheet. It's now its own page.
 - Claude Design prompt for visual exploration: `docs/claude-design-prompt.md`.
 
@@ -308,7 +310,7 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 Chat input wasn't adding anything, and once the plan exists there's no reason to look back at the conversation. So Carefree is now a short form that ends on a plan page.
 - **Flow:** start screen → age, sex, insurance, doctor (one per screen, a tap answers and moves on, Back on every step) → "Want a more accurate plan?" → Yes: the extra questions (personal questions, then the sexual health list) → plan. No: straight to the plan, with the same offer ("Make your plan more accurate") at the very bottom. Improving from there returns to a revised plan.
 - **Progress:** segmented bar above each question. Finished steps are green-800, the current one green-300. The basics ("About you", 4) and the extra questions ("Improve your plan") each get their own bar.
-- **Plan page:** header, insurance note and clinic finder, a lead line ("Start with visit 1…"), visit cards, ask-your-doctor (only after the extra questions), then email. "Start over" in the top bar.
+- **Plan page:** header, insurance note and how to find a doctor (FindDoctorCard), a lead line ("Start with visit 1…"), visit cards, ask-your-doctor (only after the extra questions), then email. "Start over" in the top bar.
 - **Motion:** the only animation is the plan reveal. Once fonts load and the page paints, sections fade up one by one (`.cf-rise`: 700ms, 24px, 150ms apart), email last. Reduced motion shows everything at once. No nudge, no panel animation.
 - **Dropped:** the mental health "what they'll ask" card ("Two more things for your visit"). Telling people who to see is enough; the doctor handles the questions.
 - **Copy:** well-woman visit is "An OB-GYN" (not "or your primary care doctor", which confused). Per-card coverage lines are gone (repetitive); coverage facts live in one place: the plan header ($0 in-network) and an insurance note (Medicare: "free when your doctor accepts Medicare"; uninsured). Visit-specific gotchas stay as tips (lab: vitamin D; imaging: screening vs symptoms). The lab "fast beforehand" tip was removed (the lab's job).

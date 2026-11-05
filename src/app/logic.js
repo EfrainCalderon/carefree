@@ -209,7 +209,18 @@ export const INSURANCE_NOTES = {
   medicare: 'These are free when your doctor accepts Medicare.',
   medicaid: 'Medicaid covers these free in most states. If you’re not sure, call the number on your card and ask about preventive care.',
   unsure: 'Most job-based and Marketplace plans cover these at $0. To confirm, call the number on your insurance card.',
-  none: 'Without insurance these aren’t automatically free, but you can still get most of them. Community health centers charge based on what you can pay, and health departments often test for free.',
+  none: 'Without insurance these aren’t automatically free, but you can still get most of them at low or no cost. Health departments often test for HIV and hepatitis for free.',
+}
+
+// Which "find a doctor" help the plan shows, from the insurance and doctor answers.
+// Someone with insurance and a doctor needs none: they call their doctor's office.
+export function findDoctorVariant(insurance, doctor) {
+  const hasDoctor = doctor === 'yes'
+  if (insurance === 'none') return hasDoctor ? 'cost' : 'clinic'
+  if (hasDoctor) return null
+  if (insurance === 'medicare') return 'medicare'
+  if (insurance === 'unsure') return 'unsure'
+  return 'insurer'
 }
 
 // Everything the plan needs, computed from answers.
@@ -222,5 +233,5 @@ export function derivePlan(data, s) {
     ...visitForInsurance(v, s.insurance),
     items: v.items.map(it => ({ ...it, note: range && ageNote(it.rec, range) })),
   }))
-  return { range, eligible, planned, askDoctor, visits }
+  return { range, eligible, planned, askDoctor, visits, insurance: s.insurance }
 }

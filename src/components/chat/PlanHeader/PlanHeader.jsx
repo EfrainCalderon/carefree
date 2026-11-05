@@ -10,7 +10,7 @@ export function PlanHeader({ plan, ready, className }) {
       <div className="flex flex-col">
         <h1 className="text-title font-bold tracking-tight">Your visit plan</h1>
         <span className="text-[var(--cf-color-green-100)]">
-          {ready ? `${n} ${n === 1 ? 'visit' : 'visits'} · $0 with in-network providers` : 'Builds as you answer'}
+          {ready ? `${n} ${n === 1 ? 'visit' : 'visits'} · ${plan.insurance === 'none' ? 'low or no cost at a health center' : '$0 with in-network providers'}` : 'Builds as you answer'}
         </span>
       </div>
     </div>

@@ -2,9 +2,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { AGE_RANGES, INSURANCE, INSURANCE_NOTES, SEXUAL_HEALTH, derivePlan, relevantQuestions } from './logic'
+import { AGE_RANGES, INSURANCE, INSURANCE_NOTES, SEXUAL_HEALTH, derivePlan, findDoctorVariant, relevantQuestions } from './logic'
 import {
-  AgeInput, DoctorFinderCard, NoteCard, OptInCard, OptionList, PlanView, QuestionStep, StartScreen,
+  AgeInput, FindDoctorCard, NoteCard, OptInCard, OptionList, PlanView, QuestionStep, StartScreen,
 } from '@/components/chat'
 
 const SEX = [{ id: 'male', label: 'Male' }, { id: 'female', label: 'Female' }]
@@ -17,7 +17,7 @@ const BASICS = [
   { id: 'age', title: 'How old are you?', description: 'Screenings change with age. Only your age range is used.' },
   { id: 'sex', title: 'What sex were you assigned at birth?', description: 'Some screenings depend on the body you were born with.', options: SEX },
   { id: 'insurance', title: 'How do you get health insurance?', options: INSURANCE },
-  { id: 'doctor', title: 'Do you have a primary care doctor you could book with?', description: 'If not, your plan will include clinics near you.', options: DOCTOR },
+  { id: 'doctor', title: 'Do you have a primary care doctor you could book with?', description: 'If not, your plan will show you how to find one.', options: DOCTOR },
 ]
 const EMPTY = { personal: {} }
 
@@ -114,7 +114,7 @@ export function App({ data }) {
     // The plan. Notes and the clinic finder sit under the header; the offer to improve sits at the very bottom.
     const notes = [
       INSURANCE_NOTES[s.insurance] && <NoteCard key="note">{INSURANCE_NOTES[s.insurance]}</NoteCard>,
-      (s.insurance === 'none' || s.doctor === 'no') && <DoctorFinderCard key="finder" reason={s.insurance === 'none' ? 'none' : 'nodoctor'} />,
+      findDoctorVariant(s.insurance, s.doctor) && <FindDoctorCard key="finder" variant={findDoctorVariant(s.insurance, s.doctor)} insurance={s.insurance} />,
     ].filter(Boolean)
     return (
       <PlanView
