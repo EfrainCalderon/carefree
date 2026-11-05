@@ -43,7 +43,7 @@ export const Type = {
   ),
 }
 
-const SPACE = [[1, 8, 'Inside a group: icon to text, chips, lines'], [2, 16, 'Card and control inset; between groups'], [3, 24, 'Gradient surfaces; between sections and speakers'], [4, 32, 'Pills and icon tiles (height)'], [5, 40, 'One-line bubble height'], [6, 48, 'Controls and touch targets'], [8, 64, 'Visit card header']]
+const SPACE = [[1, 8, 'Inside a group: icon to text, options, progress segments'], [2, 16, 'Card and control inset; between groups'], [3, 24, 'Gradient surfaces; between sections'], [4, 32, 'Pills and icon tiles (height)'], [5, 40, 'Visit number and item icon tiles'], [6, 48, 'Controls and touch targets'], [8, 64, 'Visit card header']]
 export const Spacing = {
   render: () => (
     <div className="space-y-1">
@@ -59,7 +59,7 @@ export const Spacing = {
   ),
 }
 
-const RADII = [['sm', 8, 'Controls, tails'], ['md', 16, 'Cards'], ['lg', 24, 'Bubbles, sheets, composer'], ['full', '∞', 'Chips, pills']]
+const RADII = [['sm', 8, 'Controls, tips'], ['md', 16, 'Cards'], ['lg', 24, 'Large surfaces'], ['full', '∞', 'Progress, pills']]
 export const Shape = {
   render: () => (
     <div className="flex flex-wrap gap-3">

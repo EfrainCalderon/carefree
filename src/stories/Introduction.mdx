@@ -12,7 +12,7 @@ This Storybook shows every component the live app uses, with the same code and t
 
 - **Tokens** live in `tokens/tokens.json` (managed in Figma with Tokens Studio) and build into `src/tokens.css` as `--cf-*` variables.
 - **Primitives** are [shadcn/ui](https://ui.shadcn.com) components in `src/components/ui/`, themed by those tokens.
-- **Chat components** in `src/components/chat/` are built from the primitives. The app (`src/app/ChatApp.jsx`) only composes them.
+- **Carefree components** in `src/components/chat/` are built from the primitives: the form (start screen, progress, one question per screen) and the plan page. The app (`src/app/App.jsx`) only composes them.
 - **Stories** sit next to each component, so the app and Storybook always render the same code.
 
 ## Principles

@@ -1,4 +1,4 @@
-// Plan logic for the chat lofi. Pure functions, no React.
+// Plan logic. Pure functions, no React.
 // Source data: public/data/recommendations.json + public/data/visits.json
 import { groupByVisit } from '@/lib/visits'
 
@@ -200,22 +200,16 @@ export function visitForInsurance(visit, insurance) {
       ...visit,
       name: 'Annual Wellness Visit',
       booking_tip: 'Book an "Annual Wellness Visit", not an "annual physical". Medicare doesn’t cover a routine physical, so it can be billed. In your first year on Medicare, ask for the "Welcome to Medicare" visit.',
-      coverage: 'Covered once a year at $0 when your doctor accepts Medicare.',
-    }
-  }
-  if (insurance === 'none') {
-    return {
-      ...visit,
-      coverage: 'Without insurance this isn’t automatically free. Community health centers charge based on what you can pay, and health departments often test for free.',
     }
   }
   return visit
 }
 
 export const INSURANCE_NOTES = {
+  medicare: 'These are free when your doctor accepts Medicare.',
   medicaid: 'Medicaid covers these free in most states. If you’re not sure, call the number on your card and ask about preventive care.',
   unsure: 'Most job-based and Marketplace plans cover these at $0. To confirm, call the number on your insurance card.',
-  none: 'You can still get most of this. Community health centers charge based on what you can pay.',
+  none: 'Without insurance these aren’t automatically free, but you can still get most of them. Community health centers charge based on what you can pay, and health departments often test for free.',
 }
 
 // Everything the plan needs, computed from answers.

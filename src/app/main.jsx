@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { ChatApp } from './ChatApp'
+import { App } from './App'
 import './index.css'
 
 function useData() {
@@ -21,7 +21,7 @@ function Root() {
   const { data, error } = useData()
   if (error) return <p className="p-3">Couldn’t load screening data. Refresh to try again.</p>
   if (!data) return <p className="p-3 text-muted-foreground" role="status">Loading…</p>
-  return <ChatApp data={data} />
+  return <App data={data} />
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(

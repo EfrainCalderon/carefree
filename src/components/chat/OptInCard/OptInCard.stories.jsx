@@ -1,12 +1,6 @@
+import { fn } from '@storybook/test'
 import { OptInCard } from './OptInCard'
-import { useState } from 'react'
 
-export default { title: 'Chat/Cards/OptInCard', component: OptInCard, tags: ['autodocs'] }
+export default { title: 'Plan/OptInCard', component: OptInCard, tags: ['autodocs'], decorators: [S => <div className="max-w-[640px]"><S /></div>] }
 
-export const Default = {
-  render: () => {
-    const [value, setValue] = useState(null)
-    return <OptInCard count={4} value={value} onChoose={o => setValue(o.id)} />
-  },
-}
-export const Answered = { args: { count: 4, value: 'yes', onChoose: () => {} } }
+export const Default = { args: { count: 4, onImprove: fn() } }

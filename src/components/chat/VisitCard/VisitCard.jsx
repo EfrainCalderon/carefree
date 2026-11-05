@@ -58,7 +58,6 @@ export function VisitCard({ visit, index, defaultOpen = false }) {
           </div>
           {visit.booking_tip && <Tip label="When you book:">{visit.booking_tip}</Tip>}
           {visit.coverage_tip && <Tip label="Tip:">{visit.coverage_tip}</Tip>}
-          <p className="text-muted-foreground">{visit.coverage}</p>
         </div>
       )}
     </div>

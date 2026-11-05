@@ -46,17 +46,17 @@ Tokens Studio wraps all tokens in a named set called `"global"`. The config uses
 3. `npm run tokens:build` — regenerates `src/tokens.css`
 4. Commit and push `src/tokens.css`
 
-## Component structure (updated Nov 2026: v1 removed, chat app is the product)
+## Component structure (updated Nov 2026: the chat became a short form + plan page)
 ```
 src/
   app/
-    main.jsx        — entry: loads data, renders ChatApp
-    ChatApp.jsx     — scripted conversation + layout (side panel / sheets); only composes components
+    main.jsx        — entry: loads data, renders App
+    App.jsx         — step machine (start → 4 basics → opt-in → extra questions → plan) with Back; only composes components
     logic.js        — plan logic: age ranges, questions, buildPlan, derivePlan, stats, insurance notes
     index.css       — Tailwind + shadcn theme variables mapped to --cf-* tokens
   components/
-    ui/             — shadcn/ui primitives in use (button, input, label, card, sheet, tooltip, badge), restyled to Direction D; stories for the main ones
-    chat/<Name>/    — one folder per chat component: <Name>.jsx + <Name>.stories.jsx
+    ui/             — shadcn/ui primitives in use (button, input, label, card), restyled to Direction D; stories for the main ones
+    chat/<Name>/    — one folder per component: <Name>.jsx + <Name>.stories.jsx (folder name is historical; stories are under Form/ and Plan/)
     chat/index.js   — exports every chat component (the app imports from '@/components/chat')
     chat/fixtures.js — story sample data (Marcus 47M employer, Linda 67F Medicare) built with derivePlan
   lib/              — utils (cn), visits.js (groupByVisit)
@@ -283,27 +283,34 @@ Turns "uninsured" and "no primary care doctor" from dead ends into a next step. 
 - Code: see Component structure above (`src/app/`, `src/components/chat/`).
 - **shadcn/ui** (radix-nova, Tailwind v4) in `src/components/ui/`. Theme variables in `src/app/index.css` map to `--cf-*` tokens, so Tokens Studio still drives colors. Tailwind is scoped to the lofi entry. This departs from "plain CSS only" as an experiment.
 - **React upgraded to 19 on this branch** because current shadcn components rely on React 19's ref-as-prop (React 18 broke Radix triggers and sheets). Storybook 8.6 is not yet verified on React 19.
-- Scripted conversation, no LLM yet. Free text only matches the on-screen options; typed digits answer the age question. Voice was removed (Nov 2026), not planned.
+- Superseded Nov 2026: no conversation, no text input, no voice. See "Form redesign" below.
 - Stubs: email doesn't send, clinic finder shows labeled sample results, stats are drafts marked "verify".
-- Layout: plan is a persistent side panel ≥1024px, right sheet 768–1023px, bottom sheet <768px.
+- Layout (superseded): the plan was a side panel / sheet. It's now its own page.
 - Claude Design prompt for visual exploration: `docs/claude-design-prompt.md`.
 
 ## Design system: Direction D (Nov 2026)
 - Visual direction comes from the Claude Design canvas (https://claude.ai/artifact/DQzzwp9nUYzRkBchKNfjfp). The Claude Design System built from this repo is https://claude.ai/artifact/BG8W22kCUQUcLo1P2befCJ; use it for future Claude Design work.
 - Tokens in `tokens/tokens.json` (v1 neutral/grade tokens removed Nov 2026): `color.green` 50–950, `color.gradient`, `page`, `surface`, `border`, `feedback.error`; spacing, radius, type and size per "Scale" above; `boxShadow.sheet`; `chat` gaps 8/24; `size` touch 48 / plan 440; `motion` fast/base.
 - `src/app/index.css` maps shadcn variables to the green tokens and adds Tailwind utilities (`bg-brand`, `bg-tint`, `border-outline`, `rounded-bubble`, `rounded-card`, `shadow-sheet`, …) plus `.cf-gradient`, `.cf-gradient-bubble` and `.cf-label`. Red Hat Text is self-hosted (`src/assets/fonts/`, @font-face in `src/app/index.css`). See "Scale" above.
-- Still shadcn/ui: the base components in `src/components/ui/` (button, input, card, sheet) were restyled to Direction D states (48px targets, 2px green-900 focus ring, pressed scale .98).
+- Still shadcn/ui: the base components in `src/components/ui/` (button, input, card) were restyled to Direction D states (48px targets, 2px green-900 focus ring, pressed scale .98).
 - One color only: success/info/caution all map to greens. No grade colors in the chat UI.
 - The design system's component previews are static, hand-written renditions; if the React components change, update the system too.
 
 ## Feedback round (Nov 2026)
-- **Pacing:** the intro drips. Each message waits for a reply chip ("Show me", "Let's start") until the age question. The plan panel and the header "Your plan" button only appear once a plan exists.
+- **Pacing:** (superseded by the form redesign below)
 - **Stat removed from the flow:** a stat between questions felt random. `StatCard` stays in the library for later.
 - **Naming:** the primary care visit is "Preventive care visit", who = "Your primary care provider". These are the words people use when booking.
 - **VisitCard:** collapsed by default. Items are grouped by kind (Questions, Checks, Tests, Choices, Prescriptions) instead of per-item labels; 40px icon tiles; hover darkens the border (no fill). Visits can carry a `coverage_tip` (lab work: not every blood test counts as preventive, e.g. vitamin D).
 - **Ask your doctor** only shows if the user answered the extra questions, and lists name + doctor prompt only.
-- **Ending:** "I'm good" skips the extra cards and goes straight to "Your plan is ready." On desktop the panel opens and the email field is nudged; on mobile the plan button is nudged.
-- **Nudge state:** `.cf-nudge` (green-200 ring, pulses 3 times, static with reduced motion), `nudge` prop on Button and EmailPlanForm. Cleared when the user opens the plan or focuses the email field.
-- **Email:** a sticky bar at the bottom of the plan; the plan scrolls on its own. Send is disabled until something is typed; validated on submit with a red error.
-- **Header:** "Carefree" wordmark, no Components link. The hide-panel button sits left of the plan title.
-- **Motion:** the desktop plan panel grows open from the right (320ms) and closes faster (200ms); the content inside keeps its full width so nothing reflows. Plan sections then fade up one after another (`.cf-rise`, 400ms, 120ms apart, starting 200ms in). Reduced motion turns both off.
+- **Header:** "Carefree" wordmark, no Components link.
+
+## Form redesign (Nov 2026)
+Chat input wasn't adding anything, and once the plan exists there's no reason to look back at the conversation. So Carefree is now a short form that ends on a plan page.
+- **Flow:** start screen → age, sex, insurance, doctor (one per screen, a tap answers and moves on, Back on every step) → "Want a more accurate plan?" → Yes: the extra questions (personal questions, then the sexual health list) → plan. No: straight to the plan, with the same offer ("Make your plan more accurate") at the very bottom. Improving from there returns to a revised plan.
+- **Progress:** segmented bar above each question. Finished steps are green-800, the current one green-300. The basics ("About you", 4) and the extra questions ("Improve your plan") each get their own bar.
+- **Plan page:** header, insurance note and clinic finder, a lead line ("Start with visit 1…"), visit cards, ask-your-doctor (only after the extra questions), then email. "Start over" in the top bar.
+- **Motion:** the only animation is the plan reveal. Once fonts load and the page paints, sections fade up one by one (`.cf-rise`: 700ms, 24px, 150ms apart), email last. Reduced motion shows everything at once. No nudge, no panel animation.
+- **Dropped:** the mental health "what they'll ask" card ("Two more things for your visit"). Telling people who to see is enough; the doctor handles the questions.
+- **Copy:** well-woman visit is "An OB-GYN" (not "or your primary care doctor", which confused). Per-card coverage lines are gone (repetitive); coverage facts live in one place: the plan header ($0 in-network) and an insurance note (Medicare: "free when your doctor accepts Medicare"; uninsured). Visit-specific gotchas stay as tips (lab: vitamin D; imaging: screening vs symptoms). The lab "fast beforehand" tip was removed (the lab's job).
+- **Components:** StartScreen, Progress, QuestionStep, OptionList, PlanView are new. Removed: Bubble, Typing, Composer, Chips, AddedLine, MentalHealthCard, SexualHealthCard (now a QuestionStep with `details`), PlanSnapshot, PlanPanel, ui/sheet, ui/badge. OptInCard is now the bottom-of-plan offer. StatCard is kept but unused.
+- **Unused tokens to prune in Tokens Studio:** `chat` gaps, `size.plan`, `boxShadow.sheet`.

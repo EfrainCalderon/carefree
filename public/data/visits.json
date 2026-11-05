@@ -22,8 +22,8 @@
       "aka": [
         "Annual gyn exam"
       ],
-      "who": "An OB-GYN or your primary care doctor",
-      "description": "A yearly preventive visit focused on reproductive and sexual health. Can be combined with a primary care checkup.",
+      "who": "An OB-GYN",
+      "description": "A yearly preventive visit focused on reproductive and sexual health.",
       "booking_tip": "Book it as a \"well-woman visit\".",
       "coverage": "Covered once a year at $0 under the ACA's women's preventive services."
     },
@@ -47,9 +47,9 @@
       ],
       "who": "Your doctor's office or a lab",
       "description": "A blood or urine sample. Often taken the same day as your checkup, otherwise at a lab with the order your doctor gives you.",
-      "booking_tip": "Ask whether you need to fast beforehand.",
+      "booking_tip": null,
       "coverage": "Covered at $0 when ordered as part of a preventive screening.",
-      "coverage_tip": "Not every blood test counts as preventive, even when your doctor orders it. Vitamin D is a common example. To be sure a test is $0, call your insurer and ask if it’s covered as preventive care."
+      "coverage_tip": "Not every blood test is preventive. Vitamin D often isn’t. If you’re unsure, ask your insurer."
     },
     {
       "id": "imaging",
@@ -61,7 +61,8 @@
       "who": "A hospital or imaging center",
       "description": "A scan done somewhere other than your doctor's office, like a mammogram, low-dose CT, ultrasound, or bone density test.",
       "booking_tip": "Most scans need an order from your doctor first. Mammograms often don't.",
-      "coverage": "Covered at $0 when it's a screening, not a follow-up for symptoms."
+      "coverage": "Covered at $0 when it's a screening, not a follow-up for symptoms.",
+      "coverage_tip": "Free when it’s a screening. A scan for symptoms can be billed."
     },
     {
       "id": "colorectal",

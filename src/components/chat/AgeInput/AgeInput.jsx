@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-export function AgeInput({ value, onSubmit }) {
+export function AgeInput({ onSubmit }) {
   const [text, setText] = useState('')
   const [error, setError] = useState('')
-  if (value != null) return null
   const submit = e => {
     e.preventDefault()
     const n = Number(text)

@@ -36,7 +36,6 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
-  nudge = false,
   ...props
 }) {
   const Comp = asChild ? Slot.Root : "button"
@@ -46,8 +45,7 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      data-nudge={nudge || undefined}
-      className={cn(buttonVariants({ variant, size, className }), nudge && "cf-nudge")}
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props} />
   );
 }

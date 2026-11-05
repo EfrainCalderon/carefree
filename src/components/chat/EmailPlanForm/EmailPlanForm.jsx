@@ -4,13 +4,12 @@ import { Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
 
 const VALID = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 // Send is disabled until something is typed. On submit, a malformed address shows a red error
 // (the only place Carefree uses red). Stub: the real version posts to api/send-plan.js (Resend).
-export function EmailPlanForm({ nudge, onFocus }) {
+export function EmailPlanForm() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState(false)
   const [sent, setSent] = useState(false)
@@ -37,8 +36,6 @@ export function EmailPlanForm({ nudge, onFocus }) {
           value={email}
           aria-invalid={error}
           aria-describedby={error ? 'plan-email-error' : undefined}
-          className={cn(nudge && !email && 'cf-nudge')}
-          onFocus={onFocus}
           onChange={e => { setEmail(e.target.value); if (error && VALID.test(e.target.value.trim())) setError(false) }}
         />
         <Button type="submit" disabled={!email.trim()}><Mail />Send</Button>

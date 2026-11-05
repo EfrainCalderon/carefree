@@ -1,22 +1,16 @@
-// OptInCard: The one gate before personal questions.
+// OptInCard: At the bottom of the plan, a second chance to answer the extra questions.
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Chips } from '../Chips/Chips'
 
-export function OptInCard({ count, value, onChoose }) {
+export function OptInCard({ count, onImprove }) {
   return (
-    <Card className="max-w-md">
+    <Card>
       <CardContent className="space-y-2">
         <p>
-          <span className="block text-heading font-bold">A few quick questions could add up to {count} more free {count === 1 ? 'screening' : 'screenings'}.</span>
-          <span className="text-muted-foreground">About a minute. Skip any question. Your answers stay on this device.</span>
+          <span className="block text-heading font-bold">Make your plan more accurate</span>
+          <span className="text-muted-foreground">A few quick questions could add up to {count} more free {count === 1 ? 'screening' : 'screenings'}. About a minute. Your answers stay on this device.</span>
         </p>
-        <Chips
-          label="Improve your plan?"
-          keepAfterAnswer
-          value={value}
-          onSelect={onChoose}
-          options={[{ id: 'yes', label: 'Improve my plan' }, { id: 'no', label: 'I’m good' }]}
-        />
+        <Button variant="outline" onClick={onImprove}>Improve my plan</Button>
       </CardContent>
     </Card>
   )

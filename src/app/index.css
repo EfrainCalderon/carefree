@@ -128,23 +128,11 @@
     --caution: var(--cf-color-green-600);
 }
 
-/* Brand gradient used on user bubbles and plan headers */
+/* Brand gradient used on the plan header */
 .cf-gradient { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 55%, var(--cf-color-gradient-end) 100%); color: #fff; }
-.cf-gradient-bubble { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 70%); color: #fff; }
-/* Nudge: suggests the one thing to do next (open the plan, enter an email). A soft green ring that
-   breathes three times, then stays. Static under reduced motion. */
-.cf-nudge { box-shadow: 0 0 0 4px var(--cf-color-green-200); animation: cf-nudge 1.6s ease-in-out 3; }
-@keyframes cf-nudge { 50% { box-shadow: 0 0 0 8px var(--cf-color-green-100); } }
-
-/* Rise: plan sections fade up one after another. Each element sets its own animation-delay. */
-.cf-rise { animation: cf-rise 400ms cubic-bezier(.2, .8, .2, 1) both; }
-@keyframes cf-rise { from { opacity: 0; transform: translateY(16px); } }
-/* Desktop plan panel opens by growing from the right edge, so the chat eases over instead of jumping.
-   Closing is quicker. The content inside keeps its full width, so nothing reflows while it moves. */
-.cf-panel-in { animation: cf-panel-in 320ms cubic-bezier(.2, .8, .2, 1); }
-.cf-panel-out { animation: cf-panel-out 200ms cubic-bezier(.4, 0, 1, 1) forwards; }
-@keyframes cf-panel-in { from { width: 0; } }
-@keyframes cf-panel-out { to { width: 0; } }
+/* Rise: plan sections fade up one after another, Apple-style. Each element sets its own animation-delay. */
+.cf-rise { animation: cf-rise 700ms cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes cf-rise { from { opacity: 0; transform: translateY(24px); } }
 @media (prefers-reduced-motion: reduce) { .cf-rise { animation: none; } }
 
 /* Section label: same size as body (16px minimum), set apart by weight and color. */

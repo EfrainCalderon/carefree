@@ -1,7 +1,7 @@
 import { VisitCard } from './VisitCard'
 import { lindaPlan, marcusPlan } from '../fixtures'
 
-export default { title: 'Chat/Plan/VisitCard', component: VisitCard, tags: ['autodocs'], decorators: [S => <div className="w-(--cf-size-plan)"><S /></div>] }
+export default { title: 'Plan/VisitCard', component: VisitCard, tags: ['autodocs'], decorators: [S => <div className="max-w-[640px]"><S /></div>] }
 
 // Cards start closed in the app. Items are grouped by kind; the icon says which.
 export const Open = { args: { visit: marcusPlan.visits[0], index: 0, defaultOpen: true } }
