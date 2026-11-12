@@ -17,7 +17,7 @@ export function EmailDialog({ plan, answers, triggerClassName, defaultOpen = fal
               <DialogTitle className="text-heading font-bold">Email your plan</DialogTitle>
               <DialogDescription className="text-muted-foreground">We don’t save your email address.</DialogDescription>
             </div>
-            <DialogClose asChild><Button variant="ghost" size="icon-lg" className="-mt-1 -mr-1 shrink-0" aria-label="Close"><X /></Button></DialogClose>
+            <DialogClose asChild><Button variant="ghost" size="icon-lg" className="-mt-1 shrink-0" aria-label="Close"><X /></Button></DialogClose>
           </div>
           <EmailPlanForm plan={plan} answers={answers} {...form} />
         </div>
