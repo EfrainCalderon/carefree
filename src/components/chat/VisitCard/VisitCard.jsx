@@ -13,12 +13,13 @@ import { VisitIcon } from '../VisitIcon/VisitIcon'
 const GROUP_ICONS = { ask: ClipboardList, talk: MessageCircle, questions: MessageCircleQuestion, checks: Gauge, maybe: CircleHelp }
 
 // A group reads like a small version of the card's header: an icon tile the same size and tint as the
-// visit's, with the label and its rows beside it.
+// visit's, with the label and its rows beside it. Under 400px wide the tiles (decoration only) are hidden so
+// the words get the width.
 function Group({ id, label, children }) {
   const Icon = GROUP_ICONS[id]
   return (
     <section className="flex gap-2">
-      <span aria-hidden className={cn('flex size-5 shrink-0 items-center justify-center rounded-control text-primary', Icon && 'bg-tint')}>
+      <span aria-hidden className={cn('flex size-5 shrink-0 items-center justify-center rounded-control text-primary max-[399px]:hidden', Icon && 'bg-tint')}>
         {Icon && <Icon className="size-3" strokeWidth={1.75} />}
       </span>
       <div className="min-w-0 flex-1">
@@ -50,9 +51,10 @@ export function VisitCard({ visit, defaultOpen = false, askIf = [], showSay = tr
   return (
     // Hover darkens the border instead of filling the card.
     <article className="rounded-card border bg-card transition-colors duration-(--cf-motion-fast) has-[h3>button:hover]:border-outline">
-      <div className="relative flex items-center gap-2 p-2">
+      {/* On a phone the icon and chevron sit at the top, beside the name, so a wrapped header reads from the top. */}
+      <div className="relative flex items-start gap-2 p-2 sm:items-center">
         {/* The icon and chevron let clicks through, so the whole header opens and closes the card. */}
-        <div className="pointer-events-none"><VisitIcon id={visit.id} isNew={hasNew && !open} /></div>
+        <div className="pointer-events-none max-[399px]:hidden"><VisitIcon id={visit.id} isNew={hasNew && !open} /></div>
         <div className="min-w-0 flex-1">
           <h3 className="text-heading font-bold">
             {/* The button's hit area covers the whole header; a term in the line below stays tappable on top of it. */}
@@ -79,7 +81,7 @@ export function VisitCard({ visit, defaultOpen = false, askIf = [], showSay = tr
       <Collapse open={open} id={id}>
         <div className="mx-2 space-y-2 border-t border-tint py-2">
           {((showSay && visit.say) || visit.how) && (
-            <div className="space-y-1 pl-7">
+            <div className="space-y-1 min-[400px]:pl-7">
               {showSay && visit.say && <Script label="When you call, say">{visit.say}</Script>}
               {visit.how && <p>{visit.how}</p>}
             </div>
@@ -104,7 +106,7 @@ export function VisitCard({ visit, defaultOpen = false, askIf = [], showSay = tr
         </div>
       </Collapse>
       {/* The tip shows open or closed: it's the part people most need before they go. */}
-      {visit.tip && <p className="mx-2 border-t border-tint py-2 pl-7 text-muted-foreground"><span className="font-semibold text-foreground">Good to know:</span> {visit.tip}</p>}
+      {visit.tip && <p className="mx-2 border-t border-tint py-2 text-muted-foreground min-[400px]:pl-7"><span className="font-semibold text-foreground">Good to know:</span> {visit.tip}</p>}
     </article>
   )
 }

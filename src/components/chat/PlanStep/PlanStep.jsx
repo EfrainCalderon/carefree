@@ -2,6 +2,8 @@
 // The steps are equal in weight; their order says what comes first. The step you're on has the filled marker
 // (the one place dark green means "do this"). A step you've finished folds down to its label with a check,
 // and tapping it opens it again. Tapping any marker moves you to that step.
+// Below 640px there's no rail and no indent: the marker sits at the start of the label, and the step's content
+// uses the full width, so cards on a phone aren't squeezed. The marker's fill and check still show where you are.
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -13,11 +15,11 @@ export function PlanStep({ label, detail, state = 'next', first = false, last = 
   const done = state === 'done'
   const current = state === 'current'
   return (
-    <li className={cn('grid grid-cols-[32px_minmax(0,1fr)]', className)} aria-current={current ? 'step' : undefined}>
+    <li className={cn('grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[32px_minmax(0,1fr)]', className)} aria-current={current ? 'step' : undefined}>
       {/* The marker sits in the middle of the label's row, whatever that row's height. */}
-      <div className="relative flex items-center">
-        {!first && <span aria-hidden className={cn(RAIL, 'top-0 bottom-1/2')} style={{ left: 16 }} />}
-        {!last && <span aria-hidden className={cn(RAIL, 'top-1/2 bottom-0')} style={{ left: 16 }} />}
+      <div className="relative -ml-1 flex items-center sm:ml-0">
+        {!first && <span aria-hidden className={cn(RAIL, 'top-0 bottom-1/2 hidden sm:block')} style={{ left: 16 }} />}
+        {!last && <span aria-hidden className={cn(RAIL, 'top-1/2 bottom-0 hidden sm:block')} style={{ left: 16 }} />}
         <button
           type="button"
           aria-label={`${done ? 'Reopen' : 'Go to'}: ${label}`}
@@ -41,8 +43,8 @@ export function PlanStep({ label, detail, state = 'next', first = false, last = 
         </h2>
         {!done && aside}
       </div>
-      <div className="relative">{!last && <span aria-hidden className={cn(RAIL, 'inset-y-0')} style={{ left: 16 }} />}</div>
-      <div className={cn(!last && 'pb-3', !done && 'pt-1')}>{!done && children}</div>
+      <div className="relative hidden sm:block">{!last && <span aria-hidden className={cn(RAIL, 'inset-y-0')} style={{ left: 16 }} />}</div>
+      <div className={cn('col-span-2 sm:col-span-1', !last && 'pb-3', !done && 'pt-1')}>{!done && children}</div>
     </li>
   )
 }
