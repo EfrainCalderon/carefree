@@ -57,15 +57,15 @@ export function PlanView({ plan, answers, onStartOver, actions, offer, at = 0, o
   const scheduled = book.filter(v => v.say)
   return (
     <div className="space-y-3">
-      {/* Title and cost, then the answers, then the actions. From 640px the actions sit beside the title and the answers run full width, so Start over ends on the same edge as Print. */}
+      {/* Title and cost, then the answers, then the actions. From 640px the actions sit beside the title and the answers run full width, so Start over ends on the same edge as Print. On a phone Start over runs on from the answers like the next words in the sentence, so it wraps with them. */}
       <div className="grid gap-x-2 gap-y-1 sm:grid-cols-[1fr_auto]">
         <div className="space-y-1 sm:col-start-1 sm:row-start-1">
           <h1 ref={heading} tabIndex={-1} className="text-display font-bold tracking-tight focus:outline-none">Your plan</h1>
           <p><RichText>{plan.coverage}</RichText></p>
         </div>
         {answers && (
-          <div className="flex flex-wrap items-baseline justify-between gap-x-2 text-muted-foreground sm:col-span-2 sm:row-start-2">
-            <p>
+          <div className="text-muted-foreground sm:col-span-2 sm:row-start-2 sm:flex sm:items-baseline sm:justify-between sm:gap-2">
+            <p className="inline sm:block">
               {answers.map((a, i) => (
                 <span key={a.id}>
                   {i > 0 && ', '}
@@ -73,7 +73,8 @@ export function PlanView({ plan, answers, onStartOver, actions, offer, at = 0, o
                 </span>
               ))}.
             </p>
-            {onStartOver && <button type="button" className="ml-auto cursor-pointer rounded-[2px] underline decoration-1 underline-offset-4 hover:decoration-2 hover:text-foreground" onClick={onStartOver}>Start over</button>}
+            {' '}
+            {onStartOver && <button type="button" className="cursor-pointer whitespace-nowrap rounded-[2px] underline decoration-1 underline-offset-4 hover:decoration-2 hover:text-foreground" onClick={onStartOver}>Start over</button>}
           </div>
         )}
         <div className="mt-1 sm:col-start-2 sm:row-start-1 sm:mt-0">{actions}</div>
