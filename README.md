@@ -72,14 +72,6 @@ public/data/          recommendations.json and visits.json: the source for every
 src/app/              App.jsx (the flow) and logic.js (how a plan is worked out)
 src/components/chat/  one folder per component, each with its Storybook story
 src/components/ui/    shadcn/ui primitives, restyled
-src/lib/              the email builder, glossary, visit grouping, calendar reminder
+src/lib/              the email builder, glossary, visit grouping
 tokens/               design tokens
 ```
-
-`CLAUDE.md` holds the project's design decisions and the reasons behind them.
-
-## Before real traffic
-
-- Add a rate-limit rule on `/api/*` in Vercel's Firewall. The limits in `api/_guard.js` are a second layer; their counters reset when a function restarts.
-- Check the emailed plan in Gmail, Outlook and Apple Mail.
-- Visit lengths ("about 30 minutes") are drafts and need verifying.

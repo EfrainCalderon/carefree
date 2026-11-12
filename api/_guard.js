@@ -1,15 +1,5 @@
-// Shared checks for the functions that send email. They exist because each request costs a real email:
-// a plan to whatever address was typed, or a note to the maker's inbox.
-//
-// What this does:
-// - Only accepts POSTs that come from Carefree's own pages (the Origin or Referer must match the host).
-// - Caps the request size.
-// - Limits how often one visitor (by IP address) can call a function, and how often one address can be emailed.
-//
-// What it doesn't do: the counters live in this function's memory, so they reset when the function restarts
-// and aren't shared between copies of it. That stops a stuck button or a casual script, not a determined
-// sender. For that, add a rate-limit rule in Vercel's Firewall on /api/*, or back these counters with a
-// shared store such as Upstash Redis. The limits here should stay as a second layer either way.
+// Shared checks for the functions that send email: only Carefree's own pages may call them, requests are
+// small, and each visitor and each address can only be emailed a few times an hour.
 const hits = new Map()
 
 // True if `key` is still under `max` calls in the last `windowMs`; counts this call if so.

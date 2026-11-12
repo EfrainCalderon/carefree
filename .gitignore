@@ -8,3 +8,12 @@ storybook-static/
 .env
 .env.local
 .env*.local
+
+# Working notes: kept on this machine, not published
+CLAUDE.md
+carefree prd.md
+copy.md
+copy_v2.md
+hooks.md
+hooks_v2.md
+docs/
