@@ -1,8 +1,8 @@
+import { Plus } from 'lucide-react'
 import { NoteCard } from './NoteCard'
-import { INSURANCE_NOTES } from '@/app/logic'
 
-export default { title: 'Plan/NoteCard', component: NoteCard, tags: ['autodocs'] }
+export default { title: 'Plan/NoteCard', component: NoteCard, tags: ['autodocs'], decorators: [S => <div className="max-w-[640px]"><S /></div>] }
 
-export const Medicaid = { args: { children: INSURANCE_NOTES.medicaid } }
-export const NotSure = { args: { children: INSURANCE_NOTES.unsure } }
-export const Uninsured = { args: { children: INSURANCE_NOTES.none } }
+export const Insurance = { args: { children: 'To check your state, call the number on your Medicaid card and ask about preventive care.' } }
+// After the extra questions: what the answers added.
+export const Added = { args: { icon: Plus, children: <><strong>Added from your answers:</strong> Diabetes screening, Lung cancer screening (low-dose CT scan).</> } }

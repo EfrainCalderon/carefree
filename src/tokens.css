@@ -43,6 +43,7 @@
   --cf-lineHeight-display: 48px;
   --cf-fontFamily-sans: "Red Hat Text", -apple-system, "Segoe UI", sans-serif;
   --cf-boxShadow-sheet: 0 -8px 40px rgb(22 41 31 / 0.18);
+  --cf-boxShadow-popover: 0 8px 24px rgb(22 41 31 / 0.16);
   --cf-chat-gap-group: 8px;
   --cf-chat-gap-turn: 24px;
   --cf-chat-max-width: 640px;
@@ -50,4 +51,6 @@
   --cf-size-plan: 440px;
   --cf-motion-fast: 120ms;
   --cf-motion-base: 220ms;
+  --cf-motion-slow: 480ms;
+  --cf-motion-stagger: 80ms;
 }

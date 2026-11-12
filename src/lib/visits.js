@@ -17,6 +17,30 @@ export function groupByVisit(recs, visits) {
   return [...byId.values()].filter(v => v.items.length > 0)
 }
 
+// What a visit shows, written from one point of view: the label carries the verb, each item is a noun phrase.
+// A visit you book leads with what you need to say; what happens anyway comes after.
+const BOOK_GROUPS = [
+  { id: 'ask', label: 'Ask for', as: ['order', 'prescription'] },
+  { id: 'talk', label: 'Talk about', as: ['counseling'] },
+  { id: 'questions', label: 'They’ll ask about', as: ['question'] },
+  { id: 'checks', label: 'They’ll check', as: ['measurement', 'exam'] },
+]
+// A follow-up is one list, named for what it holds.
+const FOLLOW_LABELS = { lab: 'Tests for', imaging: 'Scans', colorectal: 'You choose', pharmacy: 'To pick up' }
+
+// Returns [{ id, label, items: [{ text, note }] }]. Items that read the same are shown once.
+export function visitGroups(visit) {
+  const toItems = list => {
+    const seen = new Map()
+    for (const { step, note } of list) if (!seen.has(step.action)) seen.set(step.action, { text: step.action, note: note || null })
+    return [...seen.values()]
+  }
+  if (visit.kind !== 'book') return [{ id: 'list', label: FOLLOW_LABELS[visit.id] || 'Includes', items: toItems(visit.items) }]
+  return BOOK_GROUPS
+    .map(g => ({ id: g.id, label: g.label, items: toItems(visit.items.filter(it => g.as.includes(it.step.as))) }))
+    .filter(g => g.items.length)
+}
+
 // Screener scores can only raise the signal to see a doctor, never lower it.
 // A low score never removes or downgrades a recommendation.
 export function screenerSignal(score, threshold) {

@@ -28,11 +28,11 @@ export const Color = {
 
 const TYPE = [
   ['Display · 40/48 bold', 'text-display font-bold tracking-tight', '9 in 10'],
-  ['Title · 24/32 bold', 'text-title font-bold tracking-tight', 'Your visit plan'],
+  ['Title · 24/32 bold', 'text-title font-bold tracking-tight', 'Your plan'],
   ['Heading · 20/24 bold', 'text-heading font-bold', 'Preventive care visit'],
   ['Item · 16/24 semibold', 'font-semibold', 'Blood pressure'],
-  ['Body · 16/24 regular', '', 'First, how old are you?'],
-  ['Secondary · 16/24 regular, green-600', 'text-muted-foreground', 'Your primary care provider'],
+  ['Body · 16/24 regular', '', 'What’s recommended changes with age.'],
+  ['Secondary · 16/24 regular, green-600', 'text-muted-foreground', 'With a primary care provider'],
 ]
 export const Type = {
   render: () => (
@@ -43,7 +43,7 @@ export const Type = {
   ),
 }
 
-const SPACE = [[1, 8, 'Inside a group: icon to text, options, progress segments'], [2, 16, 'Card and control inset; between groups'], [3, 24, 'Gradient surfaces; between sections'], [4, 32, 'Pills and icon tiles (height)'], [5, 40, 'Visit number and item icon tiles'], [6, 48, 'Controls and touch targets'], [8, 64, 'Visit card header']]
+const SPACE = [[1, 8, 'Inside a group: icon to text, options, progress segments'], [2, 16, 'Card and control inset; between groups'], [3, 24, 'Gradient surfaces; between sections'], [4, 32, 'Pills and icon tiles (height)'], [5, 40, 'Visit icon tiles'], [6, 48, 'Controls and touch targets'], [8, 64, 'Visit card header']]
 export const Spacing = {
   render: () => (
     <div className="space-y-1">

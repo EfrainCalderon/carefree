@@ -1,65 +1,97 @@
-// VisitCard: A collapsible visit in the plan. Items are grouped by kind (questions, checks, tests…);
-// the icon and the grouping say what kind, so there are no per-item labels.
-import { useState } from 'react'
-import { ChevronDown, FlaskConical, Gauge, MessageCircle, Pill, Split } from 'lucide-react'
+// VisitCard: One visit in the plan. Closed, it says what it is and who it's with. Open, it follows the order
+// things happen: how to book, then what to say and what to expect there, then one thing to know about cost.
+// Each group has one label that carries the verb ("Ask for", "They'll check"), so rows are short and there
+// is one icon per group, not one per row.
+import { useId, useState } from 'react'
+import { ChevronDown, CircleHelp, ClipboardList, Gauge, Info, MessageCircle, MessageCircleQuestion } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { VisitNumber } from '../VisitNumber/VisitNumber'
+import { visitGroups } from '@/lib/visits'
+import { Collapse } from '../Collapse/Collapse'
+import { Script } from '../Script/Script'
+import { RichText } from '../Term/Term'
+import { VisitIcon } from '../VisitIcon/VisitIcon'
 
-// journey.as → group. Order here is the order shown.
-const GROUPS = [
-  { id: 'questions', label: 'Questions', Icon: MessageCircle, as: ['question', 'counseling'] },
-  { id: 'checks', label: 'Checks', Icon: Gauge, as: ['measurement', 'exam'] },
-  { id: 'tests', label: 'Tests', Icon: FlaskConical, as: ['lab', 'order'] },
-  { id: 'choices', label: 'Choices', Icon: Split, as: ['procedure'] },
-  { id: 'rx', label: 'Prescriptions', Icon: Pill, as: ['prescription'] },
-]
-const groupOf = as => GROUPS.find(g => g.as.includes(as)) || GROUPS[0]
+const GROUP_ICONS = { ask: ClipboardList, talk: MessageCircle, questions: MessageCircleQuestion, checks: Gauge, maybe: CircleHelp }
 
-const Tip = ({ label, children }) => (
-  <p className="rounded-control bg-tint p-2"><strong>{label}</strong> {children}</p>
+function Group({ id, label, children }) {
+  const Icon = GROUP_ICONS[id]
+  return (
+    <section className="space-y-1">
+      <h4 className="cf-label flex items-center gap-1">
+        {Icon && <span aria-hidden className="flex size-3 shrink-0 items-center justify-center rounded-control bg-tint text-primary"><Icon className="size-2" strokeWidth={1.75} /></span>}
+        {label}
+      </h4>
+      <ul className="space-y-1">{children}</ul>
+    </section>
+  )
+}
+
+// A row: a dot in the icon column, then the words.
+const Row = ({ children }) => (
+  <li className="relative pl-4 before:absolute before:top-1 before:left-1 before:size-1 before:rounded-full before:bg-faint">{children}</li>
 )
 
-export function VisitCard({ visit, index, defaultOpen = false }) {
+// askIf: [{ rec, note }] items that may apply, shown on the first visit. finder: help finding a doctor.
+export function VisitCard({ visit, defaultOpen = false, askIf = [], finder }) {
   const [open, setOpen] = useState(defaultOpen)
-  const groups = GROUPS
-    .map(g => ({ ...g, items: visit.items.filter(it => groupOf(it.step.as) === g) }))
-    .filter(g => g.items.length)
+  const id = useId()
+  const groups = visitGroups(visit)
   return (
-    // Hover darkens the border instead of filling the card, so the number keeps its contrast.
-    <div className="rounded-card border bg-card transition-colors duration-(--cf-motion-fast) has-[>button:hover]:border-outline">
-      <button
-        className="flex min-h-8 w-full items-center gap-2 rounded-card p-2 text-left"
-        aria-expanded={open}
-        onClick={() => setOpen(o => !o)}
-      >
-        <VisitNumber n={index + 1} on={open} size="lg" />
-        <span className="flex-1">
-          <span className="block text-heading font-bold">{visit.name}</span>
-          <span className="block text-muted-foreground">{visit.who}</span>
-        </span>
-        <ChevronDown className={cn('size-3 shrink-0 text-outline transition-transform duration-(--cf-motion-base)', open && 'rotate-180')} />
-      </button>
-      {open && (
-        <div className="space-y-2 px-2 pb-2">
-          <div className="divide-y divide-tint border-t border-tint">
-            {groups.map(g => (
-              <ul key={g.id} aria-label={g.label} className="space-y-2 py-2">
-                {g.items.map(({ rec, step, note }) => (
-                  <li key={rec.id + step.action} className="flex items-center gap-2">
-                    <span aria-hidden className="flex size-5 shrink-0 items-center justify-center rounded-control bg-tint text-primary"><g.Icon className="size-3" strokeWidth={1.75} /></span>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold">{rec.plain_name}</p>
-                      <p className="text-muted-foreground">{step.action}{note && ` · ${note}`}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ))}
-          </div>
-          {visit.booking_tip && <Tip label="When you book:">{visit.booking_tip}</Tip>}
-          {visit.coverage_tip && <Tip label="Tip:">{visit.coverage_tip}</Tip>}
+    // Hover darkens the border instead of filling the card.
+    <article className="rounded-card border bg-card transition-colors duration-(--cf-motion-fast) has-[h3>button:hover]:border-outline">
+      <div className="relative flex min-h-8 items-center gap-2 p-2">
+        <VisitIcon id={visit.id} />
+        <div className="min-w-0 flex-1">
+          <h3 className="text-heading font-bold">
+            {/* The button's hit area covers the whole header; the term in the line below stays tappable on top of it. */}
+            <button
+              type="button"
+              className="rounded-card text-left outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ring"
+              aria-expanded={open}
+              aria-controls={id}
+              onClick={() => setOpen(o => !o)}
+            >
+              {visit.name}
+            </button>
+          </h3>
+          <p className="text-muted-foreground"><RichText>{visit.who}</RichText></p>
         </div>
-      )}
-    </div>
+        <ChevronDown aria-hidden className={cn('cf-no-print size-3 shrink-0 text-outline transition-transform duration-(--cf-motion-base)', open && 'rotate-180')} />
+      </div>
+      <Collapse open={open} id={id}>
+        <div className="mx-2 space-y-3 border-t border-tint py-2">
+          {(visit.say || visit.how || finder) && (
+            <div className="space-y-1">
+              {visit.say && <Script label="When you book, say">{visit.say}</Script>}
+              {visit.how && <p>{visit.how}</p>}
+              {finder}
+            </div>
+          )}
+          {groups.map(g => (
+            <Group key={g.id} id={g.id} label={g.label}>
+              {g.items.map(it => (
+                <Row key={it.text}><RichText>{it.text}</RichText>{it.note && <span className="text-muted-foreground"> · {it.note}</span>}</Row>
+              ))}
+            </Group>
+          ))}
+          {askIf.length > 0 && (
+            <Group id="maybe" label="Ask if these apply to you">
+              {askIf.map(({ rec, note }) => (
+                <Row key={rec.id}>
+                  {rec.plain_name}
+                  <span className="block text-muted-foreground"><RichText>{rec.applies}</RichText>{note && ` ${note}.`}</span>
+                </Row>
+              ))}
+            </Group>
+          )}
+          {visit.tip && (
+            <p className="flex gap-1 text-muted-foreground">
+              <span aria-hidden className="flex size-3 shrink-0 items-center justify-center"><Info className="size-2" /></span>
+              <span><span className="font-semibold text-foreground">Good to know:</span> {visit.tip}</span>
+            </p>
+          )}
+        </div>
+      </Collapse>
+    </article>
   )
 }

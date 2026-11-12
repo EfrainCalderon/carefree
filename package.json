@@ -10,6 +10,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "tokens:build": "style-dictionary build --config sd.config.js",
+    "email:preview": "node scripts/email-preview.mjs",
     "chromatic": "npx chromatic --project-token=chpt_89e4b71ac7704d4"
   },
   "dependencies": {
