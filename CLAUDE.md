@@ -361,7 +361,7 @@ A pass for cognitive load, fewer steps, and working equally well on a phone and 
 
 **Email**
 - `src/lib/planEmail.js` builds the email (HTML + plain text) from a plan; the plan page preview, the Storybook story and `api/send-plan.js` all use it. It mirrors the plan page: header, Start here, What may come after.
-- Built for every client: tables and inline styles, solid colors with a gradient as an extra, no images or web fonts (system font stack), 600px max, light-only, bullets as table cells, under 40 KB.
+- Built for every client: tables and inline styles, solid colors with a gradient as an extra, no images or web fonts (system font stack), 600px max, light-only, bullets as table cells, 15–41 KB (Gmail clips at 102 KB).
 - The browser posts the address and the answers; the server rebuilds the plan (`cleanAnswers` → `derivePlan`), so the email can only contain a real plan.
 - Running locally, Send shows a preview link instead of sending. **Not yet tested:** a real send through Resend, and rendering in real Gmail, Outlook and Apple Mail (run `npm run email:preview` and send the HTML through a testing tool).
 
