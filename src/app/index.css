@@ -141,7 +141,10 @@
 /* Fade: content inside something that just opened. */
 .cf-fade { animation: cf-fade var(--cf-motion-base) ease-out both; }
 @keyframes cf-fade { from { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { .cf-rise, .cf-fade { animation: none; } }
+/* New: a row an answer just added. The tint settles in so the eye lands on what changed. */
+.cf-new { border-radius: var(--cf-borderRadius-sm); background: var(--cf-color-green-100); box-shadow: 0 0 0 4px var(--cf-color-green-100); animation: cf-new var(--cf-motion-slow) ease-out both; }
+@keyframes cf-new { from { background: var(--cf-color-green-300); box-shadow: 0 0 0 4px var(--cf-color-green-300); } }
+@media (prefers-reduced-motion: reduce) { .cf-rise, .cf-fade, .cf-new { animation: none; } }
 
 /* Collapse: a section that opens and closes by height. Closed content stays in the page so it can print. */
 .cf-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--cf-motion-base) cubic-bezier(.16, 1, .3, 1); }
@@ -154,7 +157,7 @@
     @page { margin: 16mm; }
     body { background: #fff; }
     .cf-no-print { display: none !important; }
-    .cf-rise, .cf-fade { animation: none !important; }
+    .cf-rise, .cf-fade, .cf-new { animation: none !important; background: none !important; box-shadow: none !important; }
     .cf-collapse { grid-template-rows: 1fr !important; }
     .cf-collapse > * { visibility: visible !important; }
     .cf-gradient, .cf-gradient * { background: none !important; color: var(--cf-color-green-900) !important; }

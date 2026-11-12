@@ -26,21 +26,27 @@ function Group({ id, label, children }) {
   )
 }
 
-// A row: a dot in the icon column, then the words.
-const Row = ({ children }) => (
-  <li className="relative pl-4 before:absolute before:top-1 before:left-1 before:size-1 before:rounded-full before:bg-faint">{children}</li>
+// A row: a dot in the icon column, then the words. A row an answer just added is tinted and announced as new.
+const Row = ({ isNew, children }) => (
+  <li className={cn('relative pl-4 before:absolute before:top-1 before:left-1 before:size-1 before:rounded-full before:bg-faint', isNew && 'cf-new before:bg-primary')}>
+    {isNew && <span className="sr-only">New: </span>}{children}
+  </li>
 )
+const NONE = new Set()
 
 // askIf: [{ rec, note }] items that may apply, shown on the first visit. finder: help finding a doctor.
-export function VisitCard({ visit, defaultOpen = false, askIf = [], finder }) {
+// fresh: ids of recommendations the last answer added; their rows are marked, and a closed card's icon gets a dot.
+export function VisitCard({ visit, defaultOpen = false, askIf = [], finder, fresh = NONE }) {
   const [open, setOpen] = useState(defaultOpen)
   const id = useId()
   const groups = visitGroups(visit)
+  const isNew = it => it.ids.some(i => fresh.has(i))
+  const hasNew = groups.some(g => g.items.some(isNew))
   return (
     // Hover darkens the border instead of filling the card.
     <article className="rounded-card border bg-card transition-colors duration-(--cf-motion-fast) has-[h3>button:hover]:border-outline">
       <div className="relative flex min-h-8 items-center gap-2 p-2">
-        <VisitIcon id={visit.id} />
+        <VisitIcon id={visit.id} isNew={hasNew && !open} />
         <div className="min-w-0 flex-1">
           <h3 className="text-heading font-bold">
             {/* The button's hit area covers the whole header; the term in the line below stays tappable on top of it. */}
@@ -70,7 +76,7 @@ export function VisitCard({ visit, defaultOpen = false, askIf = [], finder }) {
           {groups.map(g => (
             <Group key={g.id} id={g.id} label={g.label}>
               {g.items.map(it => (
-                <Row key={it.text}><RichText>{it.text}</RichText>{it.note && <span className="text-muted-foreground"> · {it.note}</span>}</Row>
+                <Row key={it.text} isNew={isNew(it)}><RichText>{it.text}</RichText>{it.note && <span className="text-muted-foreground"> · {it.note}</span>}</Row>
               ))}
             </Group>
           ))}

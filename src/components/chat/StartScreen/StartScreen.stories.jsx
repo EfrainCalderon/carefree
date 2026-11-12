@@ -1,7 +1,6 @@
-import { fn } from '@storybook/test'
 import { StartScreen } from './StartScreen'
 
-export default { title: 'Form/StartScreen', component: StartScreen, tags: ['autodocs'], decorators: [S => <div className="max-w-[560px]"><S /></div>] }
+export default { title: 'Form/StartScreen', component: StartScreen, tags: ['autodocs'], decorators: [S => <div className="max-w-[400px]"><S /></div>] }
 
-// The headline, the explanation, the preview and the button arrive one after another, in reading order.
-export const Default = { args: { onStart: fn() } }
+// The headline arrives first, then the line under it. The first question follows on the page.
+export const Default = {}

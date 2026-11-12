@@ -12,7 +12,7 @@ This Storybook shows every component the live app uses, with the same code and t
 
 - **Tokens** live in `tokens/tokens.json` (managed in Figma with Tokens Studio) and build into `src/tokens.css` as `--cf-*` variables.
 - **Primitives** are [shadcn/ui](https://ui.shadcn.com) components in `src/components/ui/`, themed by those tokens.
-- **Carefree components** in `src/components/chat/` are built from the primitives: the form (start screen, progress, one question per screen) and the plan page (visit cards, booking scripts, tap-to-define terms, email and print). The app (`src/app/App.jsx`) only composes them.
+- **Carefree components** in `src/components/chat/` are built from the primitives: the answer panel (questions, answers as chips, what each answer added) and the plan it changes (visit cards, booking scripts, tap-to-define terms), plus ways to take it with you (email, a calendar reminder, a sheet to show at the visit, print). The app (`src/app/App.jsx`) only composes them.
 - **Stories** sit next to each component, so the app and Storybook always render the same code.
 
 ## Principles
@@ -20,7 +20,7 @@ This Storybook shows every component the live app uses, with the same code and t
 - Visits, not benefits: organize around the appointments a person books.
 - Calm, one color: greens only, no grade badges or traffic-light colors.
 - Plain words, and every answer visibly changes the plan.
-- Show value before asking anything personal: three taps to a plan, extra questions offered after.
+- Show value before asking anything personal: the first tap is an answer, the plan appears after the second, and every answer after that changes it in place.
 - One option per different outcome. If two answers lead to the same plan, they are one answer.
 - Say each thing once, in the order people need it: book, say, expect, cost.
 

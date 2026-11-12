@@ -51,7 +51,7 @@ Tokens Studio wraps all tokens in a named set called `"global"`. The config uses
 src/
   app/
     main.jsx        — entry: loads data, renders App
-    App.jsx         — step machine (start → 3 basics → plan → optional extra questions → revised plan); browser Back/Forward and saved answers; only composes components
+    App.jsx         — one page: the answer panel beside (or above) the plan it changes; browser Back/Forward and saved answers; only composes components
     logic.js        — plan logic: age ranges, questions, buildPlan, derivePlan, coverage line, insurance notes, find-a-doctor copy, cleanAnswers. No React and no `@/` imports, because api/send-plan.js imports it too
     index.css       — Tailwind + shadcn theme variables mapped to --cf-* tokens; .cf-rise (staged reveal), .cf-collapse, print styles
   components/
@@ -366,3 +366,29 @@ A pass for cognitive load, fewer steps, and working equally well on a phone and 
 - Running locally, Send shows a preview link instead of sending. **Not yet tested:** a real send through Resend, and rendering in real Gmail, Outlook and Apple Mail (run `npm run email:preview` and send the HTML through a testing tool).
 
 **Tokens added** (in tokens.json; pull into Tokens Studio): `boxShadow.popover`, `motion.slow` (480ms), `motion.stagger` (80ms).
+
+## Exploration: the live plan (Nov 2026, branch `ux-exploration`, built on `ux-iteration`, not merged)
+Same content, data, copy rules, email and plan cards as the UX pass. What changes is the shape: there is no form followed by a result. It's one page where the plan appears early and every answer changes it in place.
+
+**Idea**
+- The first question (age) is on the landing page, so the first tap is already an answer. No "start" button.
+- Age + sex are enough to build a plan, so it appears after **two taps**. Insurance is the third answer; until then the header says "One more answer shows what it costs".
+- After that, the health questions are optional and answered in the same place. Each answer says what it added ("Added: Diabetes screening") and those rows are tinted in the plan (`.cf-new`); a closed card that gained something gets a dot on its icon.
+- Answers read back as chips ("45–49", "Male", "Job or own plan"). Tap one to change it; the plan follows. "Start over" is no longer the only way to fix a mistake.
+
+**Layout**
+- `AnswerPanel` holds the chips, the current question (or the offer of health questions, or a summary of what was added) and a status line screen readers hear.
+- 1024px and wider: panel on the left (400px, stays in view), plan on the right. Answering on one side and watching the other change is the point, and it's what makes the desktop version more than a stretched phone layout.
+- Narrower: the panel sits above the plan. Before the plan exists, `PlanGhost` holds its place ("Your plan builds here. 2 taps to go.").
+
+**Take it with you** (`PlanActions`), for the two moments after this page
+- Email (unchanged) and print.
+- `ReminderLink`: a calendar file for the next weekday at 9:00 with the booking script. It deliberately leaves out what the person plans to ask about, because calendars are often shared or synced to work.
+- `VisitSheet`: "Show this at my visit". A full-screen sheet in big type and first person ("I'd like to ask for…"), with lines to tick off. Built from the same groups as the visit card.
+
+**Removed here:** QuestionStep, OptInCard, OutputPreview (their jobs moved into AnswerPanel and PlanGhost). StartScreen is now only the headline and one line.
+
+**Trade-offs to test before choosing between the two branches**
+- On a phone the insurance question is tall, so after the second tap the plan starts near the bottom of the screen. The iteration branch shows nothing until the third tap, but then shows only the plan.
+- Showing a plan before insurance is known means an uninsured person briefly sees a plan with no cost line. The copy never says "$0" until insurance is answered.
+- More moving parts (chips, live changes, a dialog) than a one-question-per-screen form. Watch first-time users for whether the panel and plan read as one thing.

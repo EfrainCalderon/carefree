@@ -28,11 +28,15 @@ const BOOK_GROUPS = [
 // A follow-up is one list, named for what it holds.
 const FOLLOW_LABELS = { lab: 'Tests for', imaging: 'Scans', colorectal: 'You choose', pharmacy: 'To pick up' }
 
-// Returns [{ id, label, items: [{ text, note }] }]. Items that read the same are shown once.
+// Returns [{ id, label, items: [{ text, note, ids }] }]. Items that read the same are shown once;
+// `ids` are the recommendations behind the row, so a row can be marked as new.
 export function visitGroups(visit) {
   const toItems = list => {
     const seen = new Map()
-    for (const { step, note } of list) if (!seen.has(step.action)) seen.set(step.action, { text: step.action, note: note || null })
+    for (const { rec, step, note } of list) {
+      if (!seen.has(step.action)) seen.set(step.action, { text: step.action, note: note || null, ids: [] })
+      seen.get(step.action).ids.push(rec.id)
+    }
     return [...seen.values()]
   }
   if (visit.kind !== 'book') return [{ id: 'list', label: FOLLOW_LABELS[visit.id] || 'Includes', items: toItems(visit.items) }]

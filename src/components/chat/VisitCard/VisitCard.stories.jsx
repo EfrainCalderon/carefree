@@ -15,5 +15,8 @@ export const WithAskIfTheseApply = { args: { visit: marcusImprovedPlan.visits[0]
 // A follow-up: how you get it, one list, one thing to know about cost.
 export const LabWork = { args: { visit: visit(marcusImprovedPlan, 'lab'), defaultOpen: true } }
 export const Pharmacy = { args: { visit: visit(marcusImprovedPlan, 'pharmacy'), defaultOpen: true } }
+// An answer just added a row: it is tinted, and a closed card's icon gets a dot until the next answer.
+export const NewRow = { args: { visit: marcusImprovedPlan.visits[0], defaultOpen: true, fresh: new Set(['diabetes-screening']) } }
+export const NewWhileClosed = { args: { visit: visit(marcusImprovedPlan, 'lab'), fresh: new Set(['diabetes-screening']) } }
 // Medicare renames the visit and changes the script.
 export const Medicare = { args: { visit: lindaPlan.visits[0], defaultOpen: true } }

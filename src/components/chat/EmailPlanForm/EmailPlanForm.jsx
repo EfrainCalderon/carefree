@@ -65,7 +65,7 @@ export function EmailPlanForm({ plan, answers, preview = import.meta.env.DEV, se
   const describedBy = [invalid && 'plan-email-error', 'plan-email-help'].filter(Boolean).join(' ')
   return (
     <form className="space-y-1" onSubmit={submit} noValidate>
-      <Label htmlFor="plan-email" className="font-semibold">Email this plan to yourself</Label>
+      <Label htmlFor="plan-email" className="font-semibold">Email it to yourself</Label>
       <div className="flex gap-1">
         <Input
           id="plan-email"

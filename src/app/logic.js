@@ -22,12 +22,13 @@ export const SEX = [
 
 // One option per different plan. A job, healthcare.gov, a family member's plan and TRICARE
 // all lead to the same plan, so they are one answer.
+// `short` is the answer as it reads back on a chip.
 export const INSURANCE = [
-  { id: 'private', label: 'A job, or a plan I bought', hint: 'Includes a family member’s plan, healthcare.gov, and TRICARE' },
+  { id: 'private', label: 'A job, or a plan I bought', short: 'Job or own plan', hint: 'Includes a family member’s plan, healthcare.gov, and TRICARE' },
   { id: 'medicare', label: 'Medicare' },
   { id: 'medicaid', label: 'Medicaid' },
-  { id: 'none', label: 'I don’t have insurance' },
-  { id: 'unsure', label: 'Not sure' },
+  { id: 'none', label: 'I don’t have insurance', short: 'No insurance' },
+  { id: 'unsure', label: 'Not sure', short: 'Insurance: not sure' },
 ]
 
 // Personal questions. `effects[answer]` lists rec ids to add or remove.
@@ -300,7 +301,8 @@ export function derivePlan(data, s) {
     note: INSURANCE_NOTES[s.insurance] || null,
     finder: findDoctor(s.insurance),
   }
-  return { ...plan, summary: planSummary(plan), coverage: COVERAGE[s.insurance] || COVERAGE.unsure }
+  // The plan can show before insurance is answered; it just can't say what it costs yet.
+  return { ...plan, summary: planSummary(plan), coverage: COVERAGE[s.insurance] || 'One more answer shows what it costs' }
 }
 
 // The extra questions for this person, and how many screenings they could still unlock.

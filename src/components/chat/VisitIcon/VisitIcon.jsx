@@ -14,11 +14,13 @@ const ICONS = {
   'genetic-counseling': Dna,
 }
 
-export function VisitIcon({ id }) {
+// isNew: a dot on the corner, for a closed card that an answer just added something to.
+export function VisitIcon({ id, isNew }) {
   const Icon = ICONS[id] || ClipboardList
   return (
-    <span aria-hidden className="flex size-5 shrink-0 items-center justify-center rounded-control bg-tint text-primary">
-      <Icon className="size-3" strokeWidth={1.75} />
+    <span className="relative flex size-5 shrink-0 items-center justify-center rounded-control bg-tint text-primary">
+      <Icon aria-hidden className="size-3" strokeWidth={1.75} />
+      {isNew && <span className="cf-fade absolute -top-1 -right-1 size-2 rounded-full bg-primary ring-2 ring-card"><span className="sr-only">New items inside</span></span>}
     </span>
   )
 }
