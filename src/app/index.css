@@ -130,7 +130,7 @@
 }
 
 /* Brand gradient used on the plan header */
-.cf-gradient { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 55%, var(--cf-color-gradient-end) 100%); color: #fff; }
+.cf-gradient { background: linear-gradient(160deg, var(--cf-color-gradient-start) 0%, var(--cf-color-gradient-mid) 55%, var(--cf-color-gradient-end) 100%); color: var(--cf-color-surface); }
 /* Rise: a screen's blocks fade up one after another, so the eye takes them in order (title, then text, then actions).
    Each block sets its place with --i. A screen can tune --rise-ms, --rise-gap and --rise-y; questions use a quicker, shorter rise. */
 .cf-rise {

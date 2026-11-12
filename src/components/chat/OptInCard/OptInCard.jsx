@@ -8,7 +8,7 @@ export function OptInCard({ questions, onImprove, onDismiss }) {
   return (
     <div className="space-y-2 rounded-card border bg-card p-2">
       <p>
-        <span className="block text-heading font-bold">See if a few more apply to you</span>
+        <span className="block text-heading font-bold">Check if more screenings fit you</span>
         <span className="text-muted-foreground">Things like smoking, blood pressure and weight decide which ones.</span>
       </p>
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center">

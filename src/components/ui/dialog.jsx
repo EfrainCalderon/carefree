@@ -12,7 +12,7 @@ const DialogDescription = DialogPrimitive.Description
 function DialogContent({ className, children, ...props }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="cf-fade fixed inset-0 z-50 bg-[rgb(22_41_31/0.5)]" />
+      <DialogPrimitive.Overlay className="cf-fade fixed inset-0 z-50 bg-[color-mix(in_srgb,var(--cf-color-green-900)_50%,transparent)]" />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
