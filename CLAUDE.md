@@ -410,7 +410,7 @@ Supersedes the plan-page parts of the second round (the dark first-step block, t
 
 - **Why a timeline:** a hero block ranks things, and the plan isn't ranked. Lab work isn't less important than the visit; it comes later and because of it. Order in time carries the hierarchy.
 - **Three steps** (`PlanStep`, in `PlanView`): **Now · about 5 minutes** (who to call, the script, three barrier links, "I've scheduled it"), **At your visit** (the visit cards, "I've had my visit"), **After, if your doctor orders it** (follow-up cards, "I've done these"). A finished step folds to one line with a check and reopens on tap; tapping any marker moves there. Progress (`at`) is kept with the answers, for the tab only. Step buttons are full width on a phone and right-aligned from 640px.
-- **Finished state** (`PlanDone`): "You're done for this year", when the next visit is due (a year on), and a calendar file to be reminded. No reminder email: Resend can only schedule 30 days ahead, and a year-ahead email would mean storing addresses.
+- **Finished state** (`PlanDone`): "You're done for this year" and when the next visit is due (a year on), with a nudge to set a reminder. The calendar file was removed (Nov 2026): it downloaded as a file on phones and most browsers, and we can't know which calendar someone uses. No reminder email either: it would mean storing addresses.
 - **Dark green** appears only on the current step's marker and on `PlanDone`.
 - **Who to call** is explicit (`call` in visits.json): "Call your primary care doctor to schedule a visit". Barriers (`Barriers`) are quiet links under the script that open a short answer.
 - **Header:** title, cost line, answers with "Change", and Email and Print on the right (they act on the whole plan).
