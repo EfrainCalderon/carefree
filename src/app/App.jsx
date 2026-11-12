@@ -2,7 +2,6 @@
 // move along its steps, answer a few more questions, or go back and change an answer.
 // The app only composes components.
 import { useEffect, useMemo, useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { AGE_RANGES, SEX, cleanAnswers, derivePlan, extraQuestions, insuranceOptions, sexualHealthFactors } from './logic'
 import {
   FeedbackButton, OptInCard, OptionList, PlanActions, PlanView, PrintSheet, QuestionStep, SiteFooter, StartScreen, Wordmark,
@@ -177,6 +176,7 @@ export function App({ data }) {
       <PlanView
         plan={plan}
         answers={answersLine}
+        onStartOver={startOver}
         at={at}
         onAt={setAt}
         fresh={fresh}
@@ -194,10 +194,7 @@ export function App({ data }) {
   return (
     <>
       <div className="cf-screen flex min-h-dvh flex-col bg-background pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] text-foreground">
-        <header className={`flex items-baseline justify-between pt-1 ${column}`}>
-          <Wordmark />
-          {view === 'plan' && s.age && <Button variant="ghost" className="-mr-2 text-muted-foreground" onClick={startOver}>Start over</Button>}
-        </header>
+        <header className={`flex h-6 items-center sm:h-8 ${column}`}><Wordmark /></header>
         <main className={`flex-1 pt-1 pb-6 sm:pt-3 ${column}`}>{screen()}</main>
         <footer className={`pb-2 ${column}`}><SiteFooter onReset={s.age && view !== 'plan' ? startOver : null} /></footer>
         <FeedbackButton screen={view} />

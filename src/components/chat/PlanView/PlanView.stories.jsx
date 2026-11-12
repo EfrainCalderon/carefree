@@ -5,7 +5,7 @@ import { PlanActions } from '../PlanActions/PlanActions'
 import { lindaAnswers, lindaPlan, marcusAnswers, marcusImprovedAnswers, marcusImprovedPlan, marcusPlan, samAnswers, samPlan } from '../fixtures'
 
 const marcusLine = [{ id: 'age', text: 'Age 45–49' }, { id: 'sex', text: 'male' }, { id: 'insurance', text: 'work or own insurance plan' }].map(a => ({ ...a, onEdit: fn() }))
-export default { title: 'Plan/PlanView', component: PlanView, tags: ['autodocs'], decorators: [S => <div className="max-w-[640px]"><S /></div>], args: { onAt: fn() } }
+export default { title: 'Plan/PlanView', component: PlanView, tags: ['autodocs'], decorators: [S => <div className="max-w-[640px]"><S /></div>], args: { onAt: fn(), onStartOver: fn() } }
 
 const actions = (plan, answers) => <PlanActions plan={plan} answers={answers} />
 

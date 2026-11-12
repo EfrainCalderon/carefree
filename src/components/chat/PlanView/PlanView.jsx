@@ -33,11 +33,12 @@ function useBuild(total, animate, onDone) {
 }
 
 // answers: the answers in a few words, each { id, text, onEdit }; tapping one goes back to that question.
+// onStartOver: clear the answers and begin again; a quiet link on the answers line.
 // actions: email and print. offer: the invitation to answer more questions.
 // at: which step the person is on (0 the call, 1 the visit, 2 after; one more means everything is done).
 // onAt: move to a step.
 // fresh: ids of recommendations the last answers added. build: play the arrival; onBuilt: it finished.
-export function PlanView({ plan, answers, actions, offer, at = 0, onAt, fresh, build = false, onBuilt }) {
+export function PlanView({ plan, answers, onStartOver, actions, offer, at = 0, onAt, fresh, build = false, onBuilt }) {
   const heading = useRef(null)
   // Move focus to the heading so screen readers announce that the plan has arrived.
   useEffect(() => { heading.current?.focus({ preventScroll: true }) }, [])
@@ -56,12 +57,15 @@ export function PlanView({ plan, answers, actions, offer, at = 0, onAt, fresh, b
   const scheduled = book.filter(v => v.say)
   return (
     <div className="space-y-3">
-      <div className="space-y-2 sm:flex sm:items-start sm:justify-between sm:gap-2 sm:space-y-0">
-        <div className="space-y-1">
+      {/* Title and cost, then the answers, then the actions. From 640px the actions sit beside the title and the answers run full width, so Start over ends on the same edge as Print. */}
+      <div className="grid gap-x-2 gap-y-1 sm:grid-cols-[1fr_auto]">
+        <div className="space-y-1 sm:col-start-1 sm:row-start-1">
           <h1 ref={heading} tabIndex={-1} className="text-display font-bold tracking-tight focus:outline-none">Your plan</h1>
           <p><RichText>{plan.coverage}</RichText></p>
-          {answers && (
-            <p className="text-muted-foreground">
+        </div>
+        {answers && (
+          <div className="flex flex-wrap items-baseline justify-between gap-x-2 text-muted-foreground sm:col-span-2 sm:row-start-2">
+            <p>
               {answers.map((a, i) => (
                 <span key={a.id}>
                   {i > 0 && ', '}
@@ -69,9 +73,10 @@ export function PlanView({ plan, answers, actions, offer, at = 0, onAt, fresh, b
                 </span>
               ))}.
             </p>
-          )}
-        </div>
-        {actions}
+            {onStartOver && <button type="button" className="ml-auto cursor-pointer rounded-[2px] underline decoration-1 underline-offset-4 hover:decoration-2 hover:text-foreground" onClick={onStartOver}>Start over</button>}
+          </div>
+        )}
+        <div className="mt-1 sm:col-start-2 sm:row-start-1 sm:mt-0">{actions}</div>
       </div>
       <p role="status" className="sr-only">{built ? '' : 'Putting your plan together'}</p>
       <ol>
