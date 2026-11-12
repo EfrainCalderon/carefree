@@ -15,7 +15,7 @@ export function EmailDialog({ plan, answers, triggerClassName, defaultOpen = fal
           <div className="flex items-start justify-between gap-2">
             <div>
               <DialogTitle className="text-heading font-bold">Email your plan</DialogTitle>
-              <DialogDescription className="text-muted-foreground">We don’t save your email address.</DialogDescription>
+              <DialogDescription className="text-muted-foreground">Your email address is not saved.</DialogDescription>
             </div>
             <DialogClose asChild><Button variant="ghost" size="icon-lg" className="-mt-1 shrink-0" aria-label="Close"><X /></Button></DialogClose>
           </div>
