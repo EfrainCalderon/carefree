@@ -1,37 +1,34 @@
-// Carefree: one page. The first question is on the landing screen, the plan appears after two taps,
-// and every answer after that changes the plan in place. The app only composes components.
+// Carefree: three questions, then the plan on its own page. From the plan you can email or print it,
+// move along its steps, answer a few more questions, or go back and change an answer.
+// The app only composes components.
 import { useEffect, useMemo, useState } from 'react'
-import { RotateCcw } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { riseProps, useLoaded } from '@/lib/useLoaded'
-import { AGE_RANGES, INSURANCE, SEX, cleanAnswers, derivePlan, extraQuestions, sexualHealthFactors } from './logic'
-import { AnswerPanel, PlanActions, PlanGhost, PlanView, StartScreen, Wordmark } from '@/components/chat'
+import { AGE_RANGES, SEX, cleanAnswers, derivePlan, extraQuestions, insuranceOptions, sexualHealthFactors } from './logic'
+import {
+  FeedbackButton, OptInCard, OptionList, PlanActions, PlanView, PrintSheet, QuestionStep, SiteFooter, StartScreen, Wordmark,
+} from '@/components/chat'
 
-// The basics, in order. Age and sex are enough to build a plan; insurance adds what it costs.
-const BASICS = [
+const SEXUAL = [{ id: 'yes', label: 'Yes, add the tests' }, { id: 'no', label: 'No, not for me' }]
+const EMPTY = { personal: {} }
+
+// The basics, in order. Insurance options depend on age, so they're worked out per person.
+const basics = s => [
   { id: 'age', title: 'How old are you?', description: 'What’s recommended changes with age.', options: AGE_RANGES, columns: 2 },
   { id: 'sex', title: 'What sex were you assigned at birth?', description: 'Some screenings depend on the body you were born with.', options: SEX },
-  { id: 'insurance', title: 'How do you get health insurance?', description: 'It decides what these cost and what to ask for.', options: INSURANCE },
+  { id: 'insurance', title: 'How do you get health insurance?', options: insuranceOptions(s.age) },
 ]
-// Without insurance nothing here is automatically free, so the copy doesn't say it is.
-const sexualQuestion = free => ({
-  id: 'sexual',
-  title: 'Any of these true for you in the past year?',
-  footnote: `You don’t need to say which. “Yes” adds ${free ? 'free ' : ''}STI tests and HIV prevention to your plan.`,
-  options: [{ id: 'yes', label: 'Yes, add the tests' }, { id: 'no', label: 'No, not for me' }],
-})
-const EMPTY = { personal: {} }
-const NOTHING_NEW = { fresh: new Set(), feedback: '' }
-const nextBasic = answers => BASICS.find(b => !answers[b.id])?.id ?? 'ready'
 
-// Answers are kept for this tab only, so a refresh, or coming back after a phone call to book, doesn't lose the plan.
+// Answers are kept for this tab only, so a refresh, or coming back after a phone call, doesn't lose the plan.
 const STORE = 'carefree:answers'
 function restore() {
   try {
     const saved = JSON.parse(sessionStorage.getItem(STORE))
-    if (saved?.s) return { s: { ...EMPTY, ...cleanAnswers(saved.s) }, focus: typeof saved.focus === 'string' ? saved.focus : 'age' }
+    if (saved?.s) return {
+      s: { ...EMPTY, ...cleanAnswers(saved.s) },
+      step: typeof saved.step === 'string' ? saved.step : 'age',
+      at: [0, 1, 2, 3].includes(saved.at) ? saved.at : 0,
+    }
   } catch { /* private mode or bad data: start fresh */ }
-  return { s: EMPTY, focus: 'age' }
+  return { s: EMPTY, step: 'age', at: 0 }
 }
 function save(state) {
   try { sessionStorage.setItem(STORE, JSON.stringify(state)) } catch { /* storage is optional */ }
@@ -40,125 +37,154 @@ function save(state) {
 export function App({ data }) {
   const [initial] = useState(restore)
   const [s, setS] = useState(initial.s)
-  // What the panel is asking: a basic's id, a health question ('q:smoking', 'sexual'), or 'ready'.
-  const [focus, setFocus] = useState(initial.focus)
-  // What the last answer changed: the rows it added, and a line saying so.
-  const [change, setChange] = useState(NOTHING_NEW)
-  const loaded = useLoaded()
+  const [step, setStep] = useState(initial.step)
+  // What the extra questions just added (marked on the plan), and whether the plan should play its arrival.
+  // How far along the plan's timeline the person says they are. Kept with the answers, for this tab only.
+  const [at, setAt] = useState(initial.at)
+  const [fresh, setFresh] = useState(() => new Set())
+  const [build, setBuild] = useState(false)
 
   const plan = useMemo(() => derivePlan(data, s), [data, s])
   const extras = useMemo(() => extraQuestions(data, s), [data, s])
-  const hasPlan = !!(s.age && s.sex)
-  const ready = hasPlan && !!s.insurance
+  const BASICS = basics(s)
+  const ready = !!(s.age && s.sex && s.insurance)
+  // Without insurance nothing here is automatically free, so the copy doesn't say it is.
   const free = s.insurance !== 'none'
 
-  // The panel only asks something whose earlier answers exist (Forward after Start over, a stale saved step).
-  const basic = BASICS.findIndex(b => b.id === focus)
-  const view =
-    basic >= 0 && BASICS.slice(0, basic).every(b => s[b.id]) ? focus
-    : !ready ? nextBasic(s)
-    : extras.steps.includes(focus) ? focus
-    : 'ready'
+  // A step only shows if the answers before it exist (Forward after a change, a stale saved step).
+  const reachable =
+    step === 'age' ||
+    (step === 'sex' && !!s.age) ||
+    (step === 'insurance' && !!(s.age && s.sex)) ||
+    (ready && (step === 'plan' || extras.steps.includes(step)))
+  const view = reachable ? step : 'age'
 
-  // The browser's Back and Forward move between questions, so a phone's back gesture doesn't leave the site.
+  // The browser's Back and Forward move between steps, so a phone's back gesture doesn't leave the site.
   useEffect(() => {
     window.history.replaceState({ cf: view, n: window.history.state?.n ?? 0 }, '')
-    const onPop = e => setFocus(e.state?.cf ?? 'age')
+    const onPop = e => setStep(e.state?.cf ?? 'age')
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
-  }, []) // runs once: later questions go through go() and popstate
-  useEffect(() => { save({ s, focus: view }) }, [s, view])
+  }, []) // runs once: later steps go through go() and popstate
+  useEffect(() => { save({ s, step: view, at }) }, [s, view, at])
+  useEffect(() => { window.scrollTo(0, 0) }, [view])
 
   const go = next => {
     window.history.pushState({ cf: next, n: (window.history.state?.n ?? 0) + 1 }, '')
-    setFocus(next)
+    setStep(next)
   }
-  const back = () => {
-    if ((window.history.state?.n ?? 0) > 0) return window.history.back()
-    const i = extras.steps.indexOf(view)
-    setFocus(i > 0 ? extras.steps[i - 1] : 'ready')
+  const previous = () => {
+    const b = BASICS.findIndex(q => q.id === view)
+    if (b > 0) return BASICS[b - 1].id
+    const e = extras.steps.indexOf(view)
+    return e > 0 ? extras.steps[e - 1] : 'plan'
   }
-  const startOver = () => { setS(EMPTY); setChange(NOTHING_NEW); go('age'); window.scrollTo(0, 0) }
+  const back = () => ((window.history.state?.n ?? 0) > 0 ? window.history.back() : setStep(previous()))
 
   function answerBasic(id, value) {
     const next = { ...s, [id]: value }
+    // A new age can change which insurance options exist; an answer that no longer fits is asked again.
+    if (!insuranceOptions(next.age).some(o => o.id === next.insurance)) delete next.insurance
     setS(next)
-    // The plan appears after the second answer, while the third is still being asked. Say so, since on a phone it sits below.
-    setChange(next.age && next.sex && !next.insurance ? { ...NOTHING_NEW, feedback: 'Your plan is ready. One more answer adds what it costs.' } : NOTHING_NEW)
-    go(nextBasic(next))
-    window.scrollTo(0, 0)
+    setFresh(new Set())
+    setAt(0)
+    // Always on to the next question in order, so "Change" walks back through all three with the old answers ticked.
+    const order = basics(next)
+    const nextStep = order[order.findIndex(b => b.id === id) + 1]?.id ?? 'plan'
+    setBuild(nextStep === 'plan')
+    go(nextStep)
   }
-  // A health answer changes the plan in place. Say what it added, and mark those rows.
-  function answerExtra(patch, answered = true) {
-    const i = extras.steps.indexOf(view)
-    const last = i === extras.steps.length - 1
-    const next = { ...s, ...patch, ...(last ? { improved: true } : {}) }
-    const before = new Set(plan.planned.map(r => r.id))
-    const added = derivePlan(data, next).planned.filter(r => !before.has(r.id))
+  // The last extra question marks the plan as improved and shows what the answers added.
+  function answerExtra(patch) {
+    const nextStep = extras.steps[extras.steps.indexOf(view) + 1]
+    if (nextStep) { setS({ ...s, ...patch }); return go(nextStep) }
+    const next = { ...s, ...patch, improved: true }
     setS(next)
-    // After the last question the panel sums everything up, so the per-answer line steps aside.
-    setChange({
-      fresh: new Set(added.map(r => r.id)),
-      feedback: last ? '' : added.length ? `Added: ${added.map(r => r.plain_name).join(', ')}` : answered ? 'Nothing to add for that one' : '',
-    })
-    go(last ? 'ready' : extras.steps[i + 1])
+    setFresh(new Set(derivePlan(data, next).added.map(r => r.id)))
+    go('plan')
   }
 
-  const question = (() => {
-    if (view === 'ready') return null
-    const b = BASICS.find(q => q.id === view)
-    if (b) return { ...b, value: s[b.id] }
-    if (view === 'sexual') return { ...sexualQuestion(free), details: sexualHealthFactors(s.sex), value: s.sexual }
-    const q = extras.questions[extras.steps.indexOf(view)]
-    return { id: view, title: q.text, options: q.options, value: s.personal[q.id] }
-  })()
-  const isExtra = extras.steps.includes(view)
-  const onAnswer = o => {
-    if (!isExtra) return answerBasic(view, o.id)
-    answerExtra(view === 'sexual' ? { sexual: o.id } : { personal: { ...s.personal, [question.id.slice(2)]: o.id } })
-  }
-  // Answered basics read back as chips; the one being asked again is left out.
-  const chips = BASICS.filter(b => s[b.id] && b.id !== view).map(b => {
-    const o = b.options.find(x => x.id === s[b.id])
-    return { id: b.id, label: o.short || o.label }
-  })
+  const answersLine = ready && [
+    `Age ${AGE_RANGES.find(r => r.id === s.age).label}`,
+    SEX.find(o => o.id === s.sex).label.toLowerCase(),
+    insuranceOptions(s.age).find(o => o.id === s.insurance).short,
+  ].join(', ')
 
-  return (
-    <div className="min-h-dvh bg-background pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] text-foreground">
-      <header className="cf-no-print mx-auto flex h-6 w-full max-w-[1088px] items-center justify-between gap-2 px-2 sm:h-8 sm:px-3">
-        <Wordmark />
-        {s.age && <Button variant="ghost" className="-mr-2" onClick={startOver}><RotateCcw />Start over</Button>}
-      </header>
-      {/* A phone stacks the panel over the plan. A wide screen sets them side by side, with the panel staying in view. */}
-      <main className="mx-auto w-full max-w-[1088px] space-y-3 px-2 pt-1 pb-6 sm:px-3 sm:pt-3 lg:grid lg:grid-cols-[400px_minmax(0,1fr)] lg:items-start lg:gap-4 lg:space-y-0">
-        <div className="cf-no-print space-y-2 lg:sticky lg:top-3">
-          {!hasPlan && <StartScreen />}
-          <div {...riseProps(loaded, 2)}>
-            <AnswerPanel
-              answers={chips}
-              onEdit={go}
-              question={question}
-              onAnswer={onAnswer}
-              progress={isExtra ? { step: extras.steps.indexOf(view), total: extras.steps.length, label: 'Your health' } : null}
-              onBack={isExtra ? back : null}
-              onSkip={isExtra ? () => answerExtra({}, false) : null}
-              feedback={change.feedback}
-              offer={ready && !s.improved && extras.possible > 0 ? { count: extras.possible, questions: extras.steps.length, free } : null}
-              onTune={() => go(extras.steps[0])}
-              done={ready && s.improved ? (plan.added.length
-                ? { title: `${plan.added.length} added from your answers`, detail: plan.added.map(r => r.plain_name).join(', ') }
-                : { title: 'Nothing to add. Your plan is complete.' }) : null}
-              onRetune={() => go(extras.steps[0])}
-            >
-              {ready && view === 'ready' && <Button asChild className="hidden w-full lg:inline-flex"><a href="#keep">Email or save my plan</a></Button>}
-            </AnswerPanel>
-          </div>
-          {!hasPlan && <p {...riseProps(loaded, 3)} className={`${riseProps(loaded, 3).className} px-2 text-muted-foreground`}>No account. Your answers stay on this device.</p>}
+  const screen = () => {
+    const basic = BASICS.findIndex(b => b.id === view)
+    if (basic >= 0) {
+      const b = BASICS[basic]
+      const landing = basic === 0
+      return (
+        <div className="space-y-4">
+          {landing && <StartScreen questions={BASICS.length} />}
+          <QuestionStep
+            key={b.id}
+            title={b.title}
+            description={b.description}
+            heading={landing ? 'h2' : 'h1'}
+            autoFocus={!landing}
+            progress={landing ? null : { step: basic, total: BASICS.length, label: 'About you' }}
+            onBack={landing ? null : back}
+          >
+            <OptionList label={b.title} options={b.options} columns={b.columns} value={s[b.id]} onSelect={o => answerBasic(b.id, o.id)} />
+          </QuestionStep>
         </div>
-        {hasPlan
-          ? <PlanView plan={plan} fresh={change.fresh} actions={ready ? <PlanActions plan={plan} answers={s} /> : null} />
-          : <div {...riseProps(loaded, 3)}><PlanGhost remaining={BASICS.slice(0, 2).filter(b => !s[b.id]).length} /></div>}
-      </main>
-    </div>
+      )
+    }
+
+    const extra = extras.steps.indexOf(view)
+    if (extra >= 0) {
+      const progress = { step: extra, total: extras.steps.length, label: 'Your health' }
+      if (view === 'sexual') {
+        return (
+          <QuestionStep
+            key="sexual"
+            title="Any of these true for you in the past year?"
+            details={sexualHealthFactors(s.sex)}
+            footnote={`You don’t need to say which. “Yes” adds ${free ? 'free ' : ''}STI tests and HIV prevention to your plan.`}
+            progress={progress}
+            onBack={back}
+          >
+            <OptionList label="Add sexual health tests?" options={SEXUAL} value={s.sexual} onSelect={o => answerExtra({ sexual: o.id })} />
+          </QuestionStep>
+        )
+      }
+      const q = extras.questions[extra]
+      return (
+        <QuestionStep key={q.id} title={q.text} progress={progress} onBack={back}>
+          <OptionList label={q.text} options={q.options} value={s.personal[q.id]} onSelect={o => answerExtra({ personal: { ...s.personal, [q.id]: o.id } })} />
+        </QuestionStep>
+      )
+    }
+
+    return (
+      <PlanView
+        plan={plan}
+        answers={answersLine}
+        onChange={() => go('age')}
+        at={at}
+        onAt={setAt}
+        fresh={fresh}
+        build={build}
+        onBuilt={() => setBuild(false)}
+        actions={<PlanActions plan={plan} answers={s} />}
+        offer={!s.improved && extras.possible > 0 ? <OptInCard questions={extras.steps.length} onImprove={() => go(extras.steps[0])} /> : null}
+      />
+    )
+  }
+
+  // The header, the page and the footer share one column, so everything lines up at every width.
+  const column = `mx-auto w-full px-2 sm:px-3 ${view === 'plan' ? 'max-w-[688px]' : 'max-w-[608px]'}`
+  return (
+    <>
+      <div className="cf-screen flex min-h-dvh flex-col bg-background pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] text-foreground">
+        <header className={`flex h-6 items-center sm:h-8 ${column}`}><Wordmark /></header>
+        <main className={`flex-1 pt-1 pb-6 sm:pt-3 ${column}`}>{screen()}</main>
+        <footer className={`pb-2 ${column}`}><SiteFooter onReset={s.age ? () => { setS(EMPTY); setAt(0); setFresh(new Set()); go('age') } : null} /></footer>
+        <FeedbackButton screen={view} />
+      </div>
+      {ready && <PrintSheet plan={plan} />}
+    </>
   )
 }

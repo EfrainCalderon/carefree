@@ -3,12 +3,12 @@
 //
 // Built to survive every mail client:
 // - Tables and inline styles only. No flexbox, grid, CSS variables, images, web fonts or scripts.
-// - Colors are solid, with a bgcolor attribute beside each background. The header's gradient is an extra on top
-//   of a solid green, so clients that drop gradients (Outlook on Windows) still get the brand color.
+// - Colors are solid, with a bgcolor attribute beside each background. The first-step block's gradient is an extra
+//   on top of a solid green, so clients that drop gradients (Outlook on Windows) still get the brand color.
 // - 600px wide at most, fluid below that, 16px text, bullets drawn as table cells (list markup is unreliable).
 // - Marked light-only, so dark mode doesn't invert half of it.
 // - A plain-text version says the same thing for clients and people that don't show HTML.
-import { visitGroups } from './visits.js'
+import { followTime, visitGroups } from './visits.js'
 import { plainText } from './terms.js'
 
 // Mirrors tokens/tokens.json (email can't read CSS variables). Update both together.
@@ -44,28 +44,7 @@ const script = (lead, words) => `
   </td></tr>
 </table>`
 
-function visitBlock(visit, { finder, askIf = [] } = {}) {
-  const parts = [
-    `<h3 style="${text(C.ink, 'font-size:20px;line-height:28px;font-weight:700;')}">${esc(visit.name)}</h3>${p(t(visit.who), C.muted)}`,
-  ]
-  if (visit.say) parts.push(script('When you book, say', visit.say))
-  if (visit.how) parts.push(p(esc(visit.how)))
-  if (finder) {
-    parts.push([
-      label(finder.title),
-      p(esc(finder.text)),
-      finder.ask ? p(`Ask: &ldquo;${esc(finder.ask)}&rdquo;`, C.ink, 'font-weight:600;') : '',
-      finder.more ? p(esc(finder.more), C.muted) : '',
-      finder.link ? p(`<a href="${esc(finder.link.href)}" style="color:${C.brand};font-weight:600;text-decoration:underline;">${esc(finder.link.label)}</a>`) : '',
-    ].join(''))
-  }
-  for (const g of visitGroups(visit))
-    parts.push(label(g.label) + bullets(g.items.map(it => t(it.text) + (it.note ? ` <span style="color:${C.muted};">&middot; ${esc(it.note)}</span>` : ''))))
-  if (askIf.length)
-    parts.push(label('Ask if these apply to you') + bullets(askIf.map(({ rec, note }) =>
-      `${esc(rec.plain_name)}<br><span style="color:${C.muted};">${t(rec.applies)}${note ? ` ${esc(note)}.` : ''}</span>`)))
-  if (visit.tip) parts.push(p(`<strong style="color:${C.ink};">Good to know:</strong> ${esc(visit.tip)}`, C.muted))
-  return `
+const card = parts => `
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.surface}" style="background-color:${C.surface};border:1px solid ${C.border};border-radius:16px;border-collapse:separate;">
   <tr><td style="padding:16px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -73,20 +52,55 @@ function visitBlock(visit, { finder, askIf = [] } = {}) {
     </table>
   </td></tr>
 </table>`
+
+// The call to make now: who to call, what to say, and a short answer for what gets in the way.
+function nowBlock(visits, barriers) {
+  return card([
+    ...visits.map(v => `<h3 style="${text(C.ink, 'font-size:20px;line-height:28px;font-weight:700;')}">${esc(v.call)}</h3><div style="height:8px;line-height:8px;font-size:0;">&nbsp;</div>${script('Say', v.say)}`),
+    ...barriers.map(b => [
+      p(esc(b.title), C.ink, 'font-weight:600;'),
+      p(esc(b.text), C.muted),
+      b.ask ? p(`Ask: &ldquo;${esc(b.ask)}&rdquo;`, C.ink, 'font-weight:600;') : '',
+      b.more ? p(esc(b.more), C.muted) : '',
+      b.link ? p(`<a href="${esc(b.link.href)}" style="color:${C.brand};font-weight:600;text-decoration:underline;">${esc(b.link.label)}</a>`) : '',
+    ].join('')),
+  ])
 }
 
-function visitText(visit, { finder, askIf = [] } = {}) {
-  const lines = [`${visit.name.toUpperCase()}`, plainText(visit.who)]
-  if (visit.say) lines.push('', `When you book, say: “${visit.say}”`)
+function visitBlock(visit, { showSay = true, askIf = [] } = {}) {
+  const parts = [
+    `<h3 style="${text(C.ink, 'font-size:20px;line-height:28px;font-weight:700;')}">${esc(visit.name)}</h3>${p([t(visit.who), visit.time && esc(visit.time)].filter(Boolean).join(' &middot; '), C.muted)}`,
+  ]
+  if (showSay && visit.say) parts.push(script('When you call, say', visit.say))
+  if (visit.how) parts.push(p(esc(visit.how)))
+  for (const g of visitGroups(visit))
+    parts.push(label(g.label) + bullets(g.items.map(it => t(it.text) + (it.note ? ` <span style="color:${C.muted};">&middot; ${esc(it.note)}</span>` : ''))))
+  if (askIf.length)
+    parts.push(label('Ask if these apply to you') + bullets(askIf.map(({ rec, note }) =>
+      `${esc(rec.plain_name)}<br><span style="color:${C.muted};">${t(rec.applies)}${note ? ` ${esc(note)}.` : ''}</span>`)))
+  if (visit.tip) parts.push(p(`<strong style="color:${C.ink};">Good to know:</strong> ${esc(visit.tip)}`, C.muted))
+  return card(parts)
+}
+
+function visitText(visit, { showSay = true, askIf = [] } = {}) {
+  const lines = [`${visit.name.toUpperCase()}`, [plainText(visit.who), visit.time].filter(Boolean).join(' · ')]
+  if (showSay && visit.say) lines.push('', `When you call, say: “${visit.say}”`)
   if (visit.how) lines.push('', visit.how)
-  if (finder) lines.push('', finder.title, finder.text, ...(finder.ask ? [`Ask: “${finder.ask}”`] : []), ...(finder.more ? [finder.more] : []), ...(finder.link ? [`${finder.link.label}: ${finder.link.href}`] : []))
   for (const g of visitGroups(visit)) lines.push('', `${g.label}:`, ...g.items.map(it => `- ${plainText(it.text)}${it.note ? ` (${it.note})` : ''}`))
   if (askIf.length) lines.push('', 'Ask if these apply to you:', ...askIf.map(({ rec, note }) => `- ${rec.plain_name}: ${plainText(rec.applies)}${note ? ` ${note}.` : ''}`))
   if (visit.tip) lines.push('', `Good to know: ${visit.tip}`)
   return lines.join('\n')
 }
 
-const SOURCE = 'Based on the U.S. Preventive Services Task Force’s A and B recommendations. This isn’t medical advice. Your doctor can tell you what’s right for you.'
+function nowText(visits, barriers) {
+  const lines = []
+  for (const v of visits) lines.push(v.call, `Say: “${v.say}”`, '')
+  for (const b of barriers) lines.push(b.title, b.text, ...(b.ask ? [`Ask: “${b.ask}”`] : []), ...(b.more ? [b.more] : []), ...(b.link ? [`${b.link.label}: ${b.link.href}`] : []), '')
+  return lines.join('\n').trimEnd()
+}
+
+const SOURCE = 'Based on the U.S. Preventive Services Task Force’s A and B recommendations and HealthCare.gov’s list of preventive care for adults. This isn’t medical advice. Your doctor can tell you what’s right for you.'
+const CREDIT = { site: 'https://www.efrain.design', coffee: 'https://www.buymeacoffee.com/efrainfm' }
 const WHY = 'You’re getting this because this address was entered at Carefree. It’s the only email we’ll send.'
 
 export function buildPlanEmail(plan) {
@@ -94,12 +108,18 @@ export function buildPlanEmail(plan) {
   const follow = plan.visits.filter(v => v.kind !== 'book')
   const coverage = plainText(plan.coverage)
   const subject = 'Your plan from Carefree'
-  const first = i => (i === 0 ? { finder: plan.finder, askIf: plan.askDoctor } : {})
+  // The scripts are in the "Now" step, so the visit cards don't repeat them. The first visit carries anything still to ask about.
+  const first = i => ({ showSay: false, askIf: i === 0 ? plan.askDoctor : [] })
+  const scheduled = book.filter(v => v.say)
+  const barriers = plan.first?.barriers ?? []
+  const visitLabel = `${book.length > 1 ? 'At your visits' : 'At your visit'}${book.length === 1 && book[0].time ? ` · ${book[0].time.toLowerCase()}` : ''}`
+  const afterLabel = `After, if your doctor orders it${followTime(follow) ? ` · ${followTime(follow)}` : ''}`
 
-  const section = (title, visits, opts = () => ({})) => (visits.length ? [
-    row(`<h2 style="${text(C.muted, 'font-weight:600;')}">${esc(title)}</h2>`),
+  // A step: its label (when it happens), then its cards. The same three steps as the plan page, in order.
+  const step = (title, blocks) => (blocks.length ? [
+    row(p(esc(title), C.muted, 'font-weight:600;padding:0 16px;')),
     gap(8),
-    visits.map((v, i) => row(visitBlock(v, opts(i)))).join(gap(8)),
+    blocks.map(row).join(gap(8)),
     gap(24),
   ].join('') : '')
 
@@ -122,26 +142,27 @@ export function buildPlanEmail(plan) {
 </style>
 </head>
 <body style="margin:0;padding:0;background-color:${C.page};">
-<div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:${C.page};">${esc(`${plan.summary} ${coverage}.`)}</div>
+<div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:${C.page};">${esc(`${coverage}. Who to see, what to say, and what to ask for.`)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.page}" style="background-color:${C.page};">
   <tr><td align="center" style="padding:24px 8px;">
     <!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;">
-      <tr><td class="cf-pad" bgcolor="${C.brand}" style="background-color:${C.brand};background-image:linear-gradient(160deg,${C.brandLight} 0%,${C.brand} 55%,${C.brandDark} 100%);border-radius:16px;padding:24px;">
-        ${p('Care<strong>free</strong>', '#ffffff', 'font-size:20px;')}
+      <tr><td style="padding:0 16px;">
+        ${p('Care<strong>free</strong>', C.ink, 'font-size:20px;')}
         <div style="height:16px;line-height:16px;font-size:0;">&nbsp;</div>
-        <h1 style="${text('#ffffff', 'font-size:24px;line-height:32px;font-weight:700;')}">Your plan</h1>
-        ${p(esc(plan.summary), '#ffffff', 'font-weight:600;')}
-        ${p(esc(coverage), C.tint)}
+        <h1 style="${text(C.ink, 'font-size:32px;line-height:40px;font-weight:700;')}">Your plan</h1>
+        ${p(esc(coverage))}
       </td></tr>
       ${gap(24)}
-      ${plan.note ? row(p(esc(plan.note), C.muted, 'padding:0 16px;')) + gap(24) : ''}
-      ${section('Start here', book, first)}
-      ${section('What may come after', follow)}
+      ${step('Now · about 5 minutes', scheduled.length ? [nowBlock(scheduled, barriers)] : [])}
+      ${step(visitLabel, book.map((v, i) => visitBlock(v, first(i))))}
+      ${step(afterLabel, follow.map(v => visitBlock(v)))}
       <tr><td class="cf-pad" style="border-top:1px solid ${C.border};padding:24px 16px 8px;">
         ${p(esc(SOURCE), C.muted)}
         <div style="height:8px;line-height:8px;font-size:0;">&nbsp;</div>
         ${p(esc(WHY), C.muted)}
+        <div style="height:16px;line-height:16px;font-size:0;">&nbsp;</div>
+        ${p(`Carefree by <a href="${CREDIT.site}" style="color:${C.muted};text-decoration:underline;">Efrain Calderon</a> &nbsp;&middot;&nbsp; <a href="${CREDIT.coffee}" style="color:${C.muted};text-decoration:underline;">Buy me a coffee</a>`, C.muted)}
       </td></tr>
     </table>
     <!--[if mso]></td></tr></table><![endif]-->
@@ -152,12 +173,12 @@ export function buildPlanEmail(plan) {
 
   const body = [
     'YOUR PLAN',
-    plan.summary,
     coverage,
-    ...(plan.note ? ['', plan.note] : []),
-    ...(book.length ? ['', '', '== START HERE ==', '', book.map((v, i) => visitText(v, first(i))).join('\n\n')] : []),
-    ...(follow.length ? ['', '', '== WHAT MAY COME AFTER ==', '', follow.map(v => visitText(v)).join('\n\n')] : []),
+    ...(scheduled.length ? ['', '', '== NOW · ABOUT 5 MINUTES ==', '', nowText(scheduled, barriers)] : []),
+    ...(book.length ? ['', '', `== ${visitLabel.toUpperCase()} ==`, '', book.map((v, i) => visitText(v, first(i))).join('\n\n')] : []),
+    ...(follow.length ? ['', '', `== ${afterLabel.toUpperCase()} ==`, '', follow.map(v => visitText(v)).join('\n\n')] : []),
     '', '', SOURCE, '', WHY,
+    '', `Carefree by Efrain Calderon: ${CREDIT.site}`, `Buy me a coffee: ${CREDIT.coffee}`,
   ].join('\n')
 
   return { subject, html, text: body }

@@ -3,6 +3,7 @@
     "source": "U.S. Preventive Services Task Force — A & B Recommendations",
     "source_url": "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/uspstf-a-and-b-recommendations",
     "last_verified": "2026-04-02",
+    "also_checked": "https://www.healthcare.gov/preventive-care-adults/ (Nov 2026: adult list; cholesterol screening added from it. Not yet included from that list: immunizations, tuberculosis screening.)",
     "notes": "Age and sex eligibility encoded manually from USPSTF recommendation descriptions. Conditional recommendations flagged where universal eligibility cannot be determined by age/sex alone."
   },
   "recommendations": [
@@ -838,6 +839,32 @@
           "visit": "primary-care",
           "as": "measurement",
           "action": "Vision, with an eye chart"
+        }
+      ]
+    },
+    {
+      "id": "cholesterol-screening",
+      "name": "Cholesterol Screening",
+      "plain_name": "Cholesterol test",
+      "grade": "B",
+      "sex": ["male", "female"],
+      "age_min": 40,
+      "age_max": 75,
+      "conditional": false,
+      "condition_note": null,
+      "doctor_prompt": null,
+      "description": "A blood test for cholesterol, used to work out your risk of heart attack and stroke. HealthCare.gov lists cholesterol screening among the preventive services plans cover; the USPSTF statin recommendation for adults 40–75 depends on it.",
+      "source_url": "https://www.healthcare.gov/preventive-care-adults/",
+      "journey": [
+        {
+          "visit": "primary-care",
+          "as": "order",
+          "action": "A cholesterol test"
+        },
+        {
+          "visit": "lab",
+          "as": "lab",
+          "action": "Cholesterol"
         }
       ]
     }

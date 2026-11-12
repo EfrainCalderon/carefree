@@ -8,7 +8,7 @@ const DialogClose = DialogPrimitive.Close
 const DialogTitle = DialogPrimitive.Title
 const DialogDescription = DialogPrimitive.Description
 
-// Fills the screen on a phone; a centered sheet on anything wider. Scrolls inside itself.
+// A short form: centered, with a margin, at every width.
 function DialogContent({ className, children, ...props }) {
   return (
     <DialogPrimitive.Portal>
@@ -16,7 +16,7 @@ function DialogContent({ className, children, ...props }) {
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "cf-fade fixed inset-0 z-50 overflow-y-auto bg-card p-2 pt-[max(16px,env(safe-area-inset-top))] pb-[max(16px,env(safe-area-inset-bottom))] text-card-foreground outline-none sm:inset-auto sm:top-1/2 sm:left-1/2 sm:max-h-[calc(100dvh-48px)] sm:w-[560px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-sheet sm:p-3 sm:shadow-popover",
+          "cf-fade fixed inset-x-2 top-1/2 z-50 mx-auto max-h-[calc(100dvh-32px)] max-w-[448px] -translate-y-1/2 overflow-y-auto rounded-card bg-card p-2 text-card-foreground shadow-popover outline-none sm:p-3",
           className
         )}
         {...props}>

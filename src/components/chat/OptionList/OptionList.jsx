@@ -14,7 +14,7 @@ export function OptionList({ options, value, onSelect, label, columns = 1 }) {
             key={o.id}
             variant="outline"
             aria-pressed={picked}
-            className={cn('justify-between py-1 text-left whitespace-normal', picked && 'border-primary bg-tint-subtle')}
+            className={cn('justify-between py-1 text-left whitespace-normal', picked && 'border-primary bg-tint')}
             onClick={() => onSelect(o)}
           >
             <span>

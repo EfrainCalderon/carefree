@@ -152,18 +152,34 @@
 .cf-collapse[data-open] { grid-template-rows: 1fr; }
 .cf-collapse[data-open] > * { visibility: visible; transition-delay: 0s; }
 
-/* Print: the whole plan, opened up, without the app chrome. */
+/* Print: paper gets its own layout (PrintSheet), not the screen's. Small type, two columns, no cards or
+   color, sized to fit one page. The screen layout is hidden, so nothing from it can add a blank page. */
+.cf-print { display: none; color: #000; font-family: var(--cf-fontFamily-sans); font-size: 9.5pt; line-height: 1.4; }
+.cf-print header { display: flex; align-items: baseline; justify-content: space-between; gap: 12pt; margin-bottom: 6pt; border-bottom: 1pt solid #000; padding-bottom: 4pt; }
+.cf-print h1 { font-size: 16pt; line-height: 1.1; font-weight: 700; }
+/* One bold line per visit. Everything under it is regular weight, so bold never stacks on bold. */
+.cf-print h2 { font-size: 11pt; line-height: 1.25; font-weight: 700; }
+.cf-print p { margin: 0 0 2pt; }
+.cf-print section { margin-bottom: 10pt; break-inside: avoid; }
+/* A short centered rule between one visit and the next. */
+.cf-print section + section::before { content: ''; display: block; width: 32%; margin: 0 auto 10pt; border-top: 0.5pt solid #777; }
+.cf-print footer { margin-top: 6pt; border-top: 0.5pt solid #999; padding-top: 4pt; color: #444; font-size: 8pt; }
+.cf-print-first { margin-bottom: 10pt !important; }
+.cf-print-meta { color: #444; }
+/* Labels for a visit's parts: small, spaced capitals in gray, with room above. */
+.cf-print-label { margin: 6pt 0 1.5pt !important; color: #444; font-size: 7pt; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.cf-print-label + p { margin-bottom: 0; }
+.cf-print section > .cf-print-meta:last-child { margin-top: 6pt; }
+.cf-print-checks { margin: 0; }
+.cf-print-checks li { position: relative; padding-left: 14pt; margin-bottom: 2pt; }
+.cf-print-checks li::before { content: ''; position: absolute; left: 0; top: 2pt; width: 8pt; height: 8pt; border: 0.75pt solid #000; }
+.cf-print-columns { columns: 2; column-gap: 20pt; }
+.cf-print-preview .cf-print { display: block; }
 @media print {
-    @page { margin: 16mm; }
-    body { background: #fff; }
-    .cf-no-print { display: none !important; }
-    .cf-rise, .cf-fade, .cf-new { animation: none !important; background: none !important; box-shadow: none !important; }
-    .cf-collapse { grid-template-rows: 1fr !important; }
-    .cf-collapse > * { visibility: visible !important; }
-    .cf-gradient, .cf-gradient * { background: none !important; color: var(--cf-color-green-900) !important; }
-    .cf-gradient { padding: 0 !important; }
-    .cf-gradient svg { display: none; }
-    article, section { break-inside: avoid; }
+    @page { margin: 12mm; }
+    html, body { background: #fff !important; }
+    .cf-screen, .cf-no-print, body > :not(#root) { display: none !important; }
+    .cf-print { display: block; }
 }
 
 /* Section label: same size as body (16px minimum), set apart by weight and color. */

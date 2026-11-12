@@ -22,14 +22,20 @@ export const SEX = [
 
 // One option per different plan. A job, healthcare.gov, a family member's plan and TRICARE
 // all lead to the same plan, so they are one answer.
-// `short` is the answer as it reads back on a chip.
-export const INSURANCE = [
-  { id: 'private', label: 'A job, or a plan I bought', short: 'Job or own plan', hint: 'Includes a family member’s plan, healthcare.gov, and TRICARE' },
-  { id: 'medicare', label: 'Medicare' },
-  { id: 'medicaid', label: 'Medicaid' },
-  { id: 'none', label: 'I don’t have insurance', short: 'No insurance' },
-  { id: 'unsure', label: 'Not sure', short: 'Insurance: not sure' },
-]
+// One option per different plan, and only the options that fit the person's age, so nobody has to
+// tell Medicare from Medicaid: under 65 never sees Medicare, and from 65 Medicare leads (it pays first
+// for people who also have Medicaid). Program names stand alone: anyone who has one knows it.
+// `short` is the answer as it reads back in a summary.
+const PRIVATE = { id: 'private', label: 'Through work, or a plan I bought', short: 'work or own plan', hint: 'Includes a family member’s plan, healthcare.gov, and TRICARE' }
+const MEDICARE = { id: 'medicare', label: 'Medicare', short: 'Medicare', hint: 'Including Medicare Advantage' }
+const MEDICAID = { id: 'medicaid', label: 'Medicaid', short: 'Medicaid' }
+const NONE = { id: 'none', label: 'I don’t have insurance', short: 'no insurance' }
+const UNSURE = { id: 'unsure', label: 'Not sure', short: 'insurance not sure' }
+export const INSURANCE = [PRIVATE, MEDICARE, MEDICAID, NONE, UNSURE]
+export function insuranceOptions(age) {
+  const range = AGE_RANGES.find(r => r.id === age)
+  return range && range.lo >= 65 ? [MEDICARE, PRIVATE, NONE, UNSURE] : [PRIVATE, MEDICAID, NONE, UNSURE]
+}
 
 // Personal questions. `effects[answer]` lists rec ids to add or remove.
 // Anything not resolved stays as "ask if this applies to you".
@@ -211,14 +217,15 @@ export function visitForInsurance(visit, insurance) {
     return {
       ...visit,
       name: 'Annual Wellness Visit',
-      say: 'I’d like to book my Annual Wellness Visit.',
-      tip: 'Don’t ask for an “annual physical”. Medicare doesn’t cover one, so it can be billed. In your first year on Medicare, ask for the “Welcome to Medicare” visit.',
+      say: 'I’d like to schedule my Annual Wellness Visit.',
+      tip: 'Don’t ask for an “annual physical”. Medicare doesn’t cover one, so you’d have to pay.',
     }
   }
   if (insurance === 'none') {
     return {
       ...visit,
-      say: 'I’d like to book a preventive care visit. I don’t have insurance. What would it cost?',
+      call: 'Call a community health center to schedule a visit',
+      say: 'I’d like to schedule a preventive care visit. I don’t have insurance. What would it cost?',
       tip: null,
     }
   }
@@ -228,22 +235,15 @@ export function visitForInsurance(visit, insurance) {
 // What the plan costs, in one line. The only place coverage is stated.
 export const COVERAGE = {
   private: '$0 with [[in-network]] providers',
-  medicare: '$0 when your doctor accepts Medicare',
+  medicare: '$0 if your doctor accepts Medicare',
   medicaid: '$0 with Medicaid in most states',
   unsure: '$0 with most insurance',
   none: 'Low or no cost at a community health center',
 }
 
-// Anything more a person needs to know about their coverage. Medicare and private plans need nothing more.
-export const INSURANCE_NOTES = {
-  medicaid: 'To check your state, call the number on your Medicaid card and ask about preventive care.',
-  unsure: 'Most job-based and healthcare.gov plans cover these at $0. To check yours, call the number on your insurance card.',
-  none: 'Without insurance these aren’t automatically free. Health departments often test for HIV and hepatitis for free.',
-}
-
-// Help finding someone to book with, by insurance. It sits inside the first visit, one tap away, so nobody
+// Help finding someone to schedule with, by insurance. It's one of the answers under the plan's first step, so nobody
 // has to answer "do you have a doctor?" first. Text plus at most one link out: no provider data to keep fresh.
-const NO_DOCTOR = 'No doctor yet? Find one'
+const NO_DOCTOR = 'No doctor yet?'
 const NEW_PATIENTS = 'Which in-network primary care doctors near me are taking new patients?'
 const HEALTH_CENTERS = 'https://findahealthcenter.hrsa.gov/'
 export const FIND_DOCTOR = {
@@ -260,25 +260,34 @@ export const FIND_DOCTOR = {
     ask: NEW_PATIENTS,
     link: { label: 'No insurance? Find a health center', href: HEALTH_CENTERS },
   },
-  // Without insurance this is the main route, so it starts open.
   none: {
     title: 'Where to go without insurance',
-    open: true,
-    text: 'Community health centers see people without insurance and charge based on what you can pay. Many can be your regular doctor.',
+    text: 'Without insurance these aren’t automatically free. Community health centers see people without insurance and charge based on what you can pay, and many can be your regular doctor.',
     more: 'Already have a doctor? Ask the office what a preventive visit costs if you pay yourself.',
     link: { label: 'Find a health center near you', href: HEALTH_CENTERS },
   },
 }
 export const findDoctor = insurance => FIND_DOCTOR[insurance] || FIND_DOCTOR.private
 
-// "Book 1 visit. The rest follows from it."
-export function planSummary(plan) {
-  const book = plan.visits.filter(v => v.kind === 'book').length
-  const follow = plan.visits.length - book
-  if (!book) return ''
-  const lead = `Book ${book} ${book === 1 ? 'visit' : 'visits'}.`
-  if (!follow) return lead
-  return `${lead} The rest ${book === 1 ? 'follows from it' : 'follows from them'}.`
+// What can get in the way of making the call, and the answer to each: no doctor, no time, cost.
+// Lengths are rough and marked "about" (draft: verify before shipping).
+const COST = {
+  private: { text: 'A preventive visit is $0 with an in-network provider.', ask: 'Is this covered as a preventive visit?' },
+  medicare: { text: 'The Annual Wellness Visit is $0 if your doctor accepts Medicare.', ask: 'Do you accept Medicare?' },
+  medicaid: { text: 'Medicaid covers preventive visits at $0 in most states.', ask: 'Do you take Medicaid?' },
+  unsure: { text: 'Most job-based and healthcare.gov plans cover preventive visits at $0. To check yours, call the number on your insurance card.' },
+}
+export function firstStep(plan) {
+  const visit = plan.visits.find(v => v.kind === 'book') || plan.visits[0]
+  if (!visit) return null
+  return {
+    visit,
+    barriers: [
+      { id: 'doctor', ...plan.finder },
+      { id: 'time', title: 'Short on time?', text: `The call takes about 5 minutes${visit.time ? ` and the visit ${visit.time.toLowerCase()}` : ''}. Lab work is often done the same day.` },
+      COST[plan.insurance] && { id: 'cost', title: 'Worried about cost?', ...COST[plan.insurance] },
+    ].filter(Boolean),
+  }
 }
 
 // Everything the plan needs, computed from answers.
@@ -286,7 +295,12 @@ export function planSummary(plan) {
 export function derivePlan(data, s) {
   const range = AGE_RANGES.find(r => r.id === s.age)
   const eligible = eligibleRecs(data.recs, range, s.sex)
-  const { planned, askDoctor } = buildPlan(eligible, s.personal, s.sexual)
+  const built = buildPlan(eligible, s.personal, s.sexual)
+  const planned = built.planned
+  // Don't suggest asking about things whose question doesn't fit this person (pregnancy items at 70, say).
+  const asked = range && s.sex ? relevantQuestions(eligible, range, s.sex) : []
+  const offTopic = new Set(PERSONAL_QUESTIONS.filter(q => !asked.includes(q)).flatMap(q => q.affects))
+  const askDoctor = built.askDoctor.filter(r => !offTopic.has(r.id))
   const visits = groupByVisit(planned, data.visits).map(v => ({
     ...visitForInsurance(v, s.insurance),
     items: v.items.map(it => ({ ...it, note: range && ageNote(it.rec, range) })),
@@ -298,11 +312,9 @@ export function derivePlan(data, s) {
     // What the person's own answers unlocked.
     added: planned.filter(r => r.conditional),
     improved: !!s.improved,
-    note: INSURANCE_NOTES[s.insurance] || null,
     finder: findDoctor(s.insurance),
   }
-  // The plan can show before insurance is answered; it just can't say what it costs yet.
-  return { ...plan, summary: planSummary(plan), coverage: COVERAGE[s.insurance] || 'One more answer shows what it costs' }
+  return { ...plan, coverage: COVERAGE[s.insurance] || COVERAGE.unsure, first: firstStep(plan) }
 }
 
 // The extra questions for this person, and how many screenings they could still unlock.
@@ -333,7 +345,7 @@ export function cleanAnswers(input) {
   return {
     age: pick(AGE_RANGES, s.age),
     sex: pick(SEX, s.sex),
-    insurance: pick(INSURANCE, s.insurance),
+    insurance: pick(insuranceOptions(pick(AGE_RANGES, s.age)), s.insurance),
     personal,
     sexual: s.sexual === 'yes' || s.sexual === 'no' ? s.sexual : undefined,
     improved: s.improved === true,

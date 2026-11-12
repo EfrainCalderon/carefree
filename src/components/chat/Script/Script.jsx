@@ -1,8 +1,11 @@
-// Script: Words to say out loud, when booking or at the visit. The one tinted block on a card.
-export function Script({ label = 'Say', children }) {
+// Script: Words to say out loud. tone="dark" is for the dark green first-step block.
+import { cn } from '@/lib/utils'
+
+export function Script({ label = 'Say', tone, children }) {
+  const dark = tone === 'dark'
   return (
-    <div className="rounded-control bg-tint p-2">
-      <p className="cf-label">{label}</p>
+    <div className={cn('rounded-control p-2', dark ? 'bg-white/10' : 'bg-tint')}>
+      <p className={dark ? 'font-semibold text-[var(--cf-color-green-200)]' : 'cf-label'}>{label}</p>
       <p className="font-semibold">“{children}”</p>
     </div>
   )

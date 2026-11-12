@@ -45,6 +45,32 @@ export function visitGroups(visit) {
     .filter(g => g.items.length)
 }
 
+// For a closed card: how much is in it and how long it takes, as short parts ("3 to ask for", "About 30 minutes").
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`
+export function visitSummary(visit) {
+  const groups = visitGroups(visit)
+  const count = (...ids) => groups.filter(g => ids.includes(g.id)).reduce((n, g) => n + g.items.length, 0)
+  const parts = []
+  if (visit.kind === 'book') {
+    if (count('ask')) parts.push(`${count('ask')} to ask for`)
+    if (count('talk')) parts.push(`${count('talk')} to talk about`)
+    if (count('questions', 'checks')) parts.push(plural(count('questions', 'checks'), 'routine check', 'routine checks'))
+  } else {
+    const n = count('list')
+    const noun = { lab: ['test', 'tests'], imaging: ['scan', 'scans'], pharmacy: ['prescription', 'prescriptions'] }[visit.id]
+    if (noun) parts.push(plural(n, ...noun))
+  }
+  if (visit.time) parts.push(visit.time)
+  return parts
+}
+
+// What the follow-ups take, when it can be said in a few words.
+export function followTime(follow) {
+  if (!follow.length) return null
+  if (!follow.every(v => ['lab', 'imaging'].includes(v.id))) return 'times vary'
+  return follow.length === 1 ? follow[0].time?.toLowerCase() ?? null : '15 to 30 minutes each'
+}
+
 // Screener scores can only raise the signal to see a doctor, never lower it.
 // A low score never removes or downgrades a recommendation.
 export function screenerSignal(score, threshold) {

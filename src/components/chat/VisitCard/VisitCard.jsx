@@ -1,11 +1,10 @@
-// VisitCard: One visit in the plan. Closed, it says what it is and who it's with. Open, it follows the order
-// things happen: how to book, then what to say and what to expect there, then one thing to know about cost.
-// Each group has one label that carries the verb ("Ask for", "They'll check"), so rows are short and there
-// is one icon per group, not one per row.
+// VisitCard: One visit in the plan. Closed, it already gives the value: what it is, who it's with, how much
+// is in it, how long it takes, and the one thing to know about cost. Open, it lists what to say and expect.
+// Each group has one label that carries the verb ("Ask for", "They'll check"), so rows are short.
 import { useId, useState } from 'react'
-import { ChevronDown, CircleHelp, ClipboardList, Gauge, Info, MessageCircle, MessageCircleQuestion } from 'lucide-react'
+import { ChevronDown, CircleHelp, ClipboardList, Gauge, MessageCircle, MessageCircleQuestion } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { visitGroups } from '@/lib/visits'
+import { visitGroups, visitSummary } from '@/lib/visits'
 import { Collapse } from '../Collapse/Collapse'
 import { Script } from '../Script/Script'
 import { RichText } from '../Term/Term'
@@ -13,43 +12,50 @@ import { VisitIcon } from '../VisitIcon/VisitIcon'
 
 const GROUP_ICONS = { ask: ClipboardList, talk: MessageCircle, questions: MessageCircleQuestion, checks: Gauge, maybe: CircleHelp }
 
+// A group reads like a small version of the card's header: an icon tile the same size and tint as the
+// visit's, with the label and its rows beside it.
 function Group({ id, label, children }) {
   const Icon = GROUP_ICONS[id]
   return (
-    <section className="space-y-1">
-      <h4 className="cf-label flex items-center gap-1">
-        {Icon && <span aria-hidden className="flex size-3 shrink-0 items-center justify-center rounded-control bg-tint text-primary"><Icon className="size-2" strokeWidth={1.75} /></span>}
-        {label}
-      </h4>
-      <ul className="space-y-1">{children}</ul>
+    <section className="flex gap-2">
+      <span aria-hidden className={cn('flex size-5 shrink-0 items-center justify-center rounded-control text-primary', Icon && 'bg-tint')}>
+        {Icon && <Icon className="size-3" strokeWidth={1.75} />}
+      </span>
+      <div className="min-w-0 flex-1">
+        <h4 className="cf-label">{label}</h4>
+        <ul>{children}</ul>
+      </div>
     </section>
   )
 }
 
-// A row: a dot in the icon column, then the words. A row an answer just added is tinted and announced as new.
+// A row: a small dot, then the words. A row an answer just added is tinted and announced as new.
 const Row = ({ isNew, children }) => (
-  <li className={cn('relative pl-4 before:absolute before:top-1 before:left-1 before:size-1 before:rounded-full before:bg-faint', isNew && 'cf-new before:bg-primary')}>
+  <li className={cn('relative pl-2 before:absolute before:top-1 before:left-0 before:size-1 before:rounded-full before:bg-faint', isNew && 'cf-new before:bg-primary')}>
     {isNew && <span className="sr-only">New: </span>}{children}
   </li>
 )
 const NONE = new Set()
 
-// askIf: [{ rec, note }] items that may apply, shown on the first visit. finder: help finding a doctor.
+// askIf: [{ rec, note }] items that may apply, shown on the first visit. showSay: include the scheduling script
+// (the first visit's script lives in the plan's first step instead).
 // fresh: ids of recommendations the last answer added; their rows are marked, and a closed card's icon gets a dot.
-export function VisitCard({ visit, defaultOpen = false, askIf = [], finder, fresh = NONE }) {
+export function VisitCard({ visit, defaultOpen = false, askIf = [], showSay = true, fresh = NONE }) {
   const [open, setOpen] = useState(defaultOpen)
   const id = useId()
   const groups = visitGroups(visit)
+  const summary = visitSummary(visit)
   const isNew = it => it.ids.some(i => fresh.has(i))
   const hasNew = groups.some(g => g.items.some(isNew))
   return (
     // Hover darkens the border instead of filling the card.
     <article className="rounded-card border bg-card transition-colors duration-(--cf-motion-fast) has-[h3>button:hover]:border-outline">
-      <div className="relative flex min-h-8 items-center gap-2 p-2">
-        <VisitIcon id={visit.id} isNew={hasNew && !open} />
+      <div className="relative flex items-center gap-2 p-2">
+        {/* The icon and chevron let clicks through, so the whole header opens and closes the card. */}
+        <div className="pointer-events-none"><VisitIcon id={visit.id} isNew={hasNew && !open} /></div>
         <div className="min-w-0 flex-1">
           <h3 className="text-heading font-bold">
-            {/* The button's hit area covers the whole header; the term in the line below stays tappable on top of it. */}
+            {/* The button's hit area covers the whole header; a term in the line below stays tappable on top of it. */}
             <button
               type="button"
               className="rounded-card text-left outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-ring"
@@ -60,17 +66,22 @@ export function VisitCard({ visit, defaultOpen = false, askIf = [], finder, fres
               {visit.name}
             </button>
           </h3>
-          <p className="text-muted-foreground"><RichText>{visit.who}</RichText></p>
+          <p><RichText>{visit.who}</RichText></p>
+          {/* Each part keeps its dot, so a wrapped line never starts with one. */}
+          {summary.length > 0 && (
+            <p className="text-muted-foreground">
+              {summary.map((part, i) => [<span key={part} className="whitespace-nowrap">{part}{i < summary.length - 1 && ' ·'}</span>, ' '])}
+            </p>
+          )}
         </div>
-        <ChevronDown aria-hidden className={cn('cf-no-print size-3 shrink-0 text-outline transition-transform duration-(--cf-motion-base)', open && 'rotate-180')} />
+        <ChevronDown aria-hidden className={cn('pointer-events-none size-3 shrink-0 text-outline transition-transform duration-(--cf-motion-base)', open && 'rotate-180')} />
       </div>
       <Collapse open={open} id={id}>
-        <div className="mx-2 space-y-3 border-t border-tint py-2">
-          {(visit.say || visit.how || finder) && (
-            <div className="space-y-1">
-              {visit.say && <Script label="When you book, say">{visit.say}</Script>}
+        <div className="mx-2 space-y-2 border-t border-tint py-2">
+          {((showSay && visit.say) || visit.how) && (
+            <div className="space-y-1 pl-7">
+              {showSay && visit.say && <Script label="When you call, say">{visit.say}</Script>}
               {visit.how && <p>{visit.how}</p>}
-              {finder}
             </div>
           )}
           {groups.map(g => (
@@ -90,14 +101,10 @@ export function VisitCard({ visit, defaultOpen = false, askIf = [], finder, fres
               ))}
             </Group>
           )}
-          {visit.tip && (
-            <p className="flex gap-1 text-muted-foreground">
-              <span aria-hidden className="flex size-3 shrink-0 items-center justify-center"><Info className="size-2" /></span>
-              <span><span className="font-semibold text-foreground">Good to know:</span> {visit.tip}</span>
-            </p>
-          )}
         </div>
       </Collapse>
+      {/* The tip shows open or closed: it's the part people most need before they go. */}
+      {visit.tip && <p className="mx-2 border-t border-tint py-2 pl-7 text-muted-foreground"><span className="font-semibold text-foreground">Good to know:</span> {visit.tip}</p>}
     </article>
   )
 }

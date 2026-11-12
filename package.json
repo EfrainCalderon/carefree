@@ -11,6 +11,7 @@
     "build-storybook": "storybook build",
     "tokens:build": "style-dictionary build --config sd.config.js",
     "email:preview": "node scripts/email-preview.mjs",
+    "email:send": "node scripts/email-send-test.mjs",
     "chromatic": "npx chromatic --project-token=chpt_89e4b71ac7704d4"
   },
   "dependencies": {

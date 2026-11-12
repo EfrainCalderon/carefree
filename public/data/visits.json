@@ -1,6 +1,6 @@
 {
   "meta": {
-    "notes": "Visit types a person actually goes to. Recommendations in recommendations.json point here through their `journey` steps. Order in this list is the display order. Coverage notes are general guidance for ACA-compliant private plans, not a guarantee for every plan. `kind` is `book` for visits a person books themselves and `follow` for what gets ordered there. `who`, `how`, `say` and `tip` are what the plan shows; [[double brackets]] mark glossary terms (src/lib/terms.js)."
+    "notes": "Visit types a person actually goes to. Recommendations in recommendations.json point here through their `journey` steps. Order in this list is the display order. Coverage notes are general guidance for ACA-compliant private plans, not a guarantee for every plan. `kind` is `book` for visits a person books themselves and `follow` for what gets ordered there. `who`, `how`, `say` and `tip` are what the plan shows; [[double brackets]] mark glossary terms (src/lib/terms.js). `time` is a rough length for planning (draft: verify before shipping)."
   },
   "visits": [
     {
@@ -14,8 +14,10 @@
       ],
       "who": "With a [[primary care provider]]",
       "how": null,
-      "say": "I’d like to book a preventive care visit.",
-      "tip": "If you bring up a new problem, that part of the visit can be billed.",
+      "call": "Call your primary care doctor to schedule a visit",
+      "say": "I’d like to schedule a preventive care visit.",
+      "tip": "If you bring up a new problem, you may have to pay for that part of the visit.",
+      "time": "About 30 minutes",
       "description": "The hub. Most free screenings happen here as questions, quick measurements, or a blood draw. Anything that needs another appointment usually gets ordered here.",
       "coverage": "Most plans cover one preventive visit a year at $0."
     },
@@ -28,8 +30,10 @@
       ],
       "who": "With an [[OB-GYN]]",
       "how": null,
-      "say": "I’d like to book a well-woman visit.",
+      "call": "Call an OB-GYN to schedule a well-woman visit",
+      "say": "I’d like to schedule a well-woman visit.",
       "tip": null,
+      "time": "About 30 minutes",
       "description": "A yearly preventive visit focused on reproductive and sexual health.",
       "coverage": "Covered once a year at $0 under the ACA's women's preventive services."
     },
@@ -41,9 +45,10 @@
         "Pregnancy checkups"
       ],
       "who": "With an [[OB-GYN]] or midwife",
-      "how": "These are part of your regular pregnancy checkups. There’s nothing extra to book.",
+      "how": "These are part of your regular pregnancy checkups. There’s nothing extra to schedule.",
       "say": null,
       "tip": null,
+      "time": null,
       "description": "Checkups during pregnancy. Several free screenings and supports are built into this care.",
       "coverage": "The preventive screenings listed here are covered at $0."
     },
@@ -58,7 +63,8 @@
       "who": "At the office or a lab",
       "how": "Usually one blood draw, often the same day as your visit. Otherwise, take your doctor’s order to a lab.",
       "say": null,
-      "tip": "Not every blood test counts as preventive. Vitamin D often doesn’t. If you’re not sure, ask your insurer.",
+      "tip": "Plans must cover these tests. Routine panels, like a blood count or vitamin\u00a0D, aren’t on that list, so you may have to pay for them. Ask before the blood draw.",
+      "time": "About 15 minutes",
       "description": "A blood or urine sample. Often taken the same day as your checkup, otherwise at a lab with the order your doctor gives you.",
       "coverage": "Covered at $0 when ordered as part of a preventive screening."
     },
@@ -71,9 +77,10 @@
         "X-ray / ultrasound"
       ],
       "who": "At an imaging center",
-      "how": "Most scans need an order from your doctor. Mammograms often don’t, so you can book those yourself.",
+      "how": "Most scans need an order from your doctor. Mammograms often don’t, so you can schedule those yourself.",
       "say": null,
-      "tip": "Free when it’s a screening. A scan to look into symptoms can be billed.",
+      "tip": "Free when it’s a screening. If the scan is to look into symptoms, you may have to pay.",
+      "time": "15 to 30 minutes",
       "description": "A scan done somewhere other than your doctor's office, like a mammogram, low-dose CT, ultrasound, or bone density test.",
       "coverage": "Covered at $0 when it's a screening, not a follow-up for symptoms."
     },
@@ -89,6 +96,7 @@
       "how": "Your doctor orders it at your visit. You choose which test.",
       "say": null,
       "tip": "If a home test comes back abnormal, the follow-up colonoscopy should be covered too. Confirm with your plan.",
+      "time": null,
       "description": "You choose the test with your doctor: a stool test you do at home, or a colonoscopy at a GI clinic.",
       "coverage": "Covered at $0 for ages 45–75."
     },
@@ -103,6 +111,7 @@
       "how": "Your doctor sends the prescription and you pick it up.",
       "say": null,
       "tip": "Ask for a generic if there’s a choice. It’s usually the $0 option.",
+      "time": null,
       "description": "Some preventive medicines are free with a prescription from your doctor.",
       "coverage": "Covered at $0 with a prescription for eligible people."
     },
@@ -118,6 +127,7 @@
       "how": "Ongoing sessions with a counselor, dietitian, or coach, not a one-time test.",
       "say": null,
       "tip": "Check that the program is in-network before you start.",
+      "time": null,
       "description": "Ongoing sessions, not a one-time test. Your doctor refers you.",
       "coverage": "Covered at $0 when it meets the preventive guideline."
     },
@@ -132,6 +142,7 @@
       "how": "A conversation about your family history. It usually needs a referral.",
       "say": null,
       "tip": null,
+      "time": null,
       "description": "A conversation about family history and, if it makes sense, genetic testing.",
       "coverage": "Counseling, and testing when recommended, is covered at $0 for eligible people."
     }

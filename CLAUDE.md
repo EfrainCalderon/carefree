@@ -367,28 +367,56 @@ A pass for cognitive load, fewer steps, and working equally well on a phone and 
 
 **Tokens added** (in tokens.json; pull into Tokens Studio): `boxShadow.popover`, `motion.slow` (480ms), `motion.stagger` (80ms).
 
-## Exploration: the live plan (Nov 2026, branch `ux-exploration`, built on `ux-iteration`, not merged)
-Same content, data, copy rules, email and plan cards as the UX pass. What changes is the shape: there is no form followed by a result. It's one page where the plan appears early and every answer changes it in place.
+## Second round on `ux-exploration` (Nov 2026, after review; supersedes the "live plan" idea and parts of the UX pass)
+The side-by-side live plan was dropped: showing a plan placeholder while asking questions told people about the tool instead of letting them use it. What stayed from it: the first question on the landing page, and marking what the extra questions added.
 
-**Idea**
-- The first question (age) is on the landing page, so the first tap is already an answer. No "start" button.
-- Age + sex are enough to build a plan, so it appears after **two taps**. Insurance is the third answer; until then the header says "One more answer shows what it costs".
-- After that, the health questions are optional and answered in the same place. Each answer says what it added ("Added: Diabetes screening") and those rows are tinted in the plan (`.cf-new`); a closed card that gained something gets a dot on its icon.
-- Answers read back as chips ("45–49", "Male", "Job or own plan"). Tap one to change it; the plan follows. "Start over" is no longer the only way to fix a mistake.
+**Flow:** landing (headline + age) → sex → insurance → **the plan on its own page** → optional health questions → plan. "Change" on the plan walks back through all three questions with the old answers ticked. Browser Back works throughout; answers and checklist ticks are kept for the tab.
 
-**Layout**
-- `AnswerPanel` holds the chips, the current question (or the offer of health questions, or a summary of what was added) and a status line screen readers hear.
-- 1024px and wider: panel on the left (400px, stays in view), plan on the right. Answering on one side and watching the other change is the point, and it's what makes the desktop version more than a stretched phone layout.
-- Narrower: the panel sits above the plan. Before the plan exists, `PlanGhost` holds its place ("Your plan builds here. 2 taps to go.").
+**Copy rules learned the hard way**
+- Don't narrate the interface or coach behavior ("Three taps show you yours", "Your plan builds here", "One more answer shows what it costs", "Book 1 visit. The rest follows from it."). If a line only describes what the design already shows, cut it.
+- **Schedule, never book** (reverses the UX pass). It's the word US doctor's offices use. The internal `kind: "book"` key in visits.json is unchanged.
+- "Covered" means insurance coverage only. The checklist says "once you've talked about it".
+- Medicare is "$0 **if** your doctor accepts Medicare", not "when".
+- Privacy reassurance isn't on the landing page; it's one tap away in the footer (`PrivacyNote`).
 
-**Take it with you** (`PlanActions`), for the two moments after this page
-- Email (unchanged) and print.
-- `ReminderLink`: a calendar file for the next weekday at 9:00 with the booking script. It deliberately leaves out what the person plans to ask about, because calendars are often shared or synced to work.
-- `VisitSheet`: "Show this at my visit". A full-screen sheet in big type and first person ("I'd like to ask for…"), with lines to tick off. Built from the same groups as the visit card.
+**Insurance options depend on age** (`insuranceOptions` in logic.js), so nobody has to tell Medicare from Medicaid. Under 65: "Through work, or a plan I bought" (hint: a family member’s plan, healthcare.gov, TRICARE), Medicaid, none, not sure. 65 and older: Medicare first (hint: "Including Medicare Advantage"), work or bought plan, none, not sure. Program names carry no explanation: anyone who has one knows it. Known gap: people under 65 on Medicare through disability pick "Not sure".
 
-**Removed here:** QuestionStep, OptInCard, OutputPreview (their jobs moved into AnswerPanel and PlanGhost). StartScreen is now only the headline and one line.
+**Plan page (Rams pass: less, and color only where it means something)**
+- No header card. Plain "Your plan", the cost line, the answers in a few words with "Change", then one row of three actions: **Checklist, Email, Print**.
+- Visit cards are **closed by default** and already carry the value: name, who, a summary ("3 to ask for · 4 routine checks · About 30 minutes"), and the "Good to know" tip, which shows open or closed. No "Start here" label; "What may come after" is a real heading.
+- The whole card header toggles, including the icon and chevron (they let clicks through).
+- The first time the plan appears, visits arrive one at a time over placeholder blocks (`useBuild` in PlanView: timers, never animation frames; skipped for reduced motion).
+- **Dark green is used once**, on `FirstStep` at the end of the plan: "Schedule your preventive care visit", the script, and an answer for each thing that gets in the way: no doctor, no time, cost (`firstStep` in logic.js). Find-a-doctor help moved here from the first visit. Visit lengths (`time` in visits.json) and "the call takes about 5 minutes" are drafts: **verify**.
+- `ChecklistView` is its own page, not a dialog. Ticking crosses a line out there and changes nothing in the plan.
+- Email opens in a small dialog (`EmailDialog`); there's no "take it with you" card. The calendar reminder was removed.
+- `PrintSheet` is a separate paper layout (9.5pt, two columns, no cards or color) that only exists in print; the screen layout is hidden when printing. The longest plan measured (7 visits) takes about 70% of one letter page.
+- Buttons: outline hover fills with tint and darkens the border (more contrast than rest, not less). Tertiary actions are underlined text.
+- Display type is 40/40 (was 40/48).
 
-**Trade-offs to test before choosing between the two branches**
-- On a phone the insurance question is tall, so after the second tap the plan starts near the bottom of the screen. The iteration branch shows nothing until the third tap, but then shows only the plan.
-- Showing a plan before insurance is known means an uninsured person briefly sees a plan with no cost line. The copy never says "$0" until insurance is answered.
-- More moving parts (chips, live changes, a dialog) than a one-question-per-screen form. Watch first-time users for whether the panel and plan read as one thing.
+**Feedback and credit**
+- `FeedbackButton` floats bottom right on every screen (a round icon on phones). Free text, anonymous, posted to `api/send-feedback.js`, which emails it to `FEEDBACK_TO`. **Set `FEEDBACK_TO` in Vercel's environment variables**; locally it's in .env.local.
+- `SiteFooter` on every screen: "Carefree by Efrain Calderon" (links to efrain.design), "Buy me a coffee" (a plain link to buymeacoffee.com/efrainfm, not the floating widget, which would sit on the feedback button's corner and load a third-party script), and Privacy.
+
+**Email**
+- Mirrors the new plan: title, cost line, visit cards, then the dark first-step block.
+- `npm run dev` now runs the functions in `api/` (a small plugin in vite.config.js), so Send and Feedback really send from localhost using .env.local.
+- `npm run email:send -- you@example.com` sends three sample plans through Resend. Sent and accepted by Resend on Nov 12, 2026; how they look in Gmail, Outlook and Apple Mail still needs a human look.
+- No rate limiting on either function yet.
+
+**Removed:** AnswerPanel, PlanGhost, VisitSheet, ReminderLink, PlanHeader, FindDoctorHelp, OutputPreview. Unused but kept: NoteCard, StatCard.
+
+## Third round on `ux-exploration` (Nov 2026): the plan is a timeline
+Supersedes the plan-page parts of the second round (the dark first-step block, the Visits/Checklist switch, the checklist view, the barriers section at the end).
+
+- **Why a timeline:** a hero block ranks things, and the plan isn't ranked. Lab work isn't less important than the visit; it comes later and because of it. Order in time carries the hierarchy.
+- **Three steps** (`PlanStep`, in `PlanView`): **Now · about 5 minutes** (who to call, the script, three barrier links, "I've scheduled it"), **At your visit** (the visit cards, "I've had my visit"), **After, if your doctor orders it** (follow-up cards, "I've done these"). A finished step folds to one line with a check and reopens on tap; tapping any marker moves there. Progress (`at`) is kept with the answers, for the tab only. Step buttons are full width on a phone and right-aligned from 640px.
+- **Finished state** (`PlanDone`): "You're done for this year", when the next visit is due (a year on), and a calendar file to be reminded. No reminder email: Resend can only schedule 30 days ahead, and a year-ahead email would mean storing addresses.
+- **Dark green** appears only on the current step's marker and on `PlanDone`.
+- **Who to call** is explicit (`call` in visits.json): "Call your primary care doctor to schedule a visit". Barriers (`Barriers`) are quiet links under the script that open a short answer.
+- **Header:** title, cost line, answers with "Change", and Email and Print on the right (they act on the whole plan).
+- **No on-screen checklist.** The printed plan has tick boxes beside everything to say at the visit.
+- **Footer:** "Carefree by Efrain Calderon", "Privacy and sources" (privacy notes plus links to the USPSTF A and B list and HealthCare.gov's adult list), and a quiet "Start over" once there are answers. The coffee link is in the feedback dialog.
+- **Coverage, checked against HealthCare.gov (Nov 2026):** a routine blood panel (CBC, metabolic panel, vitamin D) is not on the required $0 list, though many plans pay for it; the lab tip says so. **Cholesterol test added** as a default item for ages 40–75 (`cholesterol-screening`). **Still missing from Carefree:** vaccines and tuberculosis screening, both on HealthCare.gov's adult list.
+- **Email** follows the same three steps and labels, without the rail or the buttons.
+- **Request limits** (`api/_guard.js`): POST only, must come from Carefree's own pages, 10 KB cap, 5 calls an hour per visitor per function, 3 plan emails an hour per recipient, a hidden field that catches scripts in the feedback form. Counters are in memory, so they reset on restart and aren't shared between instances: **add a Vercel Firewall rate-limit rule on `/api/*`** (or a shared store) before real traffic.
+- **View-control lesson:** a control that sits beside outline buttons should be built from the same parts (height, border, radius) and stay on the 8px grid.

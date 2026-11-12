@@ -12,7 +12,7 @@ const preview = {
       ],
     },
     layout: 'padded',
-    options: { storySort: { order: ['Introduction', 'Foundations', 'Chat', ['Conversation', 'Cards', 'Plan'], 'Primitives'] } },
+    options: { storySort: { order: ['Introduction', 'Foundations', 'Form', 'Plan', 'Extras', 'Primitives'] } },
   },
 }
 

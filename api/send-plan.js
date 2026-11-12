@@ -3,6 +3,7 @@
 // send someone arbitrary content, and the email always matches a real plan.
 import { createRequire } from 'node:module'
 import { Resend } from 'resend'
+import { allowRecipient, guard } from './_guard.js'
 import { cleanAnswers, derivePlan } from '../src/app/logic.js'
 import { buildPlanEmail } from '../src/lib/planEmail.js'
 
@@ -26,7 +27,8 @@ export function prepareEmail(body) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+  // At most 5 plan emails an hour from one visitor, and 3 an hour to any one address.
+  if (!guard(req, res, { name: 'plan', max: 5 })) return
 
   let message
   try {
@@ -34,6 +36,7 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(400).json({ error: err.message })
   }
+  if (!allowRecipient(res, message.to)) return
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
