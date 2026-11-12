@@ -26,7 +26,7 @@ export const SEX = [
 // tell Medicare from Medicaid: under 65 never sees Medicare, and from 65 Medicare leads (it pays first
 // for people who also have Medicaid). Program names stand alone: anyone who has one knows it.
 // `short` is the answer as it reads back in a summary.
-const PRIVATE = { id: 'private', label: 'Through work, or a plan I bought', short: 'work or own plan', hint: 'Includes a family member’s plan, healthcare.gov, and TRICARE' }
+const PRIVATE = { id: 'private', label: 'Through work, or a plan I bought', short: 'work or own insurance plan', hint: 'Includes a family member’s plan, healthcare.gov, and TRICARE' }
 const MEDICARE = { id: 'medicare', label: 'Medicare', short: 'Medicare', hint: 'Including Medicare Advantage' }
 const MEDICAID = { id: 'medicaid', label: 'Medicaid', short: 'Medicaid' }
 const NONE = { id: 'none', label: 'I don’t have insurance', short: 'no insurance' }

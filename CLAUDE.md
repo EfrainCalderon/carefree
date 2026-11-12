@@ -420,3 +420,5 @@ Supersedes the plan-page parts of the second round (the dark first-step block, t
 - **Email** follows the same three steps and labels, without the rail or the buttons.
 - **Request limits** (`api/_guard.js`): POST only, must come from Carefree's own pages, 10 KB cap, 5 calls an hour per visitor per function, 3 plan emails an hour per recipient, a hidden field that catches scripts in the feedback form. Counters are in memory, so they reset on restart and aren't shared between instances: **add a Vercel Firewall rate-limit rule on `/api/*`** (or a shared store) before real traffic.
 - **View-control lesson:** a control that sits beside outline buttons should be built from the same parts (height, border, radius) and stay on the 8px grid.
+
+- **Start over (Nov 2026):** the plan's "Change" link is gone. "Start over" is a quiet ghost button in the top bar, opposite the wordmark, on the plan page only (elsewhere it stays in the footer). It clears the answers, so the old walk-back-with-answers-ticked is gone.

@@ -32,12 +32,12 @@ function useBuild(total, animate, onDone) {
   return shown
 }
 
-// answers: the answers in a few words ("Age 45–49, male, work or own plan"). onChange: go back and change them.
+// answers: the answers in a few words, each { id, text, onEdit }; tapping one goes back to that question.
 // actions: email and print. offer: the invitation to answer more questions.
 // at: which step the person is on (0 the call, 1 the visit, 2 after; one more means everything is done).
 // onAt: move to a step.
 // fresh: ids of recommendations the last answers added. build: play the arrival; onBuilt: it finished.
-export function PlanView({ plan, answers, onChange, actions, offer, at = 0, onAt, fresh, build = false, onBuilt }) {
+export function PlanView({ plan, answers, actions, offer, at = 0, onAt, fresh, build = false, onBuilt }) {
   const heading = useRef(null)
   // Move focus to the heading so screen readers announce that the plan has arrived.
   useEffect(() => { heading.current?.focus({ preventScroll: true }) }, [])
@@ -62,8 +62,12 @@ export function PlanView({ plan, answers, onChange, actions, offer, at = 0, onAt
           <p><RichText>{plan.coverage}</RichText></p>
           {answers && (
             <p className="text-muted-foreground">
-              {answers}.{' '}
-              {onChange && <button type="button" className="font-semibold text-foreground underline decoration-1 underline-offset-4 hover:decoration-2" onClick={onChange}>Change</button>}
+              {answers.map((a, i) => (
+                <span key={a.id}>
+                  {i > 0 && ', '}
+                  <button type="button" aria-label={`${a.text}. Change`} className="cursor-pointer rounded-[2px] underline decoration-dotted decoration-1 underline-offset-4 hover:decoration-solid hover:text-foreground" onClick={a.onEdit}>{a.text}</button>
+                </span>
+              ))}.
             </p>
           )}
         </div>

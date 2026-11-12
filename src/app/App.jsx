@@ -2,6 +2,7 @@
 // move along its steps, answer a few more questions, or go back and change an answer.
 // The app only composes components.
 import { useEffect, useMemo, useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { AGE_RANGES, SEX, cleanAnswers, derivePlan, extraQuestions, insuranceOptions, sexualHealthFactors } from './logic'
 import {
   FeedbackButton, OptInCard, OptionList, PlanActions, PlanView, PrintSheet, QuestionStep, SiteFooter, StartScreen, Wordmark,
@@ -43,6 +44,8 @@ export function App({ data }) {
   const [at, setAt] = useState(initial.at)
   const [fresh, setFresh] = useState(() => new Set())
   const [build, setBuild] = useState(false)
+  // Set while one answer is being changed from the plan: the new answer goes straight back to the plan.
+  const [edit, setEdit] = useState(null)
 
   const plan = useMemo(() => derivePlan(data, s), [data, s])
   const extras = useMemo(() => extraQuestions(data, s), [data, s])
@@ -68,6 +71,7 @@ export function App({ data }) {
   }, []) // runs once: later steps go through go() and popstate
   useEffect(() => { save({ s, step: view, at }) }, [s, view, at])
   useEffect(() => { window.scrollTo(0, 0) }, [view])
+  useEffect(() => { if (view === 'plan') setEdit(null) }, [view])
 
   const go = next => {
     window.history.pushState({ cf: next, n: (window.history.state?.n ?? 0) + 1 }, '')
@@ -87,6 +91,12 @@ export function App({ data }) {
     if (!insuranceOptions(next.age).some(o => o.id === next.insurance)) delete next.insurance
     setS(next)
     setFresh(new Set())
+    if (edit) {
+      // Back to the plan, unless the new age left insurance unanswered.
+      const missing = basics(next).find(b => !next[b.id])
+      if (!missing) { setEdit(null); setBuild(false); return go('plan') }
+      return go(missing.id)
+    }
     setAt(0)
     // Always on to the next question in order, so "Change" walks back through all three with the old answers ticked.
     const order = basics(next)
@@ -104,11 +114,13 @@ export function App({ data }) {
     go('plan')
   }
 
+  // Each answer in a few words, and the question that changes it.
+  const changeAnswer = id => { setEdit(id); go(id) }
   const answersLine = ready && [
-    `Age ${AGE_RANGES.find(r => r.id === s.age).label}`,
-    SEX.find(o => o.id === s.sex).label.toLowerCase(),
-    insuranceOptions(s.age).find(o => o.id === s.insurance).short,
-  ].join(', ')
+    { id: 'age', text: `Age ${AGE_RANGES.find(r => r.id === s.age).label}` },
+    { id: 'sex', text: SEX.find(o => o.id === s.sex).label.toLowerCase() },
+    { id: 'insurance', text: insuranceOptions(s.age).find(o => o.id === s.insurance).short },
+  ].map(a => ({ ...a, onEdit: () => changeAnswer(a.id) }))
 
   const screen = () => {
     const basic = BASICS.findIndex(b => b.id === view)
@@ -124,7 +136,7 @@ export function App({ data }) {
             description={b.description}
             heading={landing ? 'h2' : 'h1'}
             autoFocus={!landing}
-            progress={landing ? null : { step: basic, total: BASICS.length, label: 'About you' }}
+            progress={landing || edit ? null : { step: basic, total: BASICS.length, label: 'About you' }}
             onBack={landing ? null : back}
           >
             <OptionList label={b.title} options={b.options} columns={b.columns} value={s[b.id]} onSelect={o => answerBasic(b.id, o.id)} />
@@ -162,7 +174,6 @@ export function App({ data }) {
       <PlanView
         plan={plan}
         answers={answersLine}
-        onChange={() => go('age')}
         at={at}
         onAt={setAt}
         fresh={fresh}
@@ -174,14 +185,18 @@ export function App({ data }) {
     )
   }
 
+  const startOver = () => { setEdit(null); setS(EMPTY); setAt(0); setFresh(new Set()); go('age') }
   // The header, the page and the footer share one column, so everything lines up at every width.
   const column = `mx-auto w-full px-2 sm:px-3 ${view === 'plan' ? 'max-w-[688px]' : 'max-w-[608px]'}`
   return (
     <>
       <div className="cf-screen flex min-h-dvh flex-col bg-background pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] text-foreground">
-        <header className={`flex h-6 items-center sm:h-8 ${column}`}><Wordmark /></header>
+        <header className={`flex h-6 items-center justify-between sm:h-8 ${column}`}>
+          <Wordmark />
+          {view === 'plan' && s.age && <Button variant="ghost" className="-mr-2 text-muted-foreground" onClick={startOver}>Start over</Button>}
+        </header>
         <main className={`flex-1 pt-1 pb-6 sm:pt-3 ${column}`}>{screen()}</main>
-        <footer className={`pb-2 ${column}`}><SiteFooter onReset={s.age ? () => { setS(EMPTY); setAt(0); setFresh(new Set()); go('age') } : null} /></footer>
+        <footer className={`pb-2 ${column}`}><SiteFooter onReset={s.age && view !== 'plan' ? startOver : null} /></footer>
         <FeedbackButton screen={view} />
       </div>
       {ready && <PrintSheet plan={plan} />}
