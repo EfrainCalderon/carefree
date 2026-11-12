@@ -27,9 +27,10 @@ function restore() {
       s: { ...EMPTY, ...cleanAnswers(saved.s) },
       step: typeof saved.step === 'string' ? saved.step : 'age',
       at: [0, 1, 2, 3].includes(saved.at) ? saved.at : 0,
+      declined: saved.declined === true,
     }
   } catch { /* private mode or bad data: start fresh */ }
-  return { s: EMPTY, step: 'age', at: 0 }
+  return { s: EMPTY, step: 'age', at: 0, declined: false }
 }
 function save(state) {
   try { sessionStorage.setItem(STORE, JSON.stringify(state)) } catch { /* storage is optional */ }
@@ -46,6 +47,8 @@ export function App({ data }) {
   const [build, setBuild] = useState(false)
   // Set while one answer is being changed from the plan: the new answer goes straight back to the plan.
   const [edit, setEdit] = useState(null)
+  // "No, thank you" on the offer to answer more questions. Kept for the tab, like the answers.
+  const [declined, setDeclined] = useState(initial.declined)
 
   const plan = useMemo(() => derivePlan(data, s), [data, s])
   const extras = useMemo(() => extraQuestions(data, s), [data, s])
@@ -69,7 +72,7 @@ export function App({ data }) {
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, []) // runs once: later steps go through go() and popstate
-  useEffect(() => { save({ s, step: view, at }) }, [s, view, at])
+  useEffect(() => { save({ s, step: view, at, declined }) }, [s, view, at, declined])
   useEffect(() => { window.scrollTo(0, 0) }, [view])
   useEffect(() => { if (view === 'plan') setEdit(null) }, [view])
 
@@ -180,18 +183,18 @@ export function App({ data }) {
         build={build}
         onBuilt={() => setBuild(false)}
         actions={<PlanActions plan={plan} answers={s} />}
-        offer={!s.improved && extras.possible > 0 ? <OptInCard questions={extras.steps.length} onImprove={() => go(extras.steps[0])} /> : null}
+        offer={!s.improved && !declined && extras.possible > 0 ? <OptInCard questions={extras.steps.length} onImprove={() => go(extras.steps[0])} onDismiss={() => setDeclined(true)} /> : null}
       />
     )
   }
 
-  const startOver = () => { setEdit(null); setS(EMPTY); setAt(0); setFresh(new Set()); go('age') }
+  const startOver = () => { setDeclined(false); setEdit(null); setS(EMPTY); setAt(0); setFresh(new Set()); go('age') }
   // The header, the page and the footer share one column, so everything lines up at every width.
   const column = `mx-auto w-full px-2 sm:px-3 ${view === 'plan' ? 'max-w-[688px]' : 'max-w-[608px]'}`
   return (
     <>
       <div className="cf-screen flex min-h-dvh flex-col bg-background pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] text-foreground">
-        <header className={`flex h-6 items-center justify-between sm:h-8 ${column}`}>
+        <header className={`flex items-baseline justify-between pt-1 ${column}`}>
           <Wordmark />
           {view === 'plan' && s.age && <Button variant="ghost" className="-mr-2 text-muted-foreground" onClick={startOver}>Start over</Button>}
         </header>
